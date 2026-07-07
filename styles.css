@@ -586,8 +586,42 @@ h3 {
         height: 260px;
     }
 
+    .contact-section {
+        padding-top: 1.2rem;
+        padding-bottom: 1rem;
+    }
+
+    .contact-grid {
+        gap: 1rem;
+    }
+
     .contact-card {
-        padding: 1.35rem;
+        padding: 1.25rem;
+        border-radius: 1rem;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+    }
+
+    .contact-form label {
+        margin-bottom: 0.85rem;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+        padding: 0.9rem 0.95rem;
+        font-size: 0.95rem;
+    }
+
+    .contact-meta {
+        gap: 0.95rem;
+    }
+
+    .contact-social {
+        flex-direction: column;
+        margin-top: 1.2rem;
+    }
+
+    .contact-social a {
+        width: 100%;
     }
 
     .footer-wrap {
