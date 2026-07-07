@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap&subset=vietnamese,latin');
 
 :root {
     --bg: #060816;
@@ -25,7 +25,7 @@ html {
 
 body {
     margin: 0;
-    font-family: 'Inter', Arial, Helvetica, sans-serif;
+    font-family: 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
     color: var(--text);
     background:
         radial-gradient(circle at top left, rgba(245, 158, 11, 0.16), transparent 28%),
@@ -186,7 +186,7 @@ img {
 .section-heading h2 {
     margin: 0 0 1rem;
     line-height: 1.1;
-    font-family: 'Poppins', 'Inter', Arial, sans-serif;
+    font-family: 'Poppins', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
 }
 
 .hero h1 {
