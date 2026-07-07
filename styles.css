@@ -36,6 +36,10 @@ body {
     position: relative;
 }
 
+body.menu-open {
+    overflow: hidden;
+}
+
 body::before,
 body::after {
     content: '';
@@ -135,6 +139,30 @@ h3 {
     display: flex;
     flex-wrap: wrap;
     gap: 0.55rem;
+}
+
+.menu-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.24rem;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    cursor: pointer;
+    padding: 0;
+}
+
+.menu-toggle span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    border-radius: 999px;
+    background: var(--text);
+    transition: transform 0.25s ease, opacity 0.25s ease;
 }
 
 .main-nav a {
@@ -561,12 +589,46 @@ h3 {
 
 @media (max-width: 720px) {
     .nav-wrap {
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+    }
+
+    .menu-toggle {
+        display: inline-flex;
     }
 
     .main-nav {
+        position: absolute;
+        top: calc(100% + 0.7rem);
+        right: 0;
+        left: 0;
+        flex-direction: column;
         gap: 0.4rem;
+        padding: 0.8rem;
+        background: rgba(6, 8, 22, 0.96);
+        border: 1px solid var(--border);
+        border-radius: 1rem;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        pointer-events: none;
+        transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+    }
+
+    .main-nav.is-open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    .main-nav a {
+        width: 100%;
+        padding: 0.75rem 0.85rem;
+        border-radius: 0.8rem;
     }
 
     .hero {
@@ -622,6 +684,22 @@ h3 {
 
     .contact-social a {
         width: 100%;
+    }
+
+    .site-header.nav-open {
+        background: rgba(6, 8, 22, 0.98);
+    }
+
+    .menu-toggle[aria-expanded="true"] span:nth-child(1) {
+        transform: translateY(6px) rotate(45deg);
+    }
+
+    .menu-toggle[aria-expanded="true"] span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .menu-toggle[aria-expanded="true"] span:nth-child(3) {
+        transform: translateY(-6px) rotate(-45deg);
     }
 
     .footer-wrap {
