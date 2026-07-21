@@ -35,31 +35,92 @@
             </div>
         </section>
 
-        <!-- Thêm phần Video Nổi Bật (Up trực tiếp bằng thẻ video từ folder) -->
+        <!-- Phần Lưới Video Các Dự Án -->
         <section class="section">
             <div class="container">
-                <article class="card" style="max-width: 800px; margin: 0 auto 3rem auto; padding: 1.5rem;">
-                    <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem; text-align: center;">Dự Án Nổi Bật</h2>
 
-                    <!-- Khung chứa video tải trực tiếp -->
-                    <div
-                        style="border-radius: 0.95rem; overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow); background-color: #000; display: flex;">
+                <!-- ============================== -->
+                <!-- DỰ ÁN 1: SUNSHINE BEACH RESORT -->
+                <!-- ============================== -->
+                <h2 style="font-size: 2rem; margin-bottom: 2.5rem; text-align: center;">Sunshine Beach Resort</h2>
 
-                        <!-- THẺ VIDEO HTML THUẦN -->
-                        <video width="100%" controls preload="metadata">
-                            <!-- Đã cập nhật đường dẫn trỏ vào folder "video" -->
-                            <source
-                                src="video/FSave.com_Facebook_1-GOC-CHECKIN-SIEU-XIN-O-NHA-SUNSHINE-CH_Media_861946670243508_001_1080p.mp4"
-                                type="video/mp4">
-                            Trình duyệt của bạn không hỗ trợ thẻ video.
-                        </video>
+                <!-- Lưới video dự án 1 (Thêm margin-bottom: 5rem để cách xa dự án 2) -->
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem; margin-bottom: 5rem;">
 
-                    </div>
-                </article>
+                    <!-- VIDEO 1 -->
+                    <article class="card" style="padding: 1.25rem;">
+                        <div
+                            style="border-radius: 0.75rem; overflow: hidden; border: 1px solid var(--border); background-color: #000; display: flex;">
+                            <video width="100%" controls preload="metadata">
+                                <source src="video/Sunshine/video-1.mp4" type="video/mp4">
+                                Trình duyệt của bạn không hỗ trợ thẻ video.
+                            </video>
+                        </div>
+                    </article>
+
+                    <!-- VIDEO 2 -->
+                    <article class="card" style="padding: 1.25rem;">
+                        <div
+                            style="border-radius: 0.75rem; overflow: hidden; border: 1px solid var(--border); background-color: #000; display: flex;">
+                            <video width="100%" controls preload="metadata">
+                                <source src="video/Sunshine/video-2.mp4" type="video/mp4">
+                                Trình duyệt của bạn không hỗ trợ thẻ video.
+                            </video>
+                        </div>
+                    </article>
+
+                    <!-- VIDEO 3 -->
+                    <article class="card" style="padding: 1.25rem;">
+                        <div
+                            style="border-radius: 0.75rem; overflow: hidden; border: 1px solid var(--border); background-color: #000; display: flex;">
+                            <video width="100%" controls preload="metadata">
+                                <source src="video/Sunshine/video-3.mp4" type="video/mp4">
+                                Trình duyệt của bạn không hỗ trợ thẻ video.
+                            </video>
+                        </div>
+                    </article>
+
+                    <!-- VIDEO 4 -->
+                    <article class="card" style="padding: 1.25rem;">
+                        <div
+                            style="border-radius: 0.75rem; overflow: hidden; border: 1px solid var(--border); background-color: #000; display: flex;">
+                            <video width="100%" controls preload="metadata">
+                                <source src="video/Sunshine/video-4.mp4" type="video/mp4">
+                                Trình duyệt của bạn không hỗ trợ thẻ video.
+                            </video>
+                        </div>
+                    </article>
+                </div>
+
+                <!-- ============================== -->
+                <!-- DỰ ÁN 2: SGARZI LUIGI -->
+                <!-- ============================== -->
+                <h2 style="font-size: 2rem; margin-bottom: 2.5rem; text-align: center;">SGARZI LUIGI</h2>
+
+                <!-- Đưa video ra giữa và giới hạn độ rộng thay vì dùng Grid kéo giãn 100% -->
+                <div style="max-width: 800px; margin: 0 auto 5rem auto;">
+                    <article class="card" style="padding: 1.25rem;">
+                        <!-- Bỏ display: flex để khung không bị ép dẹt -->
+                        <div
+                            style="border-radius: 0.75rem; overflow: hidden; border: 1px solid var(--border); background-color: #000;">
+
+                            <!-- Thêm aspect-ratio: 16/9 để ép tỷ lệ chuẩn, display: block để xóa khoảng trắng thừa -->
+                            <video width="100%" controls preload="metadata"
+                                style="display: block; aspect-ratio: 16/9; width: 100%; height: auto; object-fit: cover;">
+                                <!-- Đã sửa lại tên file không có dấu cách -->
+                                <source src="video/SGARZI-LUIGI.mp4" type="video/mp4">
+                                Trình duyệt của bạn không hỗ trợ thẻ video.
+                            </video>
+
+                        </div>
+                    </article>
+                </div>
+
             </div>
         </section>
 
-        <!-- Phần các loại video giữ nguyên -->
+        <!-- Phần các loại video giữ nguyên
         <section class="section alt">
             <div class="container card-grid">
                 <article class="card">
@@ -75,7 +136,7 @@
                     <p>Biến sản phẩm và dịch vụ thành câu chuyện thu hút khách hàng.</p>
                 </article>
             </div>
-        </section>
+        </section> -->
     </main>
 
     <footer class="site-footer">
