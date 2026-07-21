@@ -6,9 +6,12 @@
     --surface-strong: rgba(255, 255, 255, 0.09);
     --text: #f8fafc;
     --muted: #cbd5e1;
-    --accent: #f59e0b;
-    --accent-2: #fb923c;
-    --accent-soft: rgba(245, 158, 11, 0.18);
+    --accent: #ffffff;
+    /* Đổi sang màu trắng tinh */
+    --accent-2: #cbd5e1;
+    /* Đổi sang màu xám bạc ánh kim */
+    --accent-soft: rgba(255, 255, 255, 0.12);
+    /* Giảm nhẹ opacity để ánh sáng trắng dịu hơn */
     --border: rgba(255, 255, 255, 0.14);
     --shadow: 0 20px 45px rgba(0, 0, 0, 0.28);
     --radius: 1.2rem;
@@ -29,7 +32,7 @@ body {
     color: var(--text);
     background-color: var(--bg);
     background-image:
-        radial-gradient(circle at top left, rgba(245, 158, 11, 0.16), transparent 28%),
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.12), transparent 28%),
         linear-gradient(135deg, var(--bg), #020617 70%);
     background-repeat: no-repeat;
     background-size: cover;
@@ -59,17 +62,19 @@ body::after {
 body::before {
     top: -7rem;
     left: -8rem;
-    background: rgba(245, 158, 11, 0.25);
+    background: rgba(255, 255, 255, 0.2);
+    /* Ánh sáng trắng góc trên */
 }
 
 body::after {
     bottom: -7rem;
     right: -8rem;
-    background: rgba(251, 146, 60, 0.2);
+    background: rgba(255, 255, 255, 0.15);
+    /* Ánh sáng trắng góc dưới */
 }
 
 ::selection {
-    background: rgba(245, 158, 11, 0.3);
+    background: rgba(255, 255, 255, 0.25);
     color: var(--text);
 }
 
@@ -135,7 +140,8 @@ h3 {
 
 .brand:hover img {
     transform: scale(1.05);
-    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.4);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+    /* Glow trắng */
 }
 
 .main-nav {
@@ -279,11 +285,13 @@ h3 {
 .btn-primary {
     background: linear-gradient(90deg, var(--accent), var(--accent-2));
     color: #111;
-    box-shadow: 0 16px 35px rgba(245, 158, 11, 0.22);
+    /* Giữ nguyên text đen để nổi bật trên nền nút trắng */
+    box-shadow: 0 16px 35px rgba(255, 255, 255, 0.15);
+    /* Shadow trắng mờ */
 }
 
 .btn-primary:hover {
-    box-shadow: 0 18px 40px rgba(245, 158, 11, 0.3);
+    box-shadow: 0 18px 40px rgba(255, 255, 255, 0.25);
 }
 
 .btn-secondary {
@@ -295,7 +303,7 @@ h3 {
 }
 
 .btn-secondary:hover {
-    border-color: rgba(245, 158, 11, 0.4);
+    border-color: rgba(255, 255, 255, 0.4);
     background: rgba(255, 255, 255, 0.06);
 }
 
@@ -308,7 +316,7 @@ h3 {
     position: absolute;
     inset: -1rem;
     border-radius: 1.6rem;
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.24), transparent 60%);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), transparent 60%);
     z-index: -1;
     filter: blur(30px);
     opacity: 0.7;
@@ -354,7 +362,8 @@ h3 {
 }
 
 .text-link:hover {
-    color: #ffbf53;
+    color: #e2e8f0;
+    /* Hiệu ứng hover cho link text */
 }
 
 .contact-section {
@@ -406,7 +415,7 @@ h3 {
 .contact-form input:focus,
 .contact-form textarea:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.12);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.12);
     background: rgba(255, 255, 255, 0.08);
 }
 
@@ -449,9 +458,9 @@ h3 {
 }
 
 .contact-social a:hover {
-    background: rgba(245, 158, 11, 0.14);
+    background: rgba(255, 255, 255, 0.12);
     transform: translateY(-2px);
-    border-color: rgba(245, 158, 11, 0.4);
+    border-color: rgba(255, 255, 255, 0.4);
 }
 
 .card-grid {
@@ -488,7 +497,7 @@ h3 {
 .card:hover,
 .info-box:hover {
     transform: translateY(-5px);
-    border-color: rgba(245, 158, 11, 0.4);
+    border-color: rgba(255, 255, 255, 0.4);
     box-shadow: 0 24px 55px rgba(0, 0, 0, 0.22);
 }
 
@@ -643,7 +652,7 @@ h3 {
 
     .main-nav a.active,
     .main-nav a:hover {
-        background: rgba(245, 158, 11, 0.16);
+        background: rgba(255, 255, 255, 0.12);
     }
 
     .hero {
