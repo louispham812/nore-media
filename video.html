@@ -22,7 +22,6 @@
                 <a href="services.html">Dịch Vụ</a>
                 <a href="gallery.html">Hình Ảnh</a>
                 <a href="video.html" class="active">Video</a>
-                <a href="pricing.html">Báo Giá</a>
                 <a href="contact.html">Liên Hệ</a>
             </nav>
         </div>
@@ -36,7 +35,32 @@
             </div>
         </section>
 
+        <!-- Thêm phần Video Nổi Bật (Up trực tiếp bằng thẻ video từ folder) -->
         <section class="section">
+            <div class="container">
+                <article class="card" style="max-width: 800px; margin: 0 auto 3rem auto; padding: 1.5rem;">
+                    <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem; text-align: center;">Dự Án Nổi Bật</h2>
+
+                    <!-- Khung chứa video tải trực tiếp -->
+                    <div
+                        style="border-radius: 0.95rem; overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow); background-color: #000; display: flex;">
+
+                        <!-- THẺ VIDEO HTML THUẦN -->
+                        <video width="100%" controls preload="metadata">
+                            <!-- Đã cập nhật đường dẫn trỏ vào folder "video" -->
+                            <source
+                                src="video/FSave.com_Facebook_1-GOC-CHECKIN-SIEU-XIN-O-NHA-SUNSHINE-CH_Media_861946670243508_001_1080p.mp4"
+                                type="video/mp4">
+                            Trình duyệt của bạn không hỗ trợ thẻ video.
+                        </video>
+
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- Phần các loại video giữ nguyên -->
+        <section class="section alt">
             <div class="container card-grid">
                 <article class="card">
                     <h3>Video ngắn viral</h3>
