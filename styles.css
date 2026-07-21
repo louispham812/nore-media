@@ -1,7 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800&display=swap&subset=vietnamese,latin');
 
 :root {
-    --bg: #060816;
+    --bg: #000000;
+    /* Đổi sang màu đen tuyền */
     --surface: rgba(255, 255, 255, 0.06);
     --surface-strong: rgba(255, 255, 255, 0.09);
     --text: #f8fafc;
@@ -25,13 +26,13 @@ html {
 
 body {
     margin: 0;
-    /* Đã đưa Montserrat lên đầu tiên */
     font-family: 'Montserrat', 'Inter', 'Manrope', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
     color: var(--text);
     background-color: var(--bg);
     background-image:
         radial-gradient(circle at top left, rgba(255, 255, 255, 0.12), transparent 28%),
-        linear-gradient(135deg, var(--bg), #020617 70%);
+        linear-gradient(135deg, var(--bg), #0a0a0a 70%);
+    /* Đổi gradient thành đen và xám rất tối để tạo chiều sâu */
     background-repeat: no-repeat;
     background-size: cover;
     line-height: 1.75;
@@ -84,7 +85,6 @@ h2,
 h3 {
     margin: 0;
     color: var(--text);
-    /* Đảm bảo tiêu đề cũng dùng chung bộ font ưu tiên Montserrat */
     font-family: 'Montserrat', 'Inter', 'Manrope', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
     font-weight: 700;
     line-height: 1.25;
@@ -100,7 +100,8 @@ h3 {
     position: sticky;
     top: 0;
     z-index: 40;
-    background: rgba(6, 8, 22, 0.82);
+    background: rgba(0, 0, 0, 0.82);
+    /* Đổi xanh đen sang đen có độ trong suốt */
     -webkit-backdrop-filter: blur(18px);
     backdrop-filter: blur(18px);
     border-bottom: 1px solid var(--border);
@@ -218,7 +219,7 @@ h3 {
 
 .eyebrow {
     text-transform: uppercase;
-    letter-spacing: 0.24em;
+    letter-spacing: 0.32em;
     font-size: 0.78rem;
     color: var(--accent);
     margin-bottom: 0.7rem;
@@ -526,7 +527,8 @@ h3 {
 
 .page-hero {
     padding: 4.2rem 0 2.2rem;
-    background: rgba(6, 8, 22, 0.08);
+    background: rgba(255, 255, 255, 0.02);
+    /* Đổi sang màu trắng nhạt để tạo overlay trên nền đen */
 }
 
 .content-grid {
@@ -616,7 +618,8 @@ h3 {
         flex-direction: column;
         gap: 0.4rem;
         padding: 1rem;
-        background: rgba(6, 8, 22, 0.98);
+        background: rgba(0, 0, 0, 0.98);
+        /* Đổi menu mobile sang đen */
         border: 1px solid rgba(255, 255, 255, 0.12);
         border-radius: 1rem;
         box-shadow: 0 18px 45px rgba(0, 0, 0, 0.28);
@@ -704,7 +707,8 @@ h3 {
     }
 
     .site-header.nav-open {
-        background: rgba(6, 8, 22, 0.98);
+        background: rgba(0, 0, 0, 0.98);
+        /* Đổi màu header khi mở menu mobile sang đen */
     }
 
     .menu-toggle[aria-expanded="true"] span:nth-child(1) {
