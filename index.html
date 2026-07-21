@@ -127,6 +127,8 @@
         </div>
     </footer>
 
+
+
     <!-- KHUNG LIGHTBOX ĐƯỢC MANG TỪ TRANG GALLERY SANG -->
     <div id="imageModal" class="modal">
         <span class="close-modal">&times;</span>
@@ -141,20 +143,22 @@
             const closeBtn = document.querySelector(".close-modal");
             const galleryImages = document.querySelectorAll(".gallery-grid img");
 
-            // Lặp qua từng ảnh trong gallery
+            // Mở ảnh khi click
             galleryImages.forEach(img => {
                 img.addEventListener("click", function () {
                     modal.style.display = "flex";
-                    // Thêm delay nhỏ để hiệu ứng mờ dần (fade-in) hoạt động mượt
                     setTimeout(() => modal.classList.add("show"), 10);
-                    modalImg.src = this.src; // Lấy nguồn ảnh vừa bấm gán vào khung phóng to
+                    modalImg.src = this.src;
                 });
             });
 
             // Hàm đóng khung ảnh
             function closeModal() {
-                modal.classList.remove("show");
-                setTimeout(() => modal.style.display = "none", 300);
+                // Kiểm tra nếu modal đang mở thì mới xử lý đóng
+                if (modal.classList.contains("show")) {
+                    modal.classList.remove("show");
+                    setTimeout(() => modal.style.display = "none", 300);
+                }
             }
 
             // Đóng khi bấm vào nút X
@@ -163,6 +167,13 @@
             // Đóng khi bấm ra ngoài vùng ảnh
             modal.addEventListener("click", function (e) {
                 if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            // THÊM: Đóng khi bấm phím Esc trên bàn phím
+            document.addEventListener("keydown", function (e) {
+                if (e.key === "Escape" || e.keyCode === 27) {
                     closeModal();
                 }
             });
