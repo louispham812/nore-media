@@ -54,9 +54,11 @@
 
         <section class="section">
             <div class="container">
-                <div class="section-heading">
+                <!-- Thêm max-width để đảm bảo khung chứa đủ rộng -->
+                <div class="section-heading" style="max-width: 100%;">
                     <p class="eyebrow">Về chúng tôi</p>
-                    <h2>Tạo dấu ấn bằng hình ảnh và câu chuyện</h2>
+                    <!-- Thêm thuộc tính ép không xuống dòng -->
+                    <h2 style="white-space: nowrap;">Tạo dấu ấn bằng hình ảnh và câu chuyện</h2>
                 </div>
                 <div class="about-preview">
                     <p>
@@ -91,6 +93,7 @@
             </div>
         </section>
 
+        <!-- PHẦN HÌNH ẢNH NỔI BẬT ĐÃ ĐƯỢC ĐỒNG BỘ VÀ THÊM NÚT -->
         <section class="section">
             <div class="container">
                 <div class="section-heading">
@@ -98,14 +101,16 @@
                     <h2>Một số tác phẩm gần đây</h2>
                 </div>
                 <div class="gallery-grid">
-                    <img src="https://trungdungmedia.vn/thumbs/680x980x1/upload/photo/5-9472.jpg.webp"
-                        alt="Tác phẩm 1" />
-                    <img src="https://trungdungmedia.vn/thumbs/680x980x1/upload/photo/48748702232817443753127171147297928835063108n-7595.jpg.webp"
-                        alt="Tác phẩm 2" />
-                    <img src="https://trungdungmedia.vn/thumbs/680x980x1/upload/photo/7-7526.jpg.webp"
-                        alt="Tác phẩm 3" />
-                    <img src="https://trungdungmedia.vn/thumbs/680x980x1/upload/photo/td06223-5587.jpg.webp"
-                        alt="Tác phẩm 4" />
+                    <!-- Đã thêm cursor: pointer để báo hiệu có thể bấm -->
+                    <img src="gallery/1.png" alt="Tác phẩm 1" style="cursor: pointer;" />
+                    <img src="gallery/3.png" alt="Tác phẩm 2" style="cursor: pointer;" />
+                    <img src="gallery/5.png" alt="Tác phẩm 3" style="cursor: pointer;" />
+                    <img src="gallery/6.png" alt="Tác phẩm 4" style="cursor: pointer;" />
+                </div>
+
+                <!-- Nút chuyển sang trang Hình Ảnh -->
+                <div style="text-align: center; margin-top: 3rem;">
+                    <a href="gallery.html" class="btn btn-secondary">Xem thêm hình ảnh</a>
                 </div>
             </div>
         </section>
@@ -121,6 +126,48 @@
             </div>
         </div>
     </footer>
+
+    <!-- KHUNG LIGHTBOX ĐƯỢC MANG TỪ TRANG GALLERY SANG -->
+    <div id="imageModal" class="modal">
+        <span class="close-modal">&times;</span>
+        <img class="modal-content" id="modalImg">
+    </div>
+
+    <!-- SCRIPT XỬ LÝ SỰ KIỆN BẤM VÀO ẢNH DÀNH RIÊNG CHO TRANG CHỦ -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById("imageModal");
+            const modalImg = document.getElementById("modalImg");
+            const closeBtn = document.querySelector(".close-modal");
+            const galleryImages = document.querySelectorAll(".gallery-grid img");
+
+            // Lặp qua từng ảnh trong gallery
+            galleryImages.forEach(img => {
+                img.addEventListener("click", function () {
+                    modal.style.display = "flex";
+                    // Thêm delay nhỏ để hiệu ứng mờ dần (fade-in) hoạt động mượt
+                    setTimeout(() => modal.classList.add("show"), 10);
+                    modalImg.src = this.src; // Lấy nguồn ảnh vừa bấm gán vào khung phóng to
+                });
+            });
+
+            // Hàm đóng khung ảnh
+            function closeModal() {
+                modal.classList.remove("show");
+                setTimeout(() => modal.style.display = "none", 300);
+            }
+
+            // Đóng khi bấm vào nút X
+            closeBtn.addEventListener("click", closeModal);
+
+            // Đóng khi bấm ra ngoài vùng ảnh
+            modal.addEventListener("click", function (e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
