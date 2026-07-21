@@ -7,11 +7,8 @@
     --text: #f8fafc;
     --muted: #cbd5e1;
     --accent: #ffffff;
-    /* Đổi sang màu trắng tinh */
     --accent-2: #cbd5e1;
-    /* Đổi sang màu xám bạc ánh kim */
     --accent-soft: rgba(255, 255, 255, 0.12);
-    /* Giảm nhẹ opacity để ánh sáng trắng dịu hơn */
     --border: rgba(255, 255, 255, 0.14);
     --shadow: 0 20px 45px rgba(0, 0, 0, 0.28);
     --radius: 1.2rem;
@@ -28,7 +25,8 @@ html {
 
 body {
     margin: 0;
-    font-family: 'Inter', 'Montserrat', 'Manrope', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    /* Đã đưa Montserrat lên đầu tiên */
+    font-family: 'Montserrat', 'Inter', 'Manrope', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
     color: var(--text);
     background-color: var(--bg);
     background-image:
@@ -63,14 +61,12 @@ body::before {
     top: -7rem;
     left: -8rem;
     background: rgba(255, 255, 255, 0.2);
-    /* Ánh sáng trắng góc trên */
 }
 
 body::after {
     bottom: -7rem;
     right: -8rem;
     background: rgba(255, 255, 255, 0.15);
-    /* Ánh sáng trắng góc dưới */
 }
 
 ::selection {
@@ -88,7 +84,8 @@ h2,
 h3 {
     margin: 0;
     color: var(--text);
-    font-family: 'Montserrat', 'Manrope', 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    /* Đảm bảo tiêu đề cũng dùng chung bộ font ưu tiên Montserrat */
+    font-family: 'Montserrat', 'Inter', 'Manrope', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
     font-weight: 700;
     line-height: 1.25;
     letter-spacing: -0.01em;
@@ -141,7 +138,6 @@ h3 {
 .brand:hover img {
     transform: scale(1.05);
     box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
-    /* Glow trắng */
 }
 
 .main-nav {
@@ -222,7 +218,7 @@ h3 {
 
 .eyebrow {
     text-transform: uppercase;
-    letter-spacing: 0.32em;
+    letter-spacing: 0.24em;
     font-size: 0.78rem;
     color: var(--accent);
     margin-bottom: 0.7rem;
@@ -285,9 +281,7 @@ h3 {
 .btn-primary {
     background: linear-gradient(90deg, var(--accent), var(--accent-2));
     color: #111;
-    /* Giữ nguyên text đen để nổi bật trên nền nút trắng */
     box-shadow: 0 16px 35px rgba(255, 255, 255, 0.15);
-    /* Shadow trắng mờ */
 }
 
 .btn-primary:hover {
@@ -363,7 +357,6 @@ h3 {
 
 .text-link:hover {
     color: #e2e8f0;
-    /* Hiệu ứng hover cho link text */
 }
 
 .contact-section {
