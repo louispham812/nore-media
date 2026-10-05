@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import Plyr from 'plyr-react';
+import 'plyr/dist/plyr.css';
 
 const pages = [
   { path: '/', label: 'Trang Chủ', key: 'home' },
@@ -373,12 +375,22 @@ const VIDEO_BASE_URL = "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev"; //
 
 function VideoCard({ src, vertical = false, eager = false }) {
   const fullSrc = src.startsWith('http') ? src : `${VIDEO_BASE_URL}${src}`;
+  
+  const plyrOptions = {
+    controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen', 'settings'],
+    settings: ['speed'],
+    hideControls: true,
+  };
+
   return (
     <article className={`card video-card${vertical ? ' video-card-vertical' : ''}`}>
-      <video controls preload={eager ? 'auto' : 'metadata'} playsInline>
-        <source src={fullSrc} type="video/mp4" />
-        Trình duyệt của bạn không hỗ trợ thẻ video.
-      </video>
+      <Plyr
+        source={{
+          type: 'video',
+          sources: [{ src: fullSrc, type: 'video/mp4' }]
+        }}
+        options={plyrOptions}
+      />
     </article>
   );
 }

@@ -921,14 +921,14 @@ h3 {
     padding: 1.25rem;
 }
 
-.video-card video {
+.video-card .plyr {
     display: block;
     width: 100%;
     height: auto;
     border-radius: 0.75rem;
     border: 1px solid var(--border);
     background: #000;
-}
+    --plyr-color-main: #ffffff;}
 
 .video-card-vertical {
     max-width: 350px;
@@ -936,7 +936,7 @@ h3 {
     margin: 0 auto;
 }
 
-.video-card-vertical video {
+.video-card-vertical .plyr {
     aspect-ratio: 9 / 16;
     object-fit: cover;
 }
@@ -1115,5 +1115,6 @@ h3 {
 .video-grid.reveal-active .video-card:nth-child(2) { transition-delay: 0.2s; }
 .video-grid.reveal-active .video-card:nth-child(3) { transition-delay: 0.3s; }
 .video-grid.reveal-active .video-card:nth-child(4) { transition-delay: 0.4s; }
+
 
 
