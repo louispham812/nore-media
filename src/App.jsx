@@ -331,7 +331,7 @@ function ServicesPage() {
         >
           {servicePackages.map((service) => (
             <motion.article 
-              className="card" 
+              className="card framer-card" 
               key={service.name}
               variants={{
                 hidden: { opacity: 0, y: 40 },
