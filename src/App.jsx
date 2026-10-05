@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import Plyr from 'plyr-react';
+import { Plyr } from 'plyr-react';
 import 'plyr/dist/plyr.css';
 
 const pages = [
