@@ -316,23 +316,88 @@ function ServicesPage() {
     <main className="page-main">
       <PageHero eyebrow="Service Packages" title="Các Gói Dịch Vụ" />
       <section className="section">
-        <div className="container card-grid service-grid">
+        <motion.div 
+          className="container card-grid service-grid"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: { staggerChildren: 0.2 }
+            }
+          }}
+        >
           {servicePackages.map((service) => (
-            <article className="card" key={service.name}>
+            <motion.article 
+              className="card framer-card" 
+              key={service.name}
+              variants={{
+                hidden: { opacity: 0, y: 40 },
+                visible: { 
+                  opacity: 1, 
+                  y: 0, 
+                  transition: { type: "spring", stiffness: 80, damping: 20 }
+                }
+              }}
+              whileHover={{
+                y: -12,
+                transition: { type: "spring", stiffness: 300, damping: 12 }
+              }}
+              style={service.popular ? { 
+                borderColor: "rgba(255, 255, 255, 0.4)", 
+                boxShadow: "0 0 40px rgba(255,255,255,0.1)",
+                background: "linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%)"
+              } : {}}
+            >
               <div className={`service-heading${service.popular ? '' : ' service-heading-spaced'}`}>
-                {service.popular && <span className="eyebrow">PHỔ BIẾN NHẤT</span>}
+                {service.popular && (
+                  <motion.span 
+                    className="eyebrow"
+                    animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
+                    transition={{ duration: 4, ease: "linear", repeat: Infinity }}
+                    style={{
+                      background: "linear-gradient(90deg, #fff, #888, #fff)",
+                      backgroundSize: "200% 200%",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      display: "inline-block",
+                      fontWeight: 800
+                    }}
+                  >
+                    PHỔ BIẾN NHẤT
+                  </motion.span>
+                )}
                 <h2>{service.name}</h2>
               </div>
               <h3>Theo dự án (Project-based)</h3>
               <p className="service-intro">{service.intro}</p>
-              <ul className="service-features">
+              <motion.ul 
+                className="service-features"
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: { staggerChildren: 0.15, delayChildren: 0.3 }
+                  }
+                }}
+              >
                 {service.features.map(([title, text]) => (
-                  <li key={title}><strong>{title}</strong>{text}</li>
+                  <motion.li 
+                    key={title}
+                    variants={{
+                      hidden: { opacity: 0, x: -20 },
+                      visible: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 100 } }
+                    }}
+                  >
+                    <strong>{title}</strong>{text}
+                  </motion.li>
                 ))}
-              </ul>
-            </article>
+              </motion.ul>
+            </motion.article>
           ))}
-        </div>
+        </motion.div>
       </section>
     </main>
   );
