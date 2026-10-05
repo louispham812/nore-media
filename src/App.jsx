@@ -341,6 +341,10 @@ function ServicesPage() {
                   transition: { type: "spring", stiffness: 80, damping: 20 }
                 }
               }}
+              whileHover={{
+                y: -12,
+                transition: { type: "spring", stiffness: 300, damping: 12 }
+              }}
               style={service.popular ? { 
                 borderColor: "rgba(255, 255, 255, 0.4)", 
                 boxShadow: "0 0 40px rgba(255,255,255,0.1)",
