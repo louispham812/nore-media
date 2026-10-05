@@ -1131,3 +1131,14 @@ h3 {
 .framer-card {
     transition: border-color 0.4s ease, box-shadow 0.4s ease !important;
 }
+
+/* Fix sticky footer for large screens */
+#root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.site-footer {
+    margin-top: auto;
+}
