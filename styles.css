@@ -195,16 +195,9 @@ h3 {
     transition: transform 0.25s ease;
 }
 
-.main-nav a.active,
-.main-nav a:hover {
-    color: var(--text);
-    background: var(--accent-soft);
-}
+.main-nav a.active, .main-nav a:hover { color: var(--text); }
 
-.main-nav a.active::after,
-.main-nav a:hover::after {
-    transform: scaleX(1);
-}
+/* replaced */
 
 .hero {
     padding: 5.5rem 0 4.5rem;
@@ -1122,3 +1115,5 @@ h3 {
 .video-grid.reveal-active .video-card:nth-child(2) { transition-delay: 0.2s; }
 .video-grid.reveal-active .video-card:nth-child(3) { transition-delay: 0.3s; }
 .video-grid.reveal-active .video-card:nth-child(4) { transition-delay: 0.4s; }
+
+
