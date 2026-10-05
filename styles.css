@@ -195,16 +195,9 @@ h3 {
     transition: transform 0.25s ease;
 }
 
-.main-nav a.active,
-.main-nav a:hover {
-    color: var(--text);
-    background: var(--accent-soft);
-}
+.main-nav a.active, .main-nav a:hover { color: var(--text); }
 
-.main-nav a.active::after,
-.main-nav a:hover::after {
-    transform: scaleX(1);
-}
+/* replaced */
 
 .hero {
     padding: 5.5rem 0 4.5rem;
@@ -928,13 +921,21 @@ h3 {
     padding: 1.25rem;
 }
 
-.video-card video {
+.video-card .plyr {
     display: block;
     width: 100%;
     height: auto;
     border-radius: 0.75rem;
     border: 1px solid var(--border);
     background: #000;
+    --plyr-color-main: #ffffff;
+    --plyr-video-control-color-hover: #000000;
+}
+
+.video-card .plyr__control--overlaid:hover,
+.video-card .plyr__control--overlaid[aria-expanded="true"],
+.video-card .plyr__control:hover {
+    color: #000 !important;
 }
 
 .video-card-vertical {
@@ -943,7 +944,7 @@ h3 {
     margin: 0 auto;
 }
 
-.video-card-vertical video {
+.video-card-vertical .plyr {
     aspect-ratio: 9 / 16;
     object-fit: cover;
 }
@@ -982,3 +983,146 @@ h3 {
     white-space: nowrap;
     border: 0;
 }
+
+/* ==================================================
+   ANIMATIONS & EFFECTS
+   ================================================== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes zoomIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes pulseGlow {
+    0% {
+        box-shadow: 0 16px 35px rgba(255, 255, 255, 0.15);
+    }
+    50% {
+        box-shadow: 0 16px 45px rgba(255, 255, 255, 0.35);
+    }
+    100% {
+        box-shadow: 0 16px 35px rgba(255, 255, 255, 0.15);
+    }
+}
+
+.reveal-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-left {
+    opacity: 0;
+    transform: translateX(-40px);
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-right {
+    opacity: 0;
+    transform: translateX(40px);
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-zoom {
+    opacity: 0;
+    transform: scale(0.95);
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-active {
+    opacity: 1;
+    transform: translate(0) scale(1);
+}
+
+.hero-copy {
+    animation: slideInLeft 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.hero-media {
+    animation: zoomIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.btn-primary {
+    animation: pulseGlow 3s infinite;
+}
+
+.card, .info-box, .video-card {
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.card:hover, .info-box:hover, .video-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 25px 65px rgba(255, 255, 255, 0.15);
+}
+
+/* Staggered transition delays for grid items */
+.gallery-grid button, .card-grid .card, .video-grid .video-card, .contact-grid > div {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gallery-grid.reveal-active button, .card-grid.reveal-active .card, .video-grid.reveal-active .video-card, .contact-grid.reveal-active > div {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Delay for nth items */
+.card-grid.reveal-active .card:nth-child(1), .contact-grid.reveal-active > div:nth-child(1) { transition-delay: 0.1s; }
+.card-grid.reveal-active .card:nth-child(2), .contact-grid.reveal-active > div:nth-child(2) { transition-delay: 0.2s; }
+.card-grid.reveal-active .card:nth-child(3), .contact-grid.reveal-active > div:nth-child(3) { transition-delay: 0.3s; }
+.card-grid.reveal-active .card:nth-child(4) { transition-delay: 0.4s; }
+
+.gallery-grid.reveal-active button:nth-child(1) { transition-delay: 0.1s; }
+.gallery-grid.reveal-active button:nth-child(2) { transition-delay: 0.2s; }
+.gallery-grid.reveal-active button:nth-child(3) { transition-delay: 0.3s; }
+.gallery-grid.reveal-active button:nth-child(4) { transition-delay: 0.4s; }
+.gallery-grid.reveal-active button:nth-child(5) { transition-delay: 0.5s; }
+.gallery-grid.reveal-active button:nth-child(6) { transition-delay: 0.6s; }
+
+.video-grid.reveal-active .video-card:nth-child(1) { transition-delay: 0.1s; }
+.video-grid.reveal-active .video-card:nth-child(2) { transition-delay: 0.2s; }
+.video-grid.reveal-active .video-card:nth-child(3) { transition-delay: 0.3s; }
+.video-grid.reveal-active .video-card:nth-child(4) { transition-delay: 0.4s; }
+
+
+

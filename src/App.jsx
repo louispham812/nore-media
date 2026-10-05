@@ -1,17 +1,23 @@
 import { useEffect, useRef, useState } from 'react';
+import { Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Plyr } from 'plyr-react';
+import 'plyr/dist/plyr.css';
 
 const pages = [
-  { href: '/index.html', label: 'Trang Chủ', key: 'home' },
-  { href: '/about.html', label: 'Về Chúng Tôi', key: 'about' },
-  { href: '/services.html', label: 'Dịch Vụ', key: 'services' },
-  { href: '/gallery.html', label: 'Hình Ảnh', key: 'gallery' },
-  { href: '/video.html', label: 'Video', key: 'video' },
-  { href: '/contact.html', label: 'Liên Hệ', key: 'contact' },
+  { path: '/', label: 'Trang Chủ', key: 'home' },
+  { path: '/about', label: 'Về Chúng Tôi', key: 'about' },
+  { path: '/services', label: 'Dịch Vụ', key: 'services' },
+  { path: '/gallery', label: 'Hình Ảnh', key: 'gallery' },
+  { path: '/video', label: 'Video', key: 'video' },
+  { path: '/contact', label: 'Liên Hệ', key: 'contact' },
+  // Also support clean URLs
+  { path: '/index', label: 'Trang Chủ', key: 'home' },
 ];
 
-function currentPage() {
-  const file = window.location.pathname.split('/').pop();
-  return pages.find((page) => page.href.endsWith(file || 'index.html'))?.key ?? 'not-found';
+function currentPage(pathname) {
+  const file = pathname.split('/').pop();
+  return pages.find((page) => page.path.endsWith(file || '/'))?.key ?? (pathname === '/' ? 'home' : 'not-found');
 }
 
 function Header({ activePage }) {
@@ -30,25 +36,45 @@ function Header({ activePage }) {
     return () => document.body.classList.remove('menu-open');
   }, [menuOpen]);
 
+  // Unique pages for the menu
+  const menuPages = pages.slice(0, 6);
+
   return (
     <header className={`site-header${menuOpen ? ' nav-open' : ''}`}>
       <div className="container nav-wrap">
-        <a className="brand" href="/index.html">
+        <Link className="brand" to="/">
           <img src="/logo.jpg" alt="NORE" />
           <span>NORE MEDIA</span>
-        </a>
+        </Link>
         <nav className={`main-nav${menuOpen ? ' is-open' : ''}`} aria-label="Điều hướng chính">
-          {pages.map((page) => (
-            <a
-              href={page.href}
-              className={activePage === page.key ? 'active' : undefined}
-              aria-current={activePage === page.key ? 'page' : undefined}
-              key={page.key}
-              onClick={() => setMenuOpen(false)}
-            >
-              {page.label}
-            </a>
-          ))}
+          {menuPages.map((page) => {
+            const isActive = activePage === page.key;
+            return (
+              <Link
+                to={page.path}
+                className={isActive ? 'active' : ''}
+                aria-current={isActive ? 'page' : undefined}
+                key={page.key}
+                onClick={() => setMenuOpen(false)}
+                style={{ position: 'relative' }}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="active-pill"
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: 'rgba(255,255,255,0.12)',
+                      borderRadius: '999px',
+                      zIndex: -1
+                    }}
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
+                {page.label}
+              </Link>
+            );
+          })}
         </nav>
         <button
           className="menu-toggle"
@@ -121,8 +147,8 @@ function HomePage() {
                 tạo &quot;dấu ấn thị giác&quot; khác biệt, được thiết kế riêng để nâng tầm các thương hiệu của bạn.
               </p>
               <div className="actions">
-                <a href="/contact.html" className="btn btn-primary">Liên hệ ngay</a>
-                <a href="/services.html" className="btn btn-secondary">Xem dịch vụ</a>
+                <Link to="/contact" className="btn btn-primary">Liên hệ ngay</Link>
+                <Link to="/services" className="btn btn-secondary">Xem dịch vụ</Link>
               </div>
             </div>
             <div className="hero-media">
@@ -142,7 +168,7 @@ function HomePage() {
                 Với kinh nghiệm trong lĩnh vực truyền thông và sản xuất nội dung, NORE MEDIA luôn đặt sự chân thật,
                 chuyên nghiệp và sáng tạo lên hàng đầu.
               </p>
-              <a href="/about.html" className="text-link">Tìm hiểu thêm</a>
+              <Link to="/about" className="text-link">Tìm hiểu thêm</Link>
             </div>
           </div>
         </section>
@@ -190,7 +216,7 @@ function HomePage() {
               ))}
             </div>
             <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-              <a href="/gallery.html" className="btn btn-secondary">Xem thêm hình ảnh</a>
+              <Link to="/gallery" className="btn btn-secondary">Xem thêm hình ảnh</Link>
             </div>
           </div>
         </section>
@@ -345,13 +371,26 @@ function GalleryPage() {
   );
 }
 
+const VIDEO_BASE_URL = "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev"; // e.g. "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev"
+
 function VideoCard({ src, vertical = false, eager = false }) {
+  const fullSrc = src.startsWith('http') ? src : `${VIDEO_BASE_URL}${src}`;
+  
+  const plyrOptions = {
+    controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen', 'settings'],
+    settings: ['speed'],
+    hideControls: true,
+  };
+
   return (
     <article className={`card video-card${vertical ? ' video-card-vertical' : ''}`}>
-      <video controls preload={eager ? 'auto' : 'metadata'} playsInline>
-        <source src={src} type="video/mp4" />
-        Trình duyệt của bạn không hỗ trợ thẻ video.
-      </video>
+      <Plyr
+        source={{
+          type: 'video',
+          sources: [{ src: fullSrc, type: 'video/mp4' }]
+        }}
+        options={plyrOptions}
+      />
     </article>
   );
 }
@@ -531,7 +570,7 @@ function NotFoundPage() {
   return (
     <main className="page-main">
       <PageHero eyebrow="404" title="Không tìm thấy trang">
-        <p><a className="text-link" href="/index.html">Quay về Trang Chủ</a></p>
+        <p><Link className="text-link" to="/">Quay về Trang Chủ</Link></p>
       </PageHero>
     </main>
   );
@@ -558,17 +597,96 @@ const pageTitles = {
 };
 
 export default function App() {
-  const activePage = currentPage();
-  const Page = pageComponents[activePage];
+  const location = useLocation();
+  const activePage = currentPage(location.pathname);
 
   useEffect(() => {
     document.title = pageTitles[activePage];
-  }, [activePage]);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('reveal-active');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+    );
+
+    const observeElements = () => {
+      const elements = document.querySelectorAll(
+        '.reveal-up, .reveal-left, .reveal-right, .reveal-zoom, .card-grid, .gallery-grid, .video-grid, .contact-grid'
+      );
+      elements.forEach((el) => {
+        if (!el.classList.contains('reveal-active')) {
+          observer.observe(el);
+        }
+      });
+    };
+
+    // Observer new elements as they are mounted by Framer Motion transitions
+    const mutationObserver = new MutationObserver(() => {
+      observeElements();
+    });
+    mutationObserver.observe(document.body, { childList: true, subtree: true });
+    
+    // Initial check
+    observeElements();
+
+    return () => {
+      observer.disconnect();
+      mutationObserver.disconnect();
+    };
+  }, [location.pathname]); // re-run when path changes
+
+  // Scroll to top on page change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   return (
     <>
       <Header activePage={activePage} />
-      <Page />
+
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          {pages.map((page) => {
+            const PageComponent = pageComponents[page.key];
+            return (
+              <Route
+                key={page.path}
+                path={page.path}
+                element={
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                  >
+                    <PageComponent />
+                  </motion.div>
+                }
+              />
+            );
+          })}
+          {/* Catch all route */}
+          <Route
+            path="*"
+            element={
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <NotFoundPage />
+              </motion.div>
+            }
+          />
+        </Routes>
+      </AnimatePresence>
+
       <Footer showSocial={activePage === 'home'} />
     </>
   );
