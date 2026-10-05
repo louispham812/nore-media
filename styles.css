@@ -810,3 +810,175 @@ h3 {
     color: var(--accent, #fff);
     transform: scale(1.1);
 }
+
+.gallery-image-button {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    border-radius: 0.95rem;
+    background: transparent;
+    cursor: pointer;
+}
+
+.gallery-image-button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+}
+
+.service-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    gap: 2rem;
+}
+
+.service-heading {
+    text-align: center;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.service-heading .eyebrow {
+    display: block;
+    margin-bottom: 0.8rem;
+}
+
+.service-heading h2 {
+    font-size: 1.5rem;
+}
+
+.service-heading-spaced {
+    padding-top: 2.8rem;
+}
+
+.service-grid .card > h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.service-intro {
+    color: var(--muted);
+    font-style: italic;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+}
+
+.service-features {
+    padding-left: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.canva-card {
+    max-width: 1150px;
+    margin: 0 auto;
+    padding: 1.5rem;
+}
+
+.canva-embed {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-top: 56.25%;
+    overflow: hidden;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    margin-bottom: 1.2rem;
+}
+
+.canva-embed iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.canva-credit {
+    text-align: center;
+    font-size: 0.95rem;
+    color: var(--muted);
+}
+
+.video-project-title {
+    font-size: 2rem;
+    margin-bottom: 2.5rem;
+    text-align: center;
+}
+
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+    gap: 2rem;
+    margin-bottom: 5rem;
+}
+
+.video-grid-vertical {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.video-card {
+    padding: 1.25rem;
+}
+
+.video-card video {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border);
+    background: #000;
+}
+
+.video-card-vertical {
+    max-width: 350px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.video-card-vertical video {
+    aspect-ratio: 9 / 16;
+    object-fit: cover;
+}
+
+.video-featured {
+    max-width: 800px;
+    margin: 0 auto 5rem;
+}
+
+.form-feedback {
+    margin: 1rem 0 0;
+    font-weight: 600;
+}
+
+.form-feedback.success {
+    color: #86efac;
+}
+
+.form-feedback.error {
+    color: #fca5a5;
+}
+
+.contact-form button:disabled {
+    opacity: 0.7;
+    cursor: wait;
+}
+
+.contact-honeypot {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

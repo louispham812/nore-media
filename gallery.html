@@ -1,76 +1,12 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hình Ảnh | NORE MEDIA</title>
-    <link rel="stylesheet" href="styles.css" />
-    <script src="main.js" defer></script>
-</head>
-
-<body>
-    <header class="site-header">
-        <div class="container nav-wrap">
-            <a class="brand" href="index.html">
-                <img src="logo.jpg" alt="NORE" />
-                <span>NORE MEDIA</span>
-            </a>
-            <nav class="main-nav">
-                <a href="index.html">Trang Chủ</a>
-                <a href="about.html">Về Chúng Tôi</a>
-                <a href="services.html">Dịch Vụ</a>
-                <a href="gallery.html" class="active">Hình Ảnh</a>
-                <a href="video.html">Video</a>
-                <a href="contact.html">Liên Hệ</a>
-            </nav>
-        </div>
-    </header>
-
-    <main class="page-main">
-        <section class="page-hero">
-            <div class="container">
-                <p class="eyebrow">Hình ảnh</p>
-                <h1>Image Production</h1>
-            </div>
-        </section>
-
-        <!-- Phần hiển thị Slide Canva (Đã phóng to khung chứa) -->
-        <section class="section">
-            <div class="container">
-                <h2 style="font-size: 2rem; margin-bottom: 2.5rem; text-align: center;"></h2>
-
-                <!-- Đã tăng max-width từ 900px lên 1150px để khung to và rộng hơn -->
-                <article class="card" style="max-width: 1150px; margin: 0 auto; padding: 1.5rem;">
-
-                    <!-- Mã nhúng Canva -->
-                    <div
-                        style="position: relative; width: 100%; height: 0; padding-top: 56.2500%; padding-bottom: 0; box-shadow: var(--shadow); margin-top: 0; margin-bottom: 1.2rem; overflow: hidden; border-radius: 0.75rem; border: 1px solid var(--border); will-change: transform;">
-                        <iframe loading="lazy"
-                            style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; border: none; padding: 0; margin: 0;"
-                            src="https://www.canva.com/design/DAHLPDs6pRA/GuwCRPCtD6C4RWzvfqj-4w/view?embed"
-                            allowfullscreen="allowfullscreen" allow="fullscreen">
-                        </iframe>
-                    </div>
-
-                    <!-- Dòng credit bên dưới -->
-                    <div style="text-align: center; font-size: 0.95rem; color: var(--muted);">
-                        <a href="https://www.canva.com/design/DAHLPDs6pRA/GuwCRPCtD6C4RWzvfqj-4w/view?utm_content=DAHLPDs6pRA&amp;utm_campaign=designshare&amp;utm_medium=embeds&amp;utm_source=link"
-                            target="_blank" rel="noopener" class="text-link">
-                        </a>
-                    </div>
-
-                </article>
-            </div>
-        </section>
-
-    </main>
-
-    <footer class="site-footer">
-        <div class="container footer-wrap">
-            <p>© 2026 NORE MEDIA. Bản quyền thuộc về NORE MEDIA.</p>
-        </div>
-    </footer>
-</body>
-
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
