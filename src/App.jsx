@@ -6,13 +6,13 @@ import 'plyr/dist/plyr.css';
 
 const pages = [
   { path: '/', label: 'Trang Chủ', key: 'home' },
-  { path: '/about.html', label: 'Về Chúng Tôi', key: 'about' },
-  { path: '/services.html', label: 'Dịch Vụ', key: 'services' },
-  { path: '/gallery.html', label: 'Hình Ảnh', key: 'gallery' },
-  { path: '/video.html', label: 'Video', key: 'video' },
-  { path: '/contact.html', label: 'Liên Hệ', key: 'contact' },
+  { path: '/about', label: 'Về Chúng Tôi', key: 'about' },
+  { path: '/services', label: 'Dịch Vụ', key: 'services' },
+  { path: '/gallery', label: 'Hình Ảnh', key: 'gallery' },
+  { path: '/video', label: 'Video', key: 'video' },
+  { path: '/contact', label: 'Liên Hệ', key: 'contact' },
   // Also support clean URLs
-  { path: '/index.html', label: 'Trang Chủ', key: 'home' },
+  { path: '/index', label: 'Trang Chủ', key: 'home' },
 ];
 
 function currentPage(pathname) {
@@ -147,8 +147,8 @@ function HomePage() {
                 tạo &quot;dấu ấn thị giác&quot; khác biệt, được thiết kế riêng để nâng tầm các thương hiệu của bạn.
               </p>
               <div className="actions">
-                <Link to="/contact.html" className="btn btn-primary">Liên hệ ngay</Link>
-                <Link to="/services.html" className="btn btn-secondary">Xem dịch vụ</Link>
+                <Link to="/contact" className="btn btn-primary">Liên hệ ngay</Link>
+                <Link to="/services" className="btn btn-secondary">Xem dịch vụ</Link>
               </div>
             </div>
             <div className="hero-media">
@@ -168,7 +168,7 @@ function HomePage() {
                 Với kinh nghiệm trong lĩnh vực truyền thông và sản xuất nội dung, NORE MEDIA luôn đặt sự chân thật,
                 chuyên nghiệp và sáng tạo lên hàng đầu.
               </p>
-              <Link to="/about.html" className="text-link">Tìm hiểu thêm</Link>
+              <Link to="/about" className="text-link">Tìm hiểu thêm</Link>
             </div>
           </div>
         </section>
@@ -216,7 +216,7 @@ function HomePage() {
               ))}
             </div>
             <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-              <Link to="/gallery.html" className="btn btn-secondary">Xem thêm hình ảnh</Link>
+              <Link to="/gallery" className="btn btn-secondary">Xem thêm hình ảnh</Link>
             </div>
           </div>
         </section>
@@ -570,7 +570,7 @@ function NotFoundPage() {
   return (
     <main className="page-main">
       <PageHero eyebrow="404" title="Không tìm thấy trang">
-        <p><Link className="text-link" to="/index.html">Quay về Trang Chủ</Link></p>
+        <p><Link className="text-link" to="/">Quay về Trang Chủ</Link></p>
       </PageHero>
     </main>
   );
