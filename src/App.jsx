@@ -369,11 +369,14 @@ function GalleryPage() {
   );
 }
 
+const VIDEO_BASE_URL = "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev"; // e.g. "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev"
+
 function VideoCard({ src, vertical = false, eager = false }) {
+  const fullSrc = src.startsWith('http') ? src : `${VIDEO_BASE_URL}${src}`;
   return (
     <article className={`card video-card${vertical ? ' video-card-vertical' : ''}`}>
       <video controls preload={eager ? 'auto' : 'metadata'} playsInline>
-        <source src={src} type="video/mp4" />
+        <source src={fullSrc} type="video/mp4" />
         Trình duyệt của bạn không hỗ trợ thẻ video.
       </video>
     </article>
@@ -584,11 +587,10 @@ const pageTitles = {
 export default function App() {
   const location = useLocation();
   const activePage = currentPage(location.pathname);
-  
+
   useEffect(() => {
     document.title = pageTitles[activePage];
-    
-    // Re-run intersection observer on page change
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -601,15 +603,30 @@ export default function App() {
       { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
     );
 
-    // Small delay to ensure DOM elements are rendered
-    setTimeout(() => {
+    const observeElements = () => {
       const elements = document.querySelectorAll(
         '.reveal-up, .reveal-left, .reveal-right, .reveal-zoom, .card-grid, .gallery-grid, .video-grid, .contact-grid'
       );
-      elements.forEach((el) => observer.observe(el));
-    }, 100);
+      elements.forEach((el) => {
+        if (!el.classList.contains('reveal-active')) {
+          observer.observe(el);
+        }
+      });
+    };
 
-    return () => observer.disconnect();
+    // Observer new elements as they are mounted by Framer Motion transitions
+    const mutationObserver = new MutationObserver(() => {
+      observeElements();
+    });
+    mutationObserver.observe(document.body, { childList: true, subtree: true });
+    
+    // Initial check
+    observeElements();
+
+    return () => {
+      observer.disconnect();
+      mutationObserver.disconnect();
+    };
   }, [location.pathname]); // re-run when path changes
 
   // Scroll to top on page change
@@ -620,13 +637,13 @@ export default function App() {
   return (
     <>
       <Header activePage={activePage} />
-      
+
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           {pages.map((page) => {
             const PageComponent = pageComponents[page.key];
             return (
-              <Route 
+              <Route
                 key={page.path}
                 path={page.path}
                 element={
@@ -643,8 +660,8 @@ export default function App() {
             );
           })}
           {/* Catch all route */}
-          <Route 
-            path="*" 
+          <Route
+            path="*"
             element={
               <motion.div
                 initial={{ opacity: 0 }}
@@ -653,11 +670,11 @@ export default function App() {
               >
                 <NotFoundPage />
               </motion.div>
-            } 
+            }
           />
         </Routes>
       </AnimatePresence>
-      
+
       <Footer showSocial={activePage === 'home'} />
     </>
   );
