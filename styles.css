@@ -928,7 +928,15 @@ h3 {
     border-radius: 0.75rem;
     border: 1px solid var(--border);
     background: #000;
-    --plyr-color-main: #ffffff;}
+    --plyr-color-main: #ffffff;
+    --plyr-video-control-color-hover: #000000;
+}
+
+.video-card .plyr__control--overlaid:hover,
+.video-card .plyr__control--overlaid[aria-expanded="true"],
+.video-card .plyr__control:hover {
+    color: #000 !important;
+}
 
 .video-card-vertical {
     max-width: 350px;
