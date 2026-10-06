@@ -514,22 +514,122 @@ function VideoPage() {
       <PageHero eyebrow="Video" title="Video Production" />
       <section className="section">
         <div className="container">
-          <h2 className="video-project-title">Sunshine Beach Resort</h2>
-          <div className="video-grid">
-            {[1, 2, 3, 4].map((number) => (
-              <VideoCard src={`/video/Sunshine/video-${number}.mp4`} key={number} />
-            ))}
+          
+          {/* TVC Doanh Nghiệp */}
+          <div className="video-category">
+            <h2 className="video-category-title">TVC Doanh Nghiệp</h2>
+            <p className="video-category-desc">Các dự án quảng cáo, giới thiệu doanh nghiệp tiêu biểu</p>
+            
+            <h3 className="video-project-title">A By Tung</h3>
+            <div className="video-featured">
+              <VideoCard src={encodeURI("/TVC Doanh nghiệp/A By Tung/A BY TUNG - 5th Anniversary tvc.mp4")} />
+            </div>
+
+            <h3 className="video-project-title">FDL Resort</h3>
+            <div className="video-featured">
+              <VideoCard src={encodeURI("/TVC Doanh nghiệp/FDL Resort/FDL RESORT.mp4")} />
+            </div>
+
+            <h3 className="video-project-title">La Siesta Premium Saigon</h3>
+            <div className="video-featured">
+              <VideoCard src={encodeURI("/TVC Doanh nghiệp/La Siesta Premium Saigon/LA SIESTA PREMIUM SAIGON HOTEL tvc.mp4")} />
+            </div>
+
+            <h3 className="video-project-title">Sgarzi Luigi</h3>
+            <div className="video-featured">
+              <VideoCard src={encodeURI("/TVC Doanh nghiệp/Sgarzi Luigi/TVC SGARZI LUIGI VIETSUB.mp4")} />
+            </div>
+
+            <h3 className="video-project-title">Sunshine Beach Resort</h3>
+            <div className="video-grid">
+              <VideoCard src={encodeURI("/TVC Doanh nghiệp/Sunshine Beach Resort/SUNSHINE BEACH RESORT.mov")} />
+              <VideoCard src={encodeURI("/TVC Doanh nghiệp/Sunshine Beach Resort/sunshine.mov")} />
+            </div>
+
+            <h3 className="video-project-title">Turkish Airlines</h3>
+            <div className="video-featured">
+              <VideoCard src={encodeURI("/TVC Doanh nghiệp/Turkish Airlines/TURKISH AIRLINES Vietnam.mp4")} />
+            </div>
           </div>
-          <h2 className="video-project-title">SGARZI LUIGI</h2>
-          <div className="video-featured">
-            <VideoCard src="/video/SGARZI-LUIGI.mp4" />
+
+          {/* Short-video content */}
+          <div className="video-category">
+            <h2 className="video-category-title">Short-video Content</h2>
+            <p className="video-category-desc">Nội dung ngắn tối ưu cho TikTok, Reels, Shorts</p>
+            
+            <h3 className="video-project-title">JW Marriott Cam Ranh</h3>
+            <div className="video-grid video-grid-vertical">
+              <VideoCard src={encodeURI("/Short-video Content/JW Marriott Cam Ranh/6 HAND DINNER - JW MARRIOT CAM RANH.mp4")} vertical />
+              <VideoCard src={encodeURI("/Short-video Content/JW Marriott Cam Ranh/JW MARRIOT CAM RANH tvc.mp4")} vertical />
+              <VideoCard src={encodeURI("/Short-video Content/JW Marriott Cam Ranh/OCEAN BAR - JW MARRIOT CAM RANH.mp4")} vertical />
+            </div>
+
+            <h3 className="video-project-title">OTOD</h3>
+            <div className="video-grid video-grid-vertical">
+              <VideoCard src={encodeURI("/Short-video Content/OTOD/video_OTOD_1.mp4")} vertical />
+              <VideoCard src={encodeURI("/Short-video Content/OTOD/video_OTOD_2.mp4")} vertical />
+              <VideoCard src={encodeURI("/Short-video Content/OTOD/video_OTOD_3.mp4")} vertical />
+            </div>
+
+            <h3 className="video-project-title">Rrare Object</h3>
+            <div className="video-grid video-grid-vertical">
+              <VideoCard src={encodeURI("/Short-video Content/Rrare Object/RRARE OBJECT tvc.mp4")} vertical />
+              <VideoCard src={encodeURI("/Short-video Content/Rrare Object/RRARE OBJECT.mp4")} vertical />
+              <VideoCard src={encodeURI("/Short-video Content/Rrare Object/RRARE OBJECT(1).mp4")} vertical />
+            </div>
+
+            <h3 className="video-project-title">Build Kênh</h3>
+            <div className="video-grid video-grid-vertical">
+              <VideoCard src={encodeURI("/Short-video Content/Build Kênh/Short-vid build kênh.mp4")} vertical />
+            </div>
+
+            <h3 className="video-project-title">Rebrand</h3>
+            <div className="video-grid video-grid-vertical">
+              <VideoCard src={encodeURI("/Short-video Content/Rebrand/REBRAND 1 (1) xây kênh.mp4")} vertical />
+            </div>
           </div>
-          <h2 className="video-project-title">OTOD</h2>
-          <div className="video-grid video-grid-vertical">
-            {[1, 2, 3].map((number) => (
-              <VideoCard src={`/video/OTOD/${number}.mp4`} vertical eager key={number} />
-            ))}
+
+          {/* Recap Events */}
+          <div className="video-category">
+            <h2 className="video-category-title">Recap Events</h2>
+            <p className="video-category-desc">Ghi lại những khoảnh khắc đáng nhớ của các sự kiện</p>
+            
+            <h3 className="video-project-title">Almora Botanica</h3>
+            <div className="video-featured">
+              <VideoCard src={encodeURI("/Recap Events/Almora Botanica/Highlight Almora Botanica fix.mp4")} />
+            </div>
+            
+            <h3 className="video-project-title">Aurora Melodia (Hồ Tràm)</h3>
+            <div className="video-featured">
+              <VideoCard src={encodeURI("/Recap Events/Aurora Melodia (Hồ Tràm)/Aurora Meliodia Event (Hồ Tràm).mp4")} />
+            </div>
+
+            <h3 className="video-project-title">Beer Ruby</h3>
+            <div className="video-featured">
+              <VideoCard src={encodeURI("/Recap Events/Beer Ruby/Event Beer Ruby.mp4")} />
+            </div>
+
+            <h3 className="video-project-title">Boss House</h3>
+            <div className="video-featured">
+              <VideoCard src={encodeURI("/Recap Events/Boss House/Boss House Khai Trương events.mov")} />
+            </div>
+
+            <h3 className="video-project-title">Cao Đẳng FPT HCM</h3>
+            <div className="video-featured">
+              <VideoCard src={encodeURI("/Recap Events/Cao Đẳng FPT HCM/Lễ Định Hướng Cao đẳng FPT HCM event.mp4")} />
+            </div>
+
+            <h3 className="video-project-title">ISG</h3>
+            <div className="video-featured">
+              <VideoCard src={encodeURI("/Recap Events/ISG/RECAP SỰ KIỆN ISG RA MẮT.mp4")} />
+            </div>
+
+            <h3 className="video-project-title">JCI South Saigon</h3>
+            <div className="video-featured">
+              <VideoCard src={encodeURI("/Recap Events/JCI South Saigon/JCI SOUTH SAIGON 17th Annniversary events.part.mp4")} />
+            </div>
           </div>
+
         </div>
       </section>
       <section className="section alt">

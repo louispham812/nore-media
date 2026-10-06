@@ -1242,3 +1242,35 @@ h3 {
     color: #ffffff !important;
 }
 
+
+/* Video Categories */
+.video-category {
+    margin-bottom: 5rem;
+}
+.video-category-title {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #fff 0%, #a1a1aa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.video-category-desc {
+    text-align: center;
+    color: var(--muted);
+    margin-bottom: 3rem;
+    font-size: 1.1rem;
+}
+.video-project-title {
+    font-size: 1.5rem !important;
+    color: #e2e8f0;
+    margin-bottom: 2rem !important;
+}
+.empty-category-notice {
+    text-align: center;
+    padding: 3rem;
+    border: 1px dashed rgba(255,255,255,0.2);
+    border-radius: 1rem;
+    color: var(--muted);
+    grid-column: 1 / -1;
+}
