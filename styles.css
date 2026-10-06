@@ -914,7 +914,7 @@ h3 {
 .video-grid-vertical {
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
     max-width: 1000px;
-    margin: 0 auto;
+    margin: 0 auto 5rem;
 }
 
 .video-card {
