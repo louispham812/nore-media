@@ -514,22 +514,51 @@ function VideoPage() {
       <PageHero eyebrow="Video" title="Video Production" />
       <section className="section">
         <div className="container">
-          <h2 className="video-project-title">Sunshine Beach Resort</h2>
-          <div className="video-grid">
-            {[1, 2, 3, 4].map((number) => (
-              <VideoCard src={`/video/Sunshine/video-${number}.mp4`} key={number} />
-            ))}
+          
+          {/* TVC Doanh nghiệp */}
+          <div className="video-category">
+            <h2 className="video-category-title">TVC Doanh Nghiệp</h2>
+            <p className="video-category-desc">Các dự án quảng cáo, giới thiệu doanh nghiệp tiêu biểu</p>
+            
+            <h3 className="video-project-title">Sunshine Beach Resort</h3>
+            <div className="video-grid">
+              {[1, 2, 3, 4].map((number) => (
+                <VideoCard src={`/video/Sunshine/video-${number}.mp4`} key={number} />
+              ))}
+            </div>
+
+            <h3 className="video-project-title">SGARZI LUIGI</h3>
+            <div className="video-featured">
+              <VideoCard src="/video/SGARZI-LUIGI.mp4" />
+            </div>
           </div>
-          <h2 className="video-project-title">SGARZI LUIGI</h2>
-          <div className="video-featured">
-            <VideoCard src="/video/SGARZI-LUIGI.mp4" />
+
+          {/* Short-video content */}
+          <div className="video-category">
+            <h2 className="video-category-title">Short-video Content</h2>
+            <p className="video-category-desc">Nội dung ngắn tối ưu cho TikTok, Reels, Shorts</p>
+            
+            <h3 className="video-project-title">OTOD</h3>
+            <div className="video-grid video-grid-vertical">
+              {[1, 2, 3].map((number) => (
+                <VideoCard src={`/video/OTOD/${number}.mp4`} vertical eager key={number} />
+              ))}
+            </div>
           </div>
-          <h2 className="video-project-title">OTOD</h2>
-          <div className="video-grid video-grid-vertical">
-            {[1, 2, 3].map((number) => (
-              <VideoCard src={`/video/OTOD/${number}.mp4`} vertical eager key={number} />
-            ))}
+
+          {/* Recap Events */}
+          <div className="video-category">
+            <h2 className="video-category-title">Recap Events</h2>
+            <p className="video-category-desc">Ghi lại những khoảnh khắc đáng nhớ của các sự kiện</p>
+            
+            <div className="video-grid">
+              {/* Placeholders for Drive videos */}
+              <div className="empty-category-notice">
+                <p>Các video sự kiện đang được cập nhật từ Google Drive...</p>
+              </div>
+            </div>
           </div>
+
         </div>
       </section>
       <section className="section alt">
