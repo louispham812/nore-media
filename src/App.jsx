@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import { Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -466,12 +466,11 @@ function VideoCard({ src, vertical = false, eager = false }) {
     controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen', 'settings'],
     settings: ['speed'],
     hideControls: true,
-    fullscreen: { enabled: true, fallback: true, iosNative: true },
-    playsinline: true,
+    fullscreen: { enabled: true, fallback: true, iosNative: true }
   };
 
   return (
-    <article className={`card video-card${vertical ? ' video-card-vertical' : ''}`}>
+    <article className={`card video-card${vertical ? ' video-card-vertical' : ''} not-played`}>
       <Plyr
         source={{
           type: 'video',
@@ -484,6 +483,29 @@ function VideoCard({ src, vertical = false, eager = false }) {
 }
 
 function VideoPage() {
+  useEffect(() => {
+    const handlePlay = (e) => {
+      // Find the closest video-card if the target is a video element
+      const target = e.target;
+      if (target && target.tagName === 'VIDEO') {
+        const card = target.closest('.video-card');
+        if (card) {
+          card.classList.add('has-played');
+          card.classList.remove('not-played');
+        }
+      }
+    };
+    
+    // Add event listener in capture phase (true) because media events don't bubble
+    document.addEventListener('play', handlePlay, true);
+    document.addEventListener('playing', handlePlay, true);
+    
+    return () => {
+      document.removeEventListener('play', handlePlay, true);
+      document.removeEventListener('playing', handlePlay, true);
+    };
+  }, []);
+
   return (
     <main className="page-main">
       <PageHero eyebrow="Video" title="Video Production" />

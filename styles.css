@@ -921,22 +921,9 @@ h3 {
     padding: 1.25rem;
 }
 
-.video-card .plyr {
-    display: block;
-    width: 100%;
-    height: auto;
-    border-radius: 0.75rem;
-    border: 1px solid var(--border);
-    background: #000;
-    --plyr-color-main: #ffffff;
-    --plyr-video-control-color-hover: #000000;
-}
+.video-card .plyr { display: block; width: 100%; height: auto; border-radius: 0.75rem; border: 1px solid var(--border); background: #000; --plyr-color-main: #ffffff; }
 
-.video-card .plyr__control--overlaid:hover,
-.video-card .plyr__control--overlaid[aria-expanded="true"],
-.video-card .plyr__control:hover {
-    color: #000 !important;
-}
+
 
 .video-card-vertical {
     max-width: 350px;
@@ -1212,3 +1199,46 @@ h3 {
     font-size: clamp(0.7rem, 4.8cqi, 2rem) !important;
     width: 100%;
 }
+
+/* Hide bottom controls before first play */
+.video-card.not-played .plyr__controls {
+    display: none !important;
+}
+
+
+/* Modern Plyr Player Design */
+.video-card .plyr__control--overlaid {
+    background: rgba(0, 0, 0, 0.45) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ffffff !important;
+    padding: 1.25rem !important;
+    border-radius: 50% !important;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+.video-card .plyr__control--overlaid:hover {
+    background: rgba(255, 255, 255, 0.95) !important;
+    color: #000000 !important;
+    transform: translate(-50%, -50%) scale(1.1) !important;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+.video-card .plyr__control--overlaid svg {
+    width: 28px !important;
+    height: 28px !important;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+.video-card .plyr__control--overlaid:hover svg {
+    filter: none;
+}
+/* Customize bottom controls */
+.video-card .plyr__controls {
+    background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.75)) !important;
+    padding-bottom: 1rem !important;
+}
+.video-card .plyr__control:hover {
+    background: rgba(255,255,255,0.15) !important;
+    color: #ffffff !important;
+}
+
