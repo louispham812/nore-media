@@ -464,6 +464,7 @@ const VIDEO_BASE_URL = "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev"; //
 
 function VideoCard({ src, vertical = false, eager = false }) {
   const fullSrc = src.startsWith('http') ? src : `${VIDEO_BASE_URL}${src}`;
+  const posterSrc = src.startsWith('http') ? undefined : `${fullSrc}.jpg`;
   
   const plyrOptions = {
     controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen', 'settings'],
@@ -477,7 +478,8 @@ function VideoCard({ src, vertical = false, eager = false }) {
       <Plyr
         source={{
           type: 'video',
-          sources: [{ src: fullSrc, type: 'video/mp4' }]
+          sources: [{ src: fullSrc, type: 'video/mp4' }],
+          poster: posterSrc
         }}
         options={plyrOptions}
       />
