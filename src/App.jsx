@@ -545,11 +545,6 @@ function VideoPage() {
               <VideoCard src={encodeURI("/TVC Doanh nghiệp/Sunshine Beach Resort/SUNSHINE BEACH RESORT.mov")} />
               <VideoCard src={encodeURI("/TVC Doanh nghiệp/Sunshine Beach Resort/sunshine.mov")} />
             </div>
-
-            <h3 className="video-project-title">Turkish Airlines</h3>
-            <div className="video-featured">
-              <VideoCard src={encodeURI("/TVC Doanh nghiệp/Turkish Airlines/TURKISH AIRLINES Vietnam.mp4")} />
-            </div>
           </div>
 
           {/* Short-video content */}
@@ -564,13 +559,6 @@ function VideoPage() {
               <VideoCard src={encodeURI("/Short-video Content/JW Marriott Cam Ranh/OCEAN BAR - JW MARRIOT CAM RANH.mp4")} vertical />
             </div>
 
-            <h3 className="video-project-title">OTOD</h3>
-            <div className="video-grid video-grid-vertical">
-              <VideoCard src={encodeURI("/Short-video Content/OTOD/video_OTOD_1.mp4")} vertical />
-              <VideoCard src={encodeURI("/Short-video Content/OTOD/video_OTOD_2.mp4")} vertical />
-              <VideoCard src={encodeURI("/Short-video Content/OTOD/video_OTOD_3.mp4")} vertical />
-            </div>
-
             <h3 className="video-project-title">Rrare Object</h3>
             <div className="video-grid video-grid-vertical">
               <VideoCard src={encodeURI("/Short-video Content/Rrare Object/RRARE OBJECT tvc.mp4")} vertical />
@@ -578,14 +566,17 @@ function VideoPage() {
               <VideoCard src={encodeURI("/Short-video Content/Rrare Object/RRARE OBJECT(1).mp4")} vertical />
             </div>
 
-            <h3 className="video-project-title">Build Kênh</h3>
+            <h3 className="video-project-title">HOMEDASH</h3>
             <div className="video-grid video-grid-vertical">
               <VideoCard src={encodeURI("/Short-video Content/Build Kênh/Short-vid build kênh.mp4")} vertical />
+              <VideoCard src={encodeURI("/Short-video Content/Rebrand/REBRAND 1 (1) xây kênh.mp4")} vertical />
             </div>
 
-            <h3 className="video-project-title">Rebrand</h3>
+            <h3 className="video-project-title">OTOD</h3>
             <div className="video-grid video-grid-vertical">
-              <VideoCard src={encodeURI("/Short-video Content/Rebrand/REBRAND 1 (1) xây kênh.mp4")} vertical />
+              <VideoCard src={encodeURI("/Short-video Content/OTOD/video_OTOD_1.mp4")} vertical />
+              <VideoCard src={encodeURI("/Short-video Content/OTOD/video_OTOD_2.mp4")} vertical />
+              <VideoCard src={encodeURI("/Short-video Content/OTOD/video_OTOD_3.mp4")} vertical />
             </div>
           </div>
 
@@ -594,6 +585,11 @@ function VideoPage() {
             <h2 className="video-category-title">Recap Events</h2>
             <p className="video-category-desc">Ghi lại những khoảnh khắc đáng nhớ của các sự kiện</p>
             
+            <h3 className="video-project-title">Turkish Airlines</h3>
+            <div className="video-featured">
+              <VideoCard src={encodeURI("/TVC Doanh nghiệp/Turkish Airlines/TURKISH AIRLINES Vietnam.mp4")} />
+            </div>
+
             <h3 className="video-project-title">Almora Botanica</h3>
             <div className="video-featured">
               <VideoCard src={encodeURI("/Recap Events/Almora Botanica/Highlight Almora Botanica fix.mp4")} />
