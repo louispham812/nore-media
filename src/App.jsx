@@ -539,13 +539,13 @@ function VideoPage() {
 
             <h3 className="video-project-title">Sgarzi Luigi</h3>
             <div className="video-featured">
-              <VideoCard src={encodeURI("/TVC Doanh nghiệp/Sgarzi Luigi/TVC SGARZI LUIGI VIETSUB.mp4")} />
+              <VideoCard src={encodeURI("/TVC Doanh nghiệp/Sgarzi Luigi/TVC SGARZI LUIGI VIETSUB.mov")} />
             </div>
 
             <h3 className="video-project-title">Sunshine Beach Resort</h3>
             <div className="video-grid">
-              <VideoCard src={encodeURI("/TVC Doanh nghiệp/Sunshine Beach Resort/SUNSHINE BEACH RESORT.mov")} />
-              <VideoCard src={encodeURI("/TVC Doanh nghiệp/Sunshine Beach Resort/sunshine.mov")} />
+              <VideoCard src={encodeURI("/TVC Doanh nghiệp/Sunshine Beach Resort/SUNSHINE BEACH RESORT.mp4")} />
+              <VideoCard src={encodeURI("/TVC Doanh nghiệp/Sunshine Beach Resort/sunshine.mp4")} />
             </div>
           </div>
 
@@ -609,7 +609,7 @@ function VideoPage() {
 
             <h3 className="video-project-title">Boss House</h3>
             <div className="video-featured">
-              <VideoCard src={encodeURI("/Recap Events/Boss House/Boss House Khai Trương events.mov")} />
+              <VideoCard src={encodeURI("/Recap Events/Boss House/Boss House Khai Trương events.mp4")} />
             </div>
 
             <h3 className="video-project-title">Cao Đẳng FPT HCM</h3>
