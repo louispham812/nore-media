@@ -413,7 +413,7 @@ function GalleryPage() {
             <div className="canva-embed">
               <iframe
                 loading="lazy"
-                src="https://www.canva.com/design/DAHLPDs6pRA/GuwCRPCtD6C4RWzvfqj-4w/view?embed"
+                src="https://www.canva.com/design/DAHJ40demyc/haPQFA94SUbCfZWUdvxPNw/view?embed"
                 title="NORE MEDIA - Image Production"
                 allowFullScreen
                 allow="fullscreen"
@@ -421,7 +421,7 @@ function GalleryPage() {
             </div>
             <div className="canva-credit">
               <a
-                href="https://www.canva.com/design/DAHLPDs6pRA/GuwCRPCtD6C4RWzvfqj-4w/view?utm_content=DAHLPDs6pRA&amp;utm_campaign=designshare&amp;utm_medium=embeds&amp;utm_source=link"
+                href="https://canva.link/lx72u295xwn5sel"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-link"
