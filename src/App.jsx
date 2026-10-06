@@ -587,7 +587,7 @@ function VideoPage() {
             
             <h3 className="video-project-title">Turkish Airlines</h3>
             <div className="video-featured">
-              <VideoCard src={encodeURI("/TVC Doanh nghiệp/Turkish Airlines/TURKISH AIRLINES Vietnam.mp4")} />
+              <VideoCard src={encodeURI("/Recap Events/Turkish Airlines/TURKISH AIRLINES Vietnam.mp4")} />
             </div>
 
             <h3 className="video-project-title">Almora Botanica</h3>
