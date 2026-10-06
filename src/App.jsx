@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Plyr } from 'plyr-react';
 import 'plyr/dist/plyr.css';
 
@@ -22,6 +23,11 @@ function currentPage(pathname) {
 
 function Header({ activePage }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { t, i18n } = useTranslation();
+
+  const toggleLanguage = () => {
+    i18n.changeLanguage(i18n.language === 'vi' ? 'en' : 'vi');
+  };
 
   useEffect(() => {
     const closeOnResize = () => {
@@ -71,10 +77,18 @@ function Header({ activePage }) {
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
-                {page.label}
+                {t(`nav.${page.key}`)}
               </Link>
             );
           })}
+          <button 
+            type="button"
+            className="lang-toggle" 
+            onClick={toggleLanguage} 
+            title="Đổi ngôn ngữ (Change Language)"
+          >
+            {i18n.language === 'vi' ? 'EN' : 'VI'}
+          </button>
         </nav>
         <button
           className="menu-toggle"
