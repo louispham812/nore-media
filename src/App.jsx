@@ -83,11 +83,18 @@ function Header({ activePage }) {
           })}
           <button 
             type="button"
-            className="lang-toggle" 
+            className="lang-switch" 
             onClick={toggleLanguage} 
             title="Đổi ngôn ngữ (Change Language)"
           >
-            {i18n.language === 'vi' ? 'EN' : 'VI'}
+            <span className={i18n.language === 'vi' ? 'active' : ''}>VI</span>
+            <span className={i18n.language === 'en' ? 'active' : ''}>EN</span>
+            <motion.div
+              className="lang-switch-pill"
+              initial={false}
+              animate={{ x: i18n.language === 'en' ? '100%' : '0%' }}
+              transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+            />
           </button>
         </nav>
         <button
