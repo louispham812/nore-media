@@ -445,6 +445,8 @@ function VideoCard({ src, vertical = false, eager = false }) {
     controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen', 'settings'],
     settings: ['speed'],
     hideControls: true,
+    fullscreen: { enabled: true, fallback: true, iosNative: true },
+    playsinline: true,
   };
 
   return (
@@ -479,7 +481,7 @@ function VideoPage() {
           <h2 className="video-project-title">OTOD</h2>
           <div className="video-grid video-grid-vertical">
             {[1, 2, 3].map((number) => (
-              <VideoCard src={`/video/OTOD/${number}.mp4#t=0.001`} vertical eager key={number} />
+              <VideoCard src={`/video/OTOD/${number}.mp4`} vertical eager key={number} />
             ))}
           </div>
         </div>
