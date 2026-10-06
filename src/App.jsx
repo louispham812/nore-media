@@ -553,6 +553,18 @@ function VideoPage() {
           <div className="video-category">
             <h2 className="video-category-title">Short-video Content</h2>
             <p className="video-category-desc">Nội dung ngắn tối ưu cho TikTok, Reels, Shorts</p>
+
+            <h3 className="video-project-title">AQUA SKY BAR</h3>
+            <div className="video-grid video-grid-vertical">
+              <VideoCard src={encodeURI("/Short-video Content/AQUA SKY BAR/AQUA - 1 FIX OUTRO.mp4")} vertical />
+              <VideoCard src={encodeURI("/Short-video Content/AQUA SKY BAR/AQUA - 2.mp4")} vertical />
+              <VideoCard src={encodeURI("/Short-video Content/AQUA SKY BAR/AQUA - 4 FIX OUTRO.mp4")} vertical />
+            </div>
+
+            <h3 className="video-project-title">CLOUD</h3>
+            <div className="video-grid video-grid-vertical">
+              <VideoCard src={encodeURI("/Short-video Content/CLOUD/CLOUD.mp4")} vertical />
+            </div>
             
             <h3 className="video-project-title">JW Marriott Cam Ranh</h3>
             <div className="video-grid video-grid-vertical">
@@ -615,6 +627,11 @@ function VideoPage() {
             <h3 className="video-project-title">Cao Đẳng FPT HCM</h3>
             <div className="video-featured">
               <VideoCard src={encodeURI("/Recap Events/Cao Đẳng FPT HCM/Lễ Định Hướng Cao đẳng FPT HCM event.mp4")} />
+            </div>
+
+            <h3 className="video-project-title">Geely Đông SG</h3>
+            <div className="video-featured">
+              <VideoCard src={encodeURI("/Recap Events/Geely Đông SG/Xe năng lượng mới (SR Đông SG) event.mp4")} />
             </div>
 
             <h3 className="video-project-title">ISG</h3>
