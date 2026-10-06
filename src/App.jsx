@@ -568,8 +568,8 @@ function VideoPage() {
 
             <h3 className="video-project-title">HOMEDASH</h3>
             <div className="video-grid video-grid-vertical">
-              <VideoCard src={encodeURI("/Short-video Content/Build Kênh/Short-vid build kênh.mp4")} vertical />
-              <VideoCard src={encodeURI("/Short-video Content/Rebrand/REBRAND 1 (1) xây kênh.mp4")} vertical />
+              <VideoCard src={encodeURI("/Short-video Content/HOMEDASH/Short-vid build kênh.mp4")} vertical />
+              <VideoCard src={encodeURI("/Short-video Content/HOMEDASH/REBRAND 1 (1) xây kênh.mp4")} vertical />
             </div>
 
             <h3 className="video-project-title">OTOD</h3>
