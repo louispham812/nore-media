@@ -1142,3 +1142,73 @@ h3 {
 .site-footer {
     margin-top: auto;
 }
+
+.lang-toggle {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.35rem 0.8rem;
+    border-radius: 999px;
+    cursor: pointer;
+    margin-left: 0.5rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: background 0.25s ease;
+}
+.lang-toggle:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+.lang-switch {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.25rem;
+    margin-left: 0.5rem;
+    cursor: pointer;
+    width: 76px;
+    height: 36px;
+}
+
+.lang-switch span {
+    flex: 1;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    z-index: 1;
+    color: var(--muted);
+    transition: color 0.3s;
+}
+
+.lang-switch span.active {
+    color: #000;
+}
+
+.lang-switch-pill {
+    position: absolute;
+    top: 0.25rem;
+    left: 0.25rem;
+    width: calc(50% - 0.25rem);
+    height: calc(100% - 0.5rem);
+    background: var(--text);
+    border-radius: 999px;
+    z-index: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+
+
+
+
+/* Contact card titles 1-line */
+.contact-card {
+    container-type: inline-size;
+}
+.contact-card .section-heading h2 {
+    white-space: nowrap;
+    font-size: clamp(0.7rem, 4.8cqi, 2rem) !important;
+    width: 100%;
+}

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Plyr } from 'plyr-react';
 import 'plyr/dist/plyr.css';
 
@@ -22,6 +23,11 @@ function currentPage(pathname) {
 
 function Header({ activePage }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { t, i18n } = useTranslation();
+
+  const toggleLanguage = () => {
+    i18n.changeLanguage(i18n.language === 'vi' ? 'en' : 'vi');
+  };
 
   useEffect(() => {
     const closeOnResize = () => {
@@ -71,10 +77,25 @@ function Header({ activePage }) {
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
-                {page.label}
+                {t(`nav.${page.key}`)}
               </Link>
             );
           })}
+          <button 
+            type="button"
+            className="lang-switch" 
+            onClick={toggleLanguage} 
+            title="Đổi ngôn ngữ (Change Language)"
+          >
+            <span className={i18n.language === 'vi' ? 'active' : ''}>VI</span>
+            <span className={i18n.language === 'en' ? 'active' : ''}>EN</span>
+            <motion.div
+              className="lang-switch-pill"
+              initial={false}
+              animate={{ x: i18n.language === 'en' ? '100%' : '0%' }}
+              transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+            />
+          </button>
         </nav>
         <button
           className="menu-toggle"
@@ -413,7 +434,7 @@ function GalleryPage() {
             <div className="canva-embed">
               <iframe
                 loading="lazy"
-                src="https://www.canva.com/design/DAHLPDs6pRA/GuwCRPCtD6C4RWzvfqj-4w/view?embed"
+                src="https://www.canva.com/design/DAHJ40demyc/haPQFA94SUbCfZWUdvxPNw/view?embed"
                 title="NORE MEDIA - Image Production"
                 allowFullScreen
                 allow="fullscreen"
@@ -421,7 +442,7 @@ function GalleryPage() {
             </div>
             <div className="canva-credit">
               <a
-                href="https://www.canva.com/design/DAHLPDs6pRA/GuwCRPCtD6C4RWzvfqj-4w/view?utm_content=DAHLPDs6pRA&amp;utm_campaign=designshare&amp;utm_medium=embeds&amp;utm_source=link"
+                href="https://canva.link/lx72u295xwn5sel"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-link"
@@ -507,6 +528,7 @@ function VideoPage() {
 }
 
 function ContactPage() {
+  const { t } = useTranslation();
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState({ type: '', message: '' });
   const submission = useRef({ key: window.crypto.randomUUID(), details: null });
@@ -534,11 +556,11 @@ function ContactPage() {
       const result = await response.json();
       if (!response.ok) {
         const missingSettings = Array.isArray(result.missing) && result.missing.length
-          ? ` Thiếu cấu hình máy chủ: ${result.missing.join(', ')}.`
+          ? ` ${t('contact.errorMissing')}: ${result.missing.join(', ')}.`
           : '';
         setFeedback({
           type: 'error',
-          message: `${result.error || 'Không thể gửi thông tin. Vui lòng thử lại.'}${missingSettings}`,
+          message: `${result.error || t('contact.errorFail')}${missingSettings}`,
         });
         return;
       }
@@ -547,11 +569,11 @@ function ContactPage() {
       setFeedback({
         type: 'success',
         message: result.confirmationWarning
-          ? `${result.message} Tuy nhiên, email xác nhận chưa gửi được; vui lòng kiểm tra hộp thư sau.`
+          ? `${result.message} ${t('contact.successWarn')}`
           : result.message,
       });
     } catch {
-      setFeedback({ type: 'error', message: 'Không thể kết nối đến máy chủ. Vui lòng thử lại sau.' });
+      setFeedback({ type: 'error', message: t('contact.errorConnect') });
     } finally {
       setSubmitting(false);
     }
@@ -559,41 +581,41 @@ function ContactPage() {
 
   return (
     <main className="page-main">
-      <PageHero eyebrow="Liên hệ" title="Gửi thông tin hoặc liên hệ trực tiếp với NORE">
-        <p>Chúng tôi sẵn sàng tư vấn dịch vụ hình ảnh, video và truyền thông theo nhu cầu của bạn.</p>
+      <PageHero eyebrow={t('contact.heroEyebrow')} title={t('contact.heroTitle')}>
+        <p>{t('contact.heroDesc')}</p>
       </PageHero>
       <section className="section contact-section">
         <div className="container contact-grid">
           <div className="contact-card contact-form-card">
             <div className="section-heading">
-              <p className="eyebrow">Gửi thông tin</p>
-              <h2>Chúng tôi sẽ phản hồi nhanh nhất có thể</h2>
+              <p className="eyebrow">{t('contact.formEyebrow')}</p>
+              <h2>{t('contact.formTitle')}</h2>
             </div>
             <form className="contact-form" onSubmit={submitContact}>
               <label>
-                Họ và tên
-                <input name="name" type="text" placeholder="Nhập họ tên của bạn" autoComplete="name" maxLength={100} required />
+                {t('contact.name')}
+                <input name="name" type="text" placeholder={t('contact.namePlaceholder')} autoComplete="name" maxLength={100} required />
               </label>
               <label>
-                Số điện thoại
-                <input name="phone" type="tel" placeholder="Nhập số điện thoại" autoComplete="tel" maxLength={30} required />
+                {t('contact.phone')}
+                <input name="phone" type="tel" placeholder={t('contact.phonePlaceholder')} autoComplete="tel" maxLength={30} required />
               </label>
               <label>
-                Email
-                <input name="email" type="email" placeholder="Nhập email" autoComplete="email" maxLength={254} required />
+                {t('contact.email')}
+                <input name="email" type="email" placeholder={t('contact.emailPlaceholder')} autoComplete="email" maxLength={254} required />
               </label>
               <label>
-                Tin nhắn
-                <textarea name="message" rows="5" placeholder="Nói cho chúng tôi biết nhu cầu của bạn" maxLength={3000} required />
+                {t('contact.message')}
+                <textarea name="message" rows="5" placeholder={t('contact.messagePlaceholder')} maxLength={3000} required />
               </label>
               <div className="contact-honeypot" aria-hidden="true">
                 <label>
-                  Để trống trường này
+                  {t('contact.honeypot')}
                   <input name="website" type="text" tabIndex={-1} autoComplete="off" />
                 </label>
               </div>
               <button type="submit" className="btn btn-primary" disabled={submitting}>
-                {submitting ? 'Đang gửi...' : 'Gửi thông tin'}
+                {submitting ? t('contact.submitting') : t('contact.submit')}
               </button>
               {feedback.message && (
                 <p className={`form-feedback ${feedback.type}`} role="status" aria-live="polite">
@@ -604,20 +626,20 @@ function ContactPage() {
           </div>
           <div className="contact-card contact-info-card">
             <div className="section-heading">
-              <p className="eyebrow">Thông tin</p>
-              <h2>Liên hệ trực tiếp</h2>
+              <p className="eyebrow">{t('contact.infoEyebrow')}</p>
+              <h2>{t('contact.infoTitle')}</h2>
             </div>
             <div className="contact-meta">
               <div>
-                <strong>Địa chỉ</strong>
-                <p>TP. Hồ Chí Minh, Việt Nam</p>
+                <strong>{t('contact.address')}</strong>
+                <p>{t('contact.addressVal')}</p>
               </div>
               <div>
-                <strong>Hotline</strong>
+                <strong>{t('contact.hotline')}</strong>
                 <p>093 599 71 74</p>
               </div>
               <div>
-                <strong>Email</strong>
+                <strong>{t('contact.email')}</strong>
                 <p>admin@noreagency.com</p>
               </div>
             </div>
