@@ -25,8 +25,11 @@ function Header({ activePage }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const { t, i18n } = useTranslation();
 
+  const isEn = i18n.resolvedLanguage === 'en' || (i18n.language && i18n.language.startsWith('en'));
+  const currentLang = isEn ? 'en' : 'vi';
+
   const toggleLanguage = () => {
-    i18n.changeLanguage(i18n.language === 'vi' ? 'en' : 'vi');
+    i18n.changeLanguage(currentLang === 'vi' ? 'en' : 'vi');
   };
 
   useEffect(() => {
@@ -87,12 +90,12 @@ function Header({ activePage }) {
             onClick={toggleLanguage} 
             title="Đổi ngôn ngữ (Change Language)"
           >
-            <span className={i18n.language === 'vi' ? 'active' : ''}>VI</span>
-            <span className={i18n.language === 'en' ? 'active' : ''}>EN</span>
+            <span className={currentLang === 'vi' ? 'active' : ''}>VI</span>
+            <span className={currentLang === 'en' ? 'active' : ''}>EN</span>
             <motion.div
               className="lang-switch-pill"
               initial={false}
-              animate={{ x: i18n.language === 'en' ? '100%' : '0%' }}
+              animate={{ x: currentLang === 'en' ? '100%' : '0%' }}
               transition={{ type: 'spring', stiffness: 500, damping: 30 }}
             />
           </button>
@@ -802,3 +805,4 @@ export default function App() {
     </>
   );
 }
+
