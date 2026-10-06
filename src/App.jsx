@@ -464,6 +464,7 @@ const VIDEO_BASE_URL = "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev"; //
 
 function VideoCard({ src, vertical = false, eager = false }) {
   const fullSrc = src.startsWith('http') ? src : `${VIDEO_BASE_URL}${src}`;
+  const posterSrc = src.startsWith('http') ? undefined : `${fullSrc}.jpg`;
   
   const plyrOptions = {
     controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen', 'settings'],
@@ -477,7 +478,8 @@ function VideoCard({ src, vertical = false, eager = false }) {
       <Plyr
         source={{
           type: 'video',
-          sources: [{ src: fullSrc, type: 'video/mp4' }]
+          sources: [{ src: fullSrc, type: 'video/mp4' }],
+          poster: posterSrc
         }}
         options={plyrOptions}
       />
@@ -537,13 +539,13 @@ function VideoPage() {
 
             <h3 className="video-project-title">Sgarzi Luigi</h3>
             <div className="video-featured">
-              <VideoCard src={encodeURI("/TVC Doanh nghiệp/Sgarzi Luigi/TVC SGARZI LUIGI VIETSUB.mp4")} />
+              <VideoCard src={encodeURI("/TVC Doanh nghiệp/Sgarzi Luigi/TVC SGARZI LUIGI VIETSUB.mov")} />
             </div>
 
             <h3 className="video-project-title">Sunshine Beach Resort</h3>
             <div className="video-grid">
-              <VideoCard src={encodeURI("/TVC Doanh nghiệp/Sunshine Beach Resort/SUNSHINE BEACH RESORT.mov")} />
-              <VideoCard src={encodeURI("/TVC Doanh nghiệp/Sunshine Beach Resort/sunshine.mov")} />
+              <VideoCard src={encodeURI("/TVC Doanh nghiệp/Sunshine Beach Resort/SUNSHINE BEACH RESORT.mp4")} />
+              <VideoCard src={encodeURI("/TVC Doanh nghiệp/Sunshine Beach Resort/sunshine.mp4")} />
             </div>
           </div>
 
@@ -607,7 +609,7 @@ function VideoPage() {
 
             <h3 className="video-project-title">Boss House</h3>
             <div className="video-featured">
-              <VideoCard src={encodeURI("/Recap Events/Boss House/Boss House Khai Trương events.mov")} />
+              <VideoCard src={encodeURI("/Recap Events/Boss House/Boss House Khai Trương events.mp4")} />
             </div>
 
             <h3 className="video-project-title">Cao Đẳng FPT HCM</h3>
