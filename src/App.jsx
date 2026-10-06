@@ -564,6 +564,13 @@ function VideoPage() {
               <VideoCard src={encodeURI("/Short-video Content/JW Marriott Cam Ranh/OCEAN BAR - JW MARRIOT CAM RANH.mp4")} vertical />
             </div>
 
+            <h3 className="video-project-title">OTOD</h3>
+            <div className="video-grid video-grid-vertical">
+              <VideoCard src={encodeURI("/Short-video Content/OTOD/video_OTOD_1.mp4")} vertical />
+              <VideoCard src={encodeURI("/Short-video Content/OTOD/video_OTOD_2.mp4")} vertical />
+              <VideoCard src={encodeURI("/Short-video Content/OTOD/video_OTOD_3.mp4")} vertical />
+            </div>
+
             <h3 className="video-project-title">Rrare Object</h3>
             <div className="video-grid video-grid-vertical">
               <VideoCard src={encodeURI("/Short-video Content/Rrare Object/RRARE OBJECT tvc.mp4")} vertical />
