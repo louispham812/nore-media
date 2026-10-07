@@ -1302,3 +1302,118 @@ h3 {
     .video-category-title { font-size: 1.6rem; }
     .footer-wrap { align-items: center; }
 }
+
+/* --- APP-LIKE MOBILE UI REDESIGN --- */
+@media (max-width: 720px) {
+    /* 1. SWIPEABLE CAROUSELS (Netflix/TikTok style) */
+    .card-grid, .video-grid, .gallery-grid {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        scroll-snap-type: x mandatory !important;
+        scroll-padding: 0 1rem;
+        padding-bottom: 1.5rem !important;
+        gap: 1rem !important;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        width: 100vw !important;
+        margin-left: calc(-50vw + 50%) !important;
+        padding-left: max(1rem, calc(50vw - 50%)) !important;
+        padding-right: max(1rem, calc(50vw - 50%)) !important;
+    }
+    .card-grid::-webkit-scrollbar, .video-grid::-webkit-scrollbar, .gallery-grid::-webkit-scrollbar {
+        display: block !important;
+        height: 4px !important;
+    }
+    .card-grid::-webkit-scrollbar-track, .video-grid::-webkit-scrollbar-track, .gallery-grid::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border-radius: 4px;
+        margin: 0 1rem;
+    }
+    .card-grid::-webkit-scrollbar-thumb, .video-grid::-webkit-scrollbar-thumb, .gallery-grid::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.3) !important;
+        border-radius: 4px;
+    }
+    .card-grid > *, .video-grid > *, .gallery-grid > * {
+        flex: 0 0 85% !important;
+        max-width: 85% !important;
+        scroll-snap-align: center !important;
+        margin: 0 !important;
+    }
+    .video-grid-vertical > * {
+        flex: 0 0 65% !important;
+        max-width: 65% !important;
+    }
+
+    /* 2. CENTERED HERO SECTION */
+    .hero {
+        padding-top: 3rem !important;
+    }
+    .hero-copy {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .hero-copy h1, .hero-copy p, .hero-copy .eyebrow {
+        text-align: center !important;
+    }
+    .hero-copy h1 {
+        font-size: 2.5rem !important;
+        line-height: 1.2 !important;
+    }
+    .hero-copy p {
+        font-size: 0.95rem !important;
+    }
+    .actions {
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+    .actions .btn {
+        width: 100% !important;
+        padding: 1.2rem !important;
+        font-size: 1.1rem !important;
+    }
+
+    /* 3. Reverted to floating menu */
+    
+    /* 4. TWEAK SPACING AND SIZES */
+    .video-category-title { font-size: 1.8rem !important; margin-bottom: 0.5rem !important; }
+    .video-category-desc { font-size: 0.95rem !important; margin-bottom: 1.5rem !important; }
+    .video-project-title { font-size: 1.4rem !important; margin-bottom: 1rem !important; text-align: left !important; padding-left: 1rem; }
+    .video-featured { width: 100vw !important; margin-left: calc(-50vw + 50%) !important; margin-bottom: 3rem !important; }
+    .video-category { margin-bottom: 3rem !important; }
+    .section { padding: 3rem 0 !important; }
+}
+
+/* Hide icons on desktop */
+@media (min-width: 721px) {
+    .nav-icon { display: none !important; }
+}
+
+
+/* Fix logo text alignment */
+.brand span {
+    display: inline-block;
+    transform: translateY(2px);
+}
+
+@media (max-width: 720px) {
+    .brand {
+        margin-left: -0.5rem;
+        gap: 0.5rem;
+    }
+    .brand img {
+        height: 40px;
+        width: 40px;
+    }
+}
+
+@media (max-width: 720px) {
+    .menu-toggle {
+        margin-right: -0.5rem;
+    }
+}
