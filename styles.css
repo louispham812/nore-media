@@ -260,6 +260,7 @@ h3 {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
     padding: 0.95rem 1.3rem;
     border-radius: 999px;
     text-decoration: none;
@@ -1423,6 +1424,7 @@ h3 {
         margin-right: -0.5rem;
     }
 }
+
 
 
 
