@@ -275,11 +275,14 @@ h3 {
 .btn-primary {
     background: linear-gradient(90deg, var(--accent), var(--accent-2));
     color: #111;
-    box-shadow: 0 16px 35px rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+    animation: pulseGlow 3s infinite;
 }
 
 .btn-primary:hover {
-    box-shadow: 0 18px 40px rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.5) !important;
+    transform: translateY(-2px) scale(1.02);
+    animation: none !important;
 }
 
 .btn-secondary {
@@ -1020,13 +1023,13 @@ h3 {
 
 @keyframes pulseGlow {
     0% {
-        box-shadow: 0 16px 35px rgba(255, 255, 255, 0.15);
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
     }
     50% {
-        box-shadow: 0 16px 45px rgba(255, 255, 255, 0.35);
+        box-shadow: 0 0 35px rgba(255, 255, 255, 0.35);
     }
     100% {
-        box-shadow: 0 16px 35px rgba(255, 255, 255, 0.15);
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
     }
 }
 
@@ -1068,6 +1071,9 @@ h3 {
 }
 
 .btn-primary {
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    color: #111;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
     animation: pulseGlow 3s infinite;
 }
 
@@ -1417,3 +1423,6 @@ h3 {
         margin-right: -0.5rem;
     }
 }
+
+
+
