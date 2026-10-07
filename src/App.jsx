@@ -17,8 +17,10 @@ const pages = [
 ];
 
 function currentPage(pathname) {
-  const file = pathname.split('/').pop();
-  return pages.find((page) => page.path.endsWith(file || '/'))?.key ?? (pathname === '/' ? 'home' : 'not-found');
+  if (pathname === '/') return 'home';
+  if (pathname === '/index') return 'home';
+  const match = pages.find((page) => page.path === pathname);
+  return match ? match.key : 'not-found';
 }
 
 function Header({ activePage }) {
@@ -124,7 +126,7 @@ function Footer({ showSocial = false }) {
         {showSocial && (
           <div className="social-links">
             <a href="https://zalo.me/0935997174">Zalo</a>
-            <a href="https://www.facebook.com/messages/t/61550981890739">Messenger</a>
+            <a href="https://www.facebook.com/profile.php?id=61550981890739">Facebook</a>
             <a href="https://www.instagram.com/noreagencymedia/">Instagram</a>
           </div>
         )}
@@ -539,7 +541,7 @@ function VideoPage() {
 
             <h3 className="video-project-title">Sgarzi Luigi</h3>
             <div className="video-featured">
-              <VideoCard src={encodeURI("/TVC Doanh nghiệp/Sgarzi Luigi/TVC SGARZI LUIGI VIETSUB.mov")} />
+              <VideoCard src={encodeURI("/TVC Doanh nghiệp/Sgarzi Luigi/TVC SGARZI LUIGI VIETSUB.mp4")} />
             </div>
 
             <h3 className="video-project-title">Sunshine Beach Resort</h3>
@@ -709,8 +711,8 @@ function ContactPage() {
       setFeedback({
         type: 'success',
         message: result.confirmationWarning
-          ? `${result.message} ${t('contact.successWarn')}`
-          : result.message,
+          ? `${t(result.messageKey || 'contact.success')} ${t('contact.successWarn')}`
+          : t(result.messageKey || 'contact.success'),
       });
     } catch {
       setFeedback({ type: 'error', message: t('contact.errorConnect') });
@@ -855,18 +857,14 @@ export default function App() {
       });
     };
 
-    // Observer new elements as they are mounted by Framer Motion transitions
-    const mutationObserver = new MutationObserver(() => {
-      observeElements();
-    });
-    mutationObserver.observe(document.body, { childList: true, subtree: true });
-    
-    // Initial check
+    // Initial check (DOM is already mounted)
     observeElements();
+    // Safety check for any delayed components
+    const timeout = setTimeout(observeElements, 500);
 
     return () => {
       observer.disconnect();
-      mutationObserver.disconnect();
+      clearTimeout(timeout);
     };
   }, [location.pathname]); // re-run when path changes
 
