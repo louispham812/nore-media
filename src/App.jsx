@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Plyr } from 'plyr-react';
 import 'plyr/dist/plyr.css';
-
+import videoData from './data/videos.json';
 const pages = [
   { path: '/', label: 'Trang Chủ', key: 'home' },
   { path: '/about', label: 'Về Chúng Tôi', key: 'about' },
@@ -82,6 +82,7 @@ function Header({ activePage }) {
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
+                
                 {t(`nav.${page.key}`)}
               </Link>
             );
@@ -125,9 +126,9 @@ function Footer({ showSocial = false }) {
         <p>© 2026 NORE MEDIA. Bản quyền thuộc về NORE MEDIA.</p>
         {showSocial && (
           <div className="social-links">
-            <a href="https://zalo.me/0935997174">Zalo</a>
-            <a href="https://www.facebook.com/profile.php?id=61550981890739">Facebook</a>
-            <a href="https://www.instagram.com/noreagencymedia/">Instagram</a>
+            <a href="https://zalo.me/0935997174" target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>Zalo</a>
+            <a href="https://www.facebook.com/profile.php?id=61550981890739" target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>Facebook</a>
+            <a href="https://www.instagram.com/noreagencymedia/" target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>Instagram</a>
           </div>
         )}
       </div>
@@ -187,7 +188,7 @@ function HomePage() {
           <div className="container">
             <div className="section-heading" style={{ maxWidth: '100%' }}>
               <p className="eyebrow">Về chúng tôi</p>
-              <h2 style={{ whiteSpace: 'nowrap' }}>Tạo dấu ấn bằng hình ảnh và câu chuyện</h2>
+              <h2 style={{ whiteSpace: 'nowrap', fontSize: 'clamp(0.9rem, 4.8vw, 2.35rem)' }}>Tạo dấu ấn bằng hình ảnh và câu chuyện</h2>
             </div>
             <div className="about-preview">
               <p>
@@ -519,133 +520,34 @@ function VideoPage() {
       <section className="section">
         <div className="container">
           
-          {/* TVC Doanh Nghiệp */}
-          <div className="video-category">
-            <h2 className="video-category-title">TVC Doanh Nghiệp</h2>
-            <p className="video-category-desc">Các dự án quảng cáo, giới thiệu doanh nghiệp tiêu biểu</p>
-            
-            <h3 className="video-project-title">A By Tung</h3>
-            <div className="video-featured">
-              <VideoCard src={encodeURI("/TVC Doanh nghiệp/A By Tung/A BY TUNG - 5th Anniversary tvc.mp4")} />
-            </div>
+          {videoData.map((category) => (
+            <div className="video-category" key={category.id}>
+              <h2 className="video-category-title">{category.title}</h2>
+              <p className="video-category-desc">{category.desc}</p>
 
-            <h3 className="video-project-title">FDL Resort</h3>
-            <div className="video-featured">
-              <VideoCard src={encodeURI("/TVC Doanh nghiệp/FDL Resort/FDL RESORT.mp4")} />
-            </div>
+              {category.projects.map((project, pIdx) => {
+                // If it's short vertical videos, we use video-grid-vertical
+                // If it has > 1 video but not vertical, we use video-grid
+                // If it has 1 video and not vertical, we use video-featured
+                const isVertical = category.isVertical;
+                const isGrid = project.videos.length > 1;
+                let containerClass = "video-featured";
+                if (isVertical) containerClass = "video-grid video-grid-vertical";
+                else if (isGrid) containerClass = "video-grid";
 
-            <h3 className="video-project-title">La Siesta Premium Saigon</h3>
-            <div className="video-featured">
-              <VideoCard src={encodeURI("/TVC Doanh nghiệp/La Siesta Premium Saigon/LA SIESTA PREMIUM SAIGON HOTEL tvc.mp4")} />
+                return (
+                  <div key={pIdx}>
+                    <h3 className="video-project-title">{project.title}</h3>
+                    <div className={containerClass}>
+                      {project.videos.map((src, vIdx) => (
+                        <VideoCard key={vIdx} src={encodeURI(src)} vertical={isVertical} />
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-
-            <h3 className="video-project-title">Sgarzi Luigi</h3>
-            <div className="video-featured">
-              <VideoCard src={encodeURI("/TVC Doanh nghiệp/Sgarzi Luigi/TVC SGARZI LUIGI VIETSUB.mp4")} />
-            </div>
-
-            <h3 className="video-project-title">Sunshine Beach Resort</h3>
-            <div className="video-grid">
-              <VideoCard src={encodeURI("/TVC Doanh nghiệp/Sunshine Beach Resort/SUNSHINE BEACH RESORT.mp4")} />
-              <VideoCard src={encodeURI("/TVC Doanh nghiệp/Sunshine Beach Resort/sunshine.mp4")} />
-            </div>
-          </div>
-
-          {/* Short-video content */}
-          <div className="video-category">
-            <h2 className="video-category-title">Short-video Content</h2>
-            <p className="video-category-desc">Nội dung ngắn tối ưu cho TikTok, Reels, Shorts</p>
-
-            <h3 className="video-project-title">AQUA SKY BAR</h3>
-            <div className="video-grid video-grid-vertical">
-              <VideoCard src={encodeURI("/Short-video Content/AQUA SKY BAR/AQUA - 1 FIX OUTRO.mp4")} vertical />
-              <VideoCard src={encodeURI("/Short-video Content/AQUA SKY BAR/AQUA - 2.mp4")} vertical />
-              <VideoCard src={encodeURI("/Short-video Content/AQUA SKY BAR/AQUA - 4 FIX OUTRO.mp4")} vertical />
-            </div>
-
-            <h3 className="video-project-title">CLOUD</h3>
-            <div className="video-grid video-grid-vertical">
-              <VideoCard src={encodeURI("/Short-video Content/CLOUD/CLOUD.mp4")} vertical />
-            </div>
-            
-            <h3 className="video-project-title">JW Marriott Cam Ranh</h3>
-            <div className="video-grid video-grid-vertical">
-              <VideoCard src={encodeURI("/Short-video Content/JW Marriott Cam Ranh/6 HAND DINNER - JW MARRIOT CAM RANH.mp4")} vertical />
-              <VideoCard src={encodeURI("/Short-video Content/JW Marriott Cam Ranh/JW MARRIOT CAM RANH tvc.mp4")} vertical />
-              <VideoCard src={encodeURI("/Short-video Content/JW Marriott Cam Ranh/OCEAN BAR - JW MARRIOT CAM RANH.mp4")} vertical />
-            </div>
-
-            <h3 className="video-project-title">Rrare Object</h3>
-            <div className="video-grid video-grid-vertical">
-              <VideoCard src={encodeURI("/Short-video Content/Rrare Object/RRARE OBJECT tvc.mp4")} vertical />
-              <VideoCard src={encodeURI("/Short-video Content/Rrare Object/RRARE OBJECT.mp4")} vertical />
-              <VideoCard src={encodeURI("/Short-video Content/Rrare Object/RRARE OBJECT(1).mp4")} vertical />
-            </div>
-
-            <h3 className="video-project-title">HOMEDASH</h3>
-            <div className="video-grid video-grid-vertical">
-              <VideoCard src={encodeURI("/Short-video Content/HOMEDASH/Short-vid build kênh.mp4")} vertical />
-              <VideoCard src={encodeURI("/Short-video Content/HOMEDASH/REBRAND 1 (1) xây kênh.mp4")} vertical />
-            </div>
-
-            <h3 className="video-project-title">OTOD</h3>
-            <div className="video-grid video-grid-vertical">
-              <VideoCard src={encodeURI("/Short-video Content/OTOD/video_OTOD_1.mp4")} vertical />
-              <VideoCard src={encodeURI("/Short-video Content/OTOD/video_OTOD_2.mp4")} vertical />
-              <VideoCard src={encodeURI("/Short-video Content/OTOD/video_OTOD_3.mp4")} vertical />
-            </div>
-          </div>
-
-          {/* Recap Events */}
-          <div className="video-category">
-            <h2 className="video-category-title">Recap Events</h2>
-            <p className="video-category-desc">Ghi lại những khoảnh khắc đáng nhớ của các sự kiện</p>
-            
-            <h3 className="video-project-title">Turkish Airlines</h3>
-            <div className="video-featured">
-              <VideoCard src={encodeURI("/Recap Events/Turkish Airlines/TURKISH AIRLINES Vietnam.mp4")} />
-            </div>
-
-            <h3 className="video-project-title">Almora Botanica</h3>
-            <div className="video-featured">
-              <VideoCard src={encodeURI("/Recap Events/Almora Botanica/Highlight Almora Botanica fix.mp4")} />
-            </div>
-            
-            <h3 className="video-project-title">Aurora Melodia (Hồ Tràm)</h3>
-            <div className="video-featured">
-              <VideoCard src={encodeURI("/Recap Events/Aurora Melodia (Hồ Tràm)/Aurora Meliodia Event (Hồ Tràm).mp4")} />
-            </div>
-
-            <h3 className="video-project-title">Beer Ruby</h3>
-            <div className="video-featured">
-              <VideoCard src={encodeURI("/Recap Events/Beer Ruby/Event Beer Ruby.mp4")} />
-            </div>
-
-            <h3 className="video-project-title">Boss House</h3>
-            <div className="video-featured">
-              <VideoCard src={encodeURI("/Recap Events/Boss House/Boss House Khai Trương events.mp4")} />
-            </div>
-
-            <h3 className="video-project-title">Cao Đẳng FPT HCM</h3>
-            <div className="video-featured">
-              <VideoCard src={encodeURI("/Recap Events/Cao Đẳng FPT HCM/Lễ Định Hướng Cao đẳng FPT HCM event.mp4")} />
-            </div>
-
-            <h3 className="video-project-title">Geely Đông SG</h3>
-            <div className="video-featured">
-              <VideoCard src={encodeURI("/Recap Events/Geely Đông SG/Xe năng lượng mới (SR Đông SG) event.mp4")} />
-            </div>
-
-            <h3 className="video-project-title">ISG</h3>
-            <div className="video-featured">
-              <VideoCard src={encodeURI("/Recap Events/ISG/RECAP SỰ KIỆN ISG RA MẮT.mp4")} />
-            </div>
-
-            <h3 className="video-project-title">JCI South Saigon</h3>
-            <div className="video-featured">
-              <VideoCard src={encodeURI("/Recap Events/JCI South Saigon/JCI SOUTH SAIGON 17th Annniversary events.part.mp4")} />
-            </div>
-          </div>
+          ))}
 
         </div>
       </section>
@@ -673,7 +575,7 @@ function ContactPage() {
   const { t } = useTranslation();
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState({ type: '', message: '' });
-  const submission = useRef({ key: window.crypto.randomUUID(), details: null });
+  const submission = useRef({ key: (window.crypto && window.crypto.randomUUID) ? window.crypto.randomUUID() : Math.random().toString(36).substring(2), details: null });
 
   async function submitContact(event) {
     event.preventDefault();
@@ -682,7 +584,7 @@ function ContactPage() {
     const form = event.currentTarget;
     const details = Object.fromEntries(new FormData(form).entries());
     if (submission.current.details && JSON.stringify(submission.current.details) !== JSON.stringify(details)) {
-      submission.current = { key: window.crypto.randomUUID(), details: null };
+      submission.current = { key: (window.crypto && window.crypto.randomUUID) ? window.crypto.randomUUID() : Math.random().toString(36).substring(2), details: null };
     }
     submission.current.details = details;
 
@@ -707,7 +609,7 @@ function ContactPage() {
         return;
       }
       form.reset();
-      submission.current = { key: window.crypto.randomUUID(), details: null };
+      submission.current = { key: (window.crypto && window.crypto.randomUUID) ? window.crypto.randomUUID() : Math.random().toString(36).substring(2), details: null };
       setFeedback({
         type: 'success',
         message: result.confirmationWarning
@@ -786,9 +688,9 @@ function ContactPage() {
               </div>
             </div>
             <div className="social-links contact-social">
-              <a href="https://zalo.me/0935997174">Zalo</a>
-              <a href="https://www.facebook.com/profile.php?id=61550981890739">Facebook</a>
-              <a href="https://www.instagram.com/noreagencymedia/">Instagram</a>
+              <a href="https://zalo.me/0935997174" target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>Zalo</a>
+              <a href="https://www.facebook.com/profile.php?id=61550981890739" target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>Facebook</a>
+              <a href="https://www.instagram.com/noreagencymedia/" target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>Instagram</a>
             </div>
           </div>
         </div>
@@ -918,4 +820,8 @@ export default function App() {
     </>
   );
 }
+
+
+
+
 

@@ -260,6 +260,7 @@ h3 {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
     padding: 0.95rem 1.3rem;
     border-radius: 999px;
     text-decoration: none;
@@ -275,11 +276,14 @@ h3 {
 .btn-primary {
     background: linear-gradient(90deg, var(--accent), var(--accent-2));
     color: #111;
-    box-shadow: 0 16px 35px rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+    animation: pulseGlow 3s infinite;
 }
 
 .btn-primary:hover {
-    box-shadow: 0 18px 40px rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.5) !important;
+    transform: translateY(-2px) scale(1.02);
+    animation: none !important;
 }
 
 .btn-secondary {
@@ -360,7 +364,7 @@ h3 {
 
 .contact-grid {
     display: grid;
-    grid-template-columns: 1.2fr 0.9fr;
+    grid-template-columns: 1.1fr 1fr;
     gap: 1.5rem;
 }
 
@@ -429,14 +433,15 @@ h3 {
     margin-top: 1.75rem;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.7rem;
+    gap: 0.5rem;
 }
 
 .contact-social a {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.8rem 1.2rem;
+    padding: 0.7rem 1rem;
+    font-size: 0.9rem;
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.05);
     color: var(--text);
@@ -1020,13 +1025,13 @@ h3 {
 
 @keyframes pulseGlow {
     0% {
-        box-shadow: 0 16px 35px rgba(255, 255, 255, 0.15);
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
     }
     50% {
-        box-shadow: 0 16px 45px rgba(255, 255, 255, 0.35);
+        box-shadow: 0 0 35px rgba(255, 255, 255, 0.35);
     }
     100% {
-        box-shadow: 0 16px 35px rgba(255, 255, 255, 0.15);
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
     }
 }
 
@@ -1068,6 +1073,9 @@ h3 {
 }
 
 .btn-primary {
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    color: #111;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
     animation: pulseGlow 3s infinite;
 }
 
@@ -1082,7 +1090,7 @@ h3 {
 }
 
 /* Staggered transition delays for grid items */
-.gallery-grid button, .card-grid .card, .video-grid .video-card, .contact-grid > div {
+.gallery-grid button, .card-grid .card, .video-grid .video-card {
     opacity: 0;
     transform: translateY(20px);
     transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1274,3 +1282,152 @@ h3 {
     color: var(--muted);
     grid-column: 1 / -1;
 }
+
+/* Additional Mobile Optimizations */
+@media (max-width: 720px) {
+    .video-category { margin-bottom: 3rem; }
+    .video-category-title { font-size: 1.8rem; margin-bottom: 0.25rem; }
+    .video-category-desc { margin-bottom: 1.5rem; font-size: 1rem; }
+    .video-project-title { font-size: 1.3rem !important; margin-bottom: 1rem !important; }
+    .video-grid, .video-grid-vertical { margin-bottom: 3rem; gap: 1rem; }
+    
+    .hero { padding-top: 2.5rem; }
+    .hero-copy h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+    .hero-copy p { font-size: 0.95rem; }
+    
+    .section-heading h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .section-heading .eyebrow { font-size: 0.8rem; margin-bottom: 0.25rem; }
+    
+    .card { padding: 1.5rem; }
+    .service-heading h2 { font-size: 1.4rem; }
+    
+    .footer-wrap { padding: 1.5rem 0; flex-direction: column; text-align: center; gap: 1rem; }
+}
+
+@media (max-width: 720px) {
+    .video-featured { margin-bottom: 3rem; }
+    .video-category-desc { margin-bottom: 1.5rem; font-size: 0.95rem; }
+    .video-category-title { font-size: 1.6rem; }
+    .footer-wrap { align-items: center; }
+}
+
+/* --- APP-LIKE MOBILE UI REDESIGN --- */
+@media (max-width: 720px) {
+    /* 1. SWIPEABLE CAROUSELS (Netflix/TikTok style) */
+    .card-grid, .video-grid, .gallery-grid {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        scroll-snap-type: x mandatory !important;
+        scroll-padding: 0 1rem;
+        padding-bottom: 1.5rem !important;
+        gap: 1rem !important;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        width: 100vw !important;
+        margin-left: calc(-50vw + 50%) !important;
+        padding-left: max(1rem, calc(50vw - 50%)) !important;
+        padding-right: max(1rem, calc(50vw - 50%)) !important;
+    }
+    .card-grid::-webkit-scrollbar, .video-grid::-webkit-scrollbar, .gallery-grid::-webkit-scrollbar {
+        display: block !important;
+        height: 4px !important;
+    }
+    .card-grid::-webkit-scrollbar-track, .video-grid::-webkit-scrollbar-track, .gallery-grid::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border-radius: 4px;
+        margin: 0 1rem;
+    }
+    .card-grid::-webkit-scrollbar-thumb, .video-grid::-webkit-scrollbar-thumb, .gallery-grid::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.3) !important;
+        border-radius: 4px;
+    }
+    .card-grid > *, .video-grid > *, .gallery-grid > * {
+        flex: 0 0 85% !important;
+        max-width: 85% !important;
+        scroll-snap-align: center !important;
+        margin: 0 !important;
+    }
+    .video-grid-vertical > * {
+        flex: 0 0 65% !important;
+        max-width: 65% !important;
+    }
+
+    /* 2. CENTERED HERO SECTION */
+    .hero {
+        padding-top: 3rem !important;
+    }
+    .hero-copy {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .hero-copy h1, .hero-copy p, .hero-copy .eyebrow {
+        text-align: center !important;
+    }
+    .hero-copy h1 {
+        font-size: 2.5rem !important;
+        line-height: 1.2 !important;
+    }
+    .hero-copy p {
+        font-size: 0.95rem !important;
+    }
+    .actions {
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+    .actions .btn {
+        width: 100% !important;
+        padding: 1.2rem !important;
+        font-size: 1.1rem !important;
+    }
+
+    /* 3. Reverted to floating menu */
+    
+    /* 4. TWEAK SPACING AND SIZES */
+    .video-category-title { font-size: 1.8rem !important; margin-bottom: 0.5rem !important; }
+    .video-category-desc { font-size: 0.95rem !important; margin-bottom: 1.5rem !important; }
+    .video-project-title { font-size: 1.4rem !important; margin-bottom: 1rem !important; text-align: left !important; padding-left: 1rem; }
+    .video-featured { width: 100vw !important; margin-left: calc(-50vw + 50%) !important; margin-bottom: 3rem !important; }
+    .video-category { margin-bottom: 3rem !important; }
+    .section { padding: 3rem 0 !important; }
+}
+
+/* Hide icons on desktop */
+@media (min-width: 721px) {
+    .nav-icon { display: none !important; }
+}
+
+
+/* Fix logo text alignment */
+.brand span {
+    display: inline-block;
+    transform: translateY(2px);
+}
+
+@media (max-width: 720px) {
+    .brand {
+        margin-left: -0.5rem;
+        gap: 0.5rem;
+    }
+    .brand img {
+        height: 40px;
+        width: 40px;
+    }
+}
+
+@media (max-width: 720px) {
+    .menu-toggle {
+        margin-right: -0.5rem;
+    }
+}
+
+
+
+
+
+

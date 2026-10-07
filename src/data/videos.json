@@ -1,0 +1,148 @@
+[
+  {
+    "id": "tvc",
+    "title": "TVC Doanh Nghiệp",
+    "desc": "Các dự án quảng cáo, giới thiệu doanh nghiệp tiêu biểu",
+    "projects": [
+      {
+        "title": "A By Tung",
+        "videos": [
+          "/TVC Doanh nghiệp/A By Tung/A BY TUNG - 5th Anniversary tvc.mp4"
+        ]
+      },
+      {
+        "title": "FDL Resort",
+        "videos": [
+          "/TVC Doanh nghiệp/FDL Resort/FDL RESORT.mp4"
+        ]
+      },
+      {
+        "title": "La Siesta Premium Saigon",
+        "videos": [
+          "/TVC Doanh nghiệp/La Siesta Premium Saigon/LA SIESTA PREMIUM SAIGON HOTEL tvc.mp4"
+        ]
+      },
+      {
+        "title": "Sgarzi Luigi",
+        "videos": [
+          "/TVC Doanh nghiệp/Sgarzi Luigi/TVC SGARZI LUIGI VIETSUB.mp4"
+        ]
+      },
+      {
+        "title": "Sunshine Beach Resort",
+        "videos": [
+          "/TVC Doanh nghiệp/Sunshine Beach Resort/SUNSHINE BEACH RESORT.mp4",
+          "/TVC Doanh nghiệp/Sunshine Beach Resort/sunshine.mp4"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "short",
+    "title": "Short-video Content",
+    "desc": "Nội dung ngắn tối ưu cho TikTok, Reels, Shorts",
+    "isVertical": true,
+    "projects": [
+      {
+        "title": "AQUA SKY BAR",
+        "videos": [
+          "/Short-video Content/AQUA SKY BAR/AQUA - 1 FIX OUTRO.mp4",
+          "/Short-video Content/AQUA SKY BAR/AQUA - 2.mp4",
+          "/Short-video Content/AQUA SKY BAR/AQUA - 4 FIX OUTRO.mp4"
+        ]
+      },
+      {
+        "title": "CLOUD",
+        "videos": [
+          "/Short-video Content/CLOUD/CLOUD.mp4"
+        ]
+      },
+      {
+        "title": "JW Marriott Cam Ranh",
+        "videos": [
+          "/Short-video Content/JW Marriott Cam Ranh/6 HAND DINNER - JW MARRIOT CAM RANH.mp4",
+          "/Short-video Content/JW Marriott Cam Ranh/JW MARRIOT CAM RANH tvc.mp4",
+          "/Short-video Content/JW Marriott Cam Ranh/OCEAN BAR - JW MARRIOT CAM RANH.mp4"
+        ]
+      },
+      {
+        "title": "Rrare Object",
+        "videos": [
+          "/Short-video Content/Rrare Object/RRARE OBJECT tvc.mp4",
+          "/Short-video Content/Rrare Object/RRARE OBJECT.mp4",
+          "/Short-video Content/Rrare Object/RRARE OBJECT(1).mp4"
+        ]
+      },
+      {
+        "title": "HOMEDASH",
+        "videos": [
+          "/Short-video Content/HOMEDASH/Short-vid build kênh.mp4",
+          "/Short-video Content/HOMEDASH/REBRAND 1 (1) xây kênh.mp4"
+        ]
+      },
+      {
+        "title": "OTOD",
+        "videos": [
+          "/Short-video Content/OTOD/video_OTOD_1.mp4",
+          "/Short-video Content/OTOD/video_OTOD_2.mp4",
+          "/Short-video Content/OTOD/video_OTOD_3.mp4"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "recap",
+    "title": "Recap Events",
+    "desc": "Ghi lại những khoảnh khắc đáng nhớ của các sự kiện",
+    "projects": [
+      {
+        "title": "Turkish Airlines",
+        "videos": [
+          "/Recap Events/Turkish Airlines/TURKISH AIRLINES Vietnam.mp4"
+        ]
+      },
+      {
+        "title": "Almora Botanica",
+        "videos": [
+          "/Recap Events/Almora Botanica/Highlight Almora Botanica fix.mp4"
+        ]
+      },
+      {
+        "title": "Aurora Melodia (Hồ Tràm)",
+        "videos": [
+          "/Recap Events/Aurora Melodia (Hồ Tràm)/Aurora Meliodia Event (Hồ Tràm).mp4"
+        ]
+      },
+      {
+        "title": "Beer Ruby",
+        "videos": [
+          "/Recap Events/Beer Ruby/Event Beer Ruby.mp4"
+        ]
+      },
+      {
+        "title": "Boss House",
+        "videos": [
+          "/Recap Events/Boss House/Boss House Khai Trương events.mp4"
+        ]
+      },
+      {
+        "title": "Cao Đẳng FPT HCM",
+        "videos": [
+          "/Recap Events/Cao Đẳng FPT HCM/Lễ Định Hướng Cao đẳng FPT HCM event.mp4"
+        ]
+      },
+      {
+        "title": "Geely Đông SG",
+        "videos": [
+          "/Recap Events/Geely Đông SG/Xe năng lượng mới (SR Đông SG) event.mp4"
+        ]
+      },
+      {
+        "title": "ISG",
+        "videos": [
+          "/Recap Events/ISG/RECAP SỰ KIỆN ISG RA MẮT.mp4"
+        ]
+      }
+    ]
+  }
+]
