@@ -187,7 +187,7 @@ function HomePage() {
           <div className="container">
             <div className="section-heading" style={{ maxWidth: '100%' }}>
               <p className="eyebrow">Về chúng tôi</p>
-              <h2>Tạo dấu ấn bằng hình ảnh và câu chuyện</h2>
+              <h2 style={{ whiteSpace: 'nowrap', fontSize: 'clamp(0.9rem, 4.8vw, 2.35rem)' }}>Tạo dấu ấn bằng hình ảnh và câu chuyện</h2>
             </div>
             <div className="about-preview">
               <p>
