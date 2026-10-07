@@ -1274,3 +1274,31 @@ h3 {
     color: var(--muted);
     grid-column: 1 / -1;
 }
+
+/* Additional Mobile Optimizations */
+@media (max-width: 720px) {
+    .video-category { margin-bottom: 3rem; }
+    .video-category-title { font-size: 1.8rem; margin-bottom: 0.25rem; }
+    .video-category-desc { margin-bottom: 1.5rem; font-size: 1rem; }
+    .video-project-title { font-size: 1.3rem !important; margin-bottom: 1rem !important; }
+    .video-grid, .video-grid-vertical { margin-bottom: 3rem; gap: 1rem; }
+    
+    .hero { padding-top: 2.5rem; }
+    .hero-copy h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+    .hero-copy p { font-size: 0.95rem; }
+    
+    .section-heading h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .section-heading .eyebrow { font-size: 0.8rem; margin-bottom: 0.25rem; }
+    
+    .card { padding: 1.5rem; }
+    .service-heading h2 { font-size: 1.4rem; }
+    
+    .footer-wrap { padding: 1.5rem 0; flex-direction: column; text-align: center; gap: 1rem; }
+}
+
+@media (max-width: 720px) {
+    .video-featured { margin-bottom: 3rem; }
+    .video-category-desc { margin-bottom: 1.5rem; font-size: 0.95rem; }
+    .video-category-title { font-size: 1.6rem; }
+    .footer-wrap { align-items: center; }
+}
