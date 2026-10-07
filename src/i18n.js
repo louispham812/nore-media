@@ -78,7 +78,8 @@ const resources = {
         errorMissing: 'Missing server configuration',
         errorFail: 'Could not send information. Please try again.',
         errorConnect: 'Could not connect to the server. Please try later.',
-        successWarn: 'However, the confirmation email could not be sent; please check your inbox later.'
+        successWarn: 'However, the confirmation email could not be sent; please check your inbox later.',
+        success: 'Thank you for contacting us! We will get back to you as soon as possible.'
       }
     }
   }
