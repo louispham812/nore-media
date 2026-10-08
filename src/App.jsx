@@ -870,7 +870,7 @@ export default function App() {
       observer.disconnect();
       clearTimeout(timeout);
     };
-  }, [location.pathname]);
+  }, [location.pathname, location.search]);
 
   // Scroll to top on page change
   useEffect(() => {
