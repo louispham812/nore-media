@@ -174,7 +174,7 @@ const resources = {
           home: 'NORE MEDIA',
           about: 'About Us | NORE MEDIA',
           services: 'Services | NORE MEDIA',
-          gallery: 'Gallery | NORE MEDIA',
+          gallery: 'Photography | NORE MEDIA',
           video: 'Video | NORE MEDIA',
           contact: 'Contact | NORE MEDIA',
           notFound: 'Page Not Found | NORE MEDIA'
@@ -184,7 +184,7 @@ const resources = {
         home: 'Home',
         about: 'About Us',
         services: 'Services',
-        gallery: 'Gallery',
+        gallery: 'Photography',
         video: 'Video',
         contact: 'Contact',
         mainAria: 'Main navigation',
@@ -258,7 +258,7 @@ const resources = {
         }
       },
       gallery: {
-        eyebrow: 'Gallery',
+        eyebrow: 'Photography',
         title: 'Image Production',
         iframeTitle: 'NORE MEDIA - Image Production',
         openCanva: 'Open Presentation on Canva'
