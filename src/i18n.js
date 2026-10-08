@@ -124,7 +124,7 @@ const resources = {
             desc: 'Nội dung ngắn tối ưu cho TikTok, Reels, Shorts'
           },
           recap: {
-            title: 'Recap Events',
+            title: 'Recap Event',
             desc: 'Ghi lại những khoảnh khắc đáng nhớ của các sự kiện'
           }
         },
@@ -294,7 +294,7 @@ const resources = {
             desc: 'Short-form visual storytelling optimized for TikTok, Reels, and Shorts'
           },
           recap: {
-            title: 'Event Recaps',
+            title: 'Event Recap',
             desc: 'Capturing the vibrant energy and memorable highlights of premium events'
           }
         },

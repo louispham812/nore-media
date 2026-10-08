@@ -52,9 +52,9 @@
         ]
       },
       {
-        "title": "CLOUD",
+        "title": "CLOUDNINE",
         "videos": [
-          "/Short-video Content/CLOUD/CLOUD.mp4"
+          "/Short-video Content/CLOUDNINE/CLOUDNINE.mp4"
         ]
       },
       {
@@ -92,67 +92,67 @@
   },
   {
     "id": "recap",
-    "title": "Recap Events",
+    "title": "Recap Event",
     "desc": "Ghi lại những khoảnh khắc đáng nhớ của các sự kiện",
     "projects": [
       {
         "title": "Turkish Airlines",
         "videos": [
-          "/Recap Events/Turkish Airlines/TURKISH AIRLINES Vietnam.mp4"
+          "/Recap Event/Turkish Airlines/TURKISH AIRLINES Vietnam.mp4"
         ]
       },
       {
         "title": "Almora Botanica",
         "videos": [
-          "/Recap Events/Almora Botanica/Highlight Almora Botanica fix.mp4"
+          "/Recap Event/Almora Botanica/Highlight Almora Botanica fix.mp4"
         ]
       },
       {
         "title": "Aurora Melodia (Hồ Tràm)",
         "videos": [
-          "/Recap Events/Aurora Melodia (Hồ Tràm)/Aurora Meliodia Event (Hồ Tràm).mp4"
+          "/Recap Event/Aurora Melodia (Hồ Tràm)/Aurora Meliodia Event (Hồ Tràm).mp4"
         ]
       },
       {
         "title": "Beer Ruby",
         "videos": [
-          "/Recap Events/Beer Ruby/Event Beer Ruby.mp4"
+          "/Recap Event/Beer Ruby/Event Beer Ruby.mp4"
         ]
       },
       {
         "title": "Boss House",
         "videos": [
-          "/Recap Events/Boss House/Boss House Khai Trương events.mp4"
+          "/Recap Event/Boss House/Boss House Khai Trương events.mp4"
         ]
       },
       {
         "title": "Cao Đẳng FPT HCM",
         "videos": [
-          "/Recap Events/Cao Đẳng FPT HCM/Lễ Định Hướng Cao đẳng FPT HCM event.mp4"
+          "/Recap Event/Cao Đẳng FPT HCM/Lễ Định Hướng Cao đẳng FPT HCM event.mp4"
         ]
       },
       {
         "title": "Geely Đông SG",
         "videos": [
-          "/Recap Events/Geely Đông SG/Xe năng lượng mới (SR Đông SG) event.mp4"
+          "/Recap Event/Geely Đông SG/Xe năng lượng mới (SR Đông SG) event.mp4"
         ]
       },
       {
         "title": "ISG",
         "videos": [
-          "/Recap Events/ISG/RECAP SỰ KIỆN ISG RA MẮT.mp4"
+          "/Recap Event/ISG/RECAP SỰ KIỆN ISG RA MẮT.mp4"
         ]
       },
       {
         "title": "JEEPILATES",
         "videos": [
-          "/Recap Events/JEEPILATES/Clip Yep JEEPILATES events .mp4"
+          "/Recap Event/JEEPILATES/Clip Yep JEEPILATES events .mp4"
         ]
       },
       {
         "title": "tlacSEA Connect Vietnam",
         "videos": [
-          "/Recap Events/tlacSEA Connect Vietnam/Event tlacSEA Connect Vietnam.mp4"
+          "/Recap Event/tlacSEA Connect Vietnam/Event tlacSEA Connect Vietnam.mp4"
         ]
       }
     ]
