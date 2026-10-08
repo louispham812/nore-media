@@ -105,6 +105,15 @@ const resources = {
       video: {
         eyebrow: 'Video',
         title: 'Video Production',
+        hub: {
+          subtitle: 'Chọn danh mục để khám phá các dự án video được thiết kế riêng của chúng tôi',
+          explore: 'Khám phá dự án',
+          backToCategories: '← Tất cả danh mục',
+          projectsCount_one: '{{count}} dự án',
+          projectsCount_other: '{{count}} dự án',
+          videosCount_one: '{{count}} video',
+          videosCount_other: '{{count}} video'
+        },
         categories: {
           tvc: {
             title: 'TVC Doanh Nghiệp',
@@ -266,6 +275,15 @@ const resources = {
       video: {
         eyebrow: 'Video',
         title: 'Video Production',
+        hub: {
+          subtitle: 'Select a category to explore our featured bespoke video projects',
+          explore: 'Explore Projects',
+          backToCategories: '← All Categories',
+          projectsCount_one: '{{count}} project',
+          projectsCount_other: '{{count}} projects',
+          videosCount_one: '{{count}} video',
+          videosCount_other: '{{count}} videos'
+        },
         categories: {
           tvc: {
             title: 'Corporate TVC',

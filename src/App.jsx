@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { Routes, Route, Link, useLocation, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Plyr } from 'plyr-react';
@@ -472,8 +472,31 @@ function VideoCard({ src, vertical = false, eager = false }) {
   );
 }
 
+const categoryIcons = {
+  tvc: (
+    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="23 7 16 12 23 17 23 7" />
+      <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+    </svg>
+  ),
+  short: (
+    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+      <line x1="12" y1="18" x2="12.01" y2="18" strokeWidth="2.5" />
+    </svg>
+  ),
+  recap: (
+    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </svg>
+  ),
+};
+
 function VideoPage() {
   const { t } = useTranslation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const categoryParam = searchParams.get('category');
+  const activeCategory = videoData.find((c) => c.id === categoryParam) || null;
 
   useEffect(() => {
     const handlePlay = (e) => {
@@ -496,43 +519,136 @@ function VideoPage() {
     };
   }, []);
 
+  const handleSelectCategory = (catId) => {
+    setSearchParams({ category: catId });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleBackToHub = () => {
+    setSearchParams({});
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <main className="page-main">
       <PageHero eyebrow={t('video.eyebrow')} title={t('video.title')} />
       <section className="section">
         <div className="container">
-          
-          {videoData.map((category) => {
-            const catTitle = t(`video.categories.${category.id}.title`, { defaultValue: category.title });
-            const catDesc = t(`video.categories.${category.id}.desc`, { defaultValue: category.desc });
+          <AnimatePresence mode="wait">
+            {!activeCategory ? (
+              <motion.div
+                key="hub"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+              >
+                <div className="video-hub-intro">
+                  <p className="video-hub-desc">{t('video.hub.subtitle')}</p>
+                </div>
+                <div className="video-hub-grid">
+                  {videoData.map((category) => {
+                    const catTitle = t(`video.categories.${category.id}.title`, { defaultValue: category.title });
+                    const catDesc = t(`video.categories.${category.id}.desc`, { defaultValue: category.desc });
+                    const projectCount = category.projects.length;
+                    const videoCount = category.projects.reduce((sum, p) => sum + p.videos.length, 0);
 
-            return (
-              <div className="video-category" key={category.id}>
-                <h2 className="video-category-title">{catTitle}</h2>
-                <p className="video-category-desc">{catDesc}</p>
+                    return (
+                      <article
+                        key={category.id}
+                        className="video-hub-card"
+                        onClick={() => handleSelectCategory(category.id)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            handleSelectCategory(category.id);
+                          }
+                        }}
+                      >
+                        <div className="video-hub-badge-row">
+                          <div className="video-hub-icon">
+                            {categoryIcons[category.id] || null}
+                          </div>
+                          <span className="video-hub-stat">
+                            {t('video.hub.projectsCount', { count: projectCount })} • {t('video.hub.videosCount', { count: videoCount })}
+                          </span>
+                        </div>
+                        <h3>{catTitle}</h3>
+                        <p>{catDesc}</p>
+                        <div className="video-hub-action">
+                          <span>{t('video.hub.explore')}</span>
+                          <span aria-hidden="true">&rarr;</span>
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key={activeCategory.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+              >
+                <div className="video-active-nav">
+                  <button
+                    type="button"
+                    className="video-back-btn"
+                    onClick={handleBackToHub}
+                  >
+                    {t('video.hub.backToCategories')}
+                  </button>
+                  <div className="video-category-pills">
+                    {videoData.map((cat) => {
+                      const isCurrent = cat.id === activeCategory.id;
+                      return (
+                        <button
+                          key={cat.id}
+                          type="button"
+                          className={`video-pill${isCurrent ? ' active' : ''}`}
+                          onClick={() => handleSelectCategory(cat.id)}
+                        >
+                          {t(`video.categories.${cat.id}.title`, { defaultValue: cat.title })}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
 
-                {category.projects.map((project, pIdx) => {
-                  const isVertical = category.isVertical;
-                  const isGrid = project.videos.length > 1;
-                  let containerClass = "video-featured";
-                  if (isVertical) containerClass = "video-grid video-grid-vertical";
-                  else if (isGrid) containerClass = "video-grid";
+                <div className="video-category">
+                  <h2 className="video-category-title">
+                    {t(`video.categories.${activeCategory.id}.title`, { defaultValue: activeCategory.title })}
+                  </h2>
+                  <p className="video-category-desc">
+                    {t(`video.categories.${activeCategory.id}.desc`, { defaultValue: activeCategory.desc })}
+                  </p>
 
-                  return (
-                    <div key={pIdx}>
-                      <h3 className="video-project-title">{project.title}</h3>
-                      <div className={containerClass}>
-                        {project.videos.map((src, vIdx) => (
-                          <VideoCard key={vIdx} src={encodeURI(src)} vertical={isVertical} />
-                        ))}
+                  {activeCategory.projects.map((project, pIdx) => {
+                    const isVertical = activeCategory.isVertical;
+                    const isGrid = project.videos.length > 1;
+                    let containerClass = "video-featured";
+                    if (isVertical) containerClass = "video-grid video-grid-vertical";
+                    else if (isGrid) containerClass = "video-grid";
+
+                    return (
+                      <div key={pIdx}>
+                        <h3 className="video-project-title">{project.title}</h3>
+                        <div className={containerClass}>
+                          {project.videos.map((src, vIdx) => (
+                            <VideoCard key={vIdx} src={encodeURI(src)} vertical={isVertical} />
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
-            );
-          })}
-
+                    );
+                  })}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </section>
       <section className="section alt">
