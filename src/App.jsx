@@ -1,24 +1,24 @@
-import { useEffect, useRef, useState, useMemo } from 'react';
-import { Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Plyr } from 'plyr-react';
 import 'plyr/dist/plyr.css';
 import videoData from './data/videos.json';
+
 const pages = [
-  { path: '/', label: 'Trang Chủ', key: 'home' },
-  { path: '/about', label: 'Về Chúng Tôi', key: 'about' },
-  { path: '/services', label: 'Dịch Vụ', key: 'services' },
-  { path: '/gallery', label: 'Hình Ảnh', key: 'gallery' },
-  { path: '/video', label: 'Video', key: 'video' },
-  { path: '/contact', label: 'Liên Hệ', key: 'contact' },
+  { path: '/', key: 'home' },
+  { path: '/about', key: 'about' },
+  { path: '/services', key: 'services' },
+  { path: '/gallery', key: 'gallery' },
+  { path: '/video', key: 'video' },
+  { path: '/contact', key: 'contact' },
   // Also support clean URLs
-  { path: '/index', label: 'Trang Chủ', key: 'home' },
+  { path: '/index', key: 'home' },
 ];
 
 function currentPage(pathname) {
-  if (pathname === '/') return 'home';
-  if (pathname === '/index') return 'home';
+  if (pathname === '/' || pathname === '/index') return 'home';
   const match = pages.find((page) => page.path === pathname);
   return match ? match.key : 'not-found';
 }
@@ -31,8 +31,14 @@ function Header({ activePage }) {
   const currentLang = isEn ? 'en' : 'vi';
 
   const toggleLanguage = () => {
-    i18n.changeLanguage(currentLang === 'vi' ? 'en' : 'vi');
+    const nextLang = currentLang === 'vi' ? 'en' : 'vi';
+    i18n.changeLanguage(nextLang);
+    document.documentElement.lang = nextLang;
   };
+
+  useEffect(() => {
+    document.documentElement.lang = currentLang;
+  }, [currentLang]);
 
   useEffect(() => {
     const closeOnResize = () => {
@@ -57,7 +63,7 @@ function Header({ activePage }) {
           <img src="/logo.jpg" alt="NORE" />
           <span>NORE MEDIA</span>
         </Link>
-        <nav className={`main-nav${menuOpen ? ' is-open' : ''}`} aria-label="Điều hướng chính">
+        <nav className={`main-nav${menuOpen ? ' is-open' : ''}`} aria-label={t('nav.mainAria')}>
           {menuPages.map((page) => {
             const isActive = activePage === page.key;
             return (
@@ -82,7 +88,6 @@ function Header({ activePage }) {
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
-                
                 {t(`nav.${page.key}`)}
               </Link>
             );
@@ -91,7 +96,7 @@ function Header({ activePage }) {
             type="button"
             className="lang-switch" 
             onClick={toggleLanguage} 
-            title="Đổi ngôn ngữ (Change Language)"
+            title={t('nav.langSwitchTitle')}
           >
             <span className={currentLang === 'vi' ? 'active' : ''}>VI</span>
             <span className={currentLang === 'en' ? 'active' : ''}>EN</span>
@@ -106,7 +111,7 @@ function Header({ activePage }) {
         <button
           className="menu-toggle"
           type="button"
-          aria-label={menuOpen ? 'Đóng menu' : 'Mở menu'}
+          aria-label={menuOpen ? t('nav.closeMenu') : t('nav.openMenu')}
           aria-expanded={menuOpen}
           onClick={() => setMenuOpen((open) => !open)}
         >
@@ -120,15 +125,25 @@ function Header({ activePage }) {
 }
 
 function Footer({ showSocial = false }) {
+  const { t } = useTranslation();
   return (
     <footer className="site-footer">
       <div className="container footer-wrap">
-        <p>© 2026 NORE MEDIA. Bản quyền thuộc về NORE MEDIA.</p>
+        <p>{t('site.copyright')}</p>
         {showSocial && (
           <div className="social-links">
-            <a href="https://zalo.me/0935997174" target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>Zalo</a>
-            <a href="https://www.facebook.com/profile.php?id=61550981890739" target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>Facebook</a>
-            <a href="https://www.instagram.com/noreagencymedia/" target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>Instagram</a>
+            <a href="https://zalo.me/0935997174" target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+              Zalo
+            </a>
+            <a href="https://www.facebook.com/profile.php?id=61550981890739" target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+              Facebook
+            </a>
+            <a href="https://www.instagram.com/noreagencymedia/" target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+              Instagram
+            </a>
           </div>
         )}
       </div>
@@ -149,6 +164,7 @@ function PageHero({ eyebrow, title, children }) {
 }
 
 function HomePage() {
+  const { t } = useTranslation();
   const [image, setImage] = useState(null);
 
   useEffect(() => {
@@ -166,16 +182,12 @@ function HomePage() {
         <section className="hero">
           <div className="container hero-grid">
             <div className="hero-copy">
-              <p className="eyebrow">Navigate - Optimize - Result - Empower</p>
+              <p className="eyebrow">{t('site.tagline')}</p>
               <h1>NORE MEDIA</h1>
-              <p>
-                NORE MEDIA là Creative House hàng đầu, tiên phong kết nối giữa sản xuất hình ảnh thương mại cao
-                cấp và hệ thống Marketing bài bản. Chúng tôi không tạo ra những nội dung đại trà - chúng tôi kiến
-                tạo &quot;dấu ấn thị giác&quot; khác biệt, được thiết kế riêng để nâng tầm các thương hiệu của bạn.
-              </p>
+              <p>{t('home.heroDesc')}</p>
               <div className="actions">
-                <Link to="/contact" className="btn btn-primary">Liên hệ ngay</Link>
-                <Link to="/services" className="btn btn-secondary">Xem dịch vụ</Link>
+                <Link to="/contact" className="btn btn-primary">{t('home.contactNow')}</Link>
+                <Link to="/services" className="btn btn-secondary">{t('home.viewServices')}</Link>
               </div>
             </div>
             <div className="hero-media">
@@ -187,15 +199,14 @@ function HomePage() {
         <section className="section">
           <div className="container">
             <div className="section-heading" style={{ maxWidth: '100%' }}>
-              <p className="eyebrow">Về chúng tôi</p>
-              <h2 style={{ whiteSpace: 'nowrap', fontSize: 'clamp(0.9rem, 4.8vw, 2.35rem)' }}>Tạo dấu ấn bằng hình ảnh và câu chuyện</h2>
+              <p className="eyebrow">{t('home.aboutEyebrow')}</p>
+              <h2 style={{ whiteSpace: 'nowrap', fontSize: 'clamp(0.9rem, 4.8vw, 2.35rem)' }}>
+                {t('home.aboutHeading')}
+              </h2>
             </div>
             <div className="about-preview">
-              <p>
-                Với kinh nghiệm trong lĩnh vực truyền thông và sản xuất nội dung, NORE MEDIA luôn đặt sự chân thật,
-                chuyên nghiệp và sáng tạo lên hàng đầu.
-              </p>
-              <Link to="/about" className="text-link">Tìm hiểu thêm</Link>
+              <p>{t('home.aboutDesc')}</p>
+              <Link to="/about" className="text-link">{t('home.learnMore')}</Link>
             </div>
           </div>
         </section>
@@ -203,21 +214,21 @@ function HomePage() {
         <section className="section alt">
           <div className="container">
             <div className="section-heading">
-              <p className="eyebrow">Dịch vụ</p>
-              <h2>Giải pháp truyền thông toàn diện</h2>
+              <p className="eyebrow">{t('home.servicesEyebrow')}</p>
+              <h2>{t('home.servicesHeading')}</h2>
             </div>
             <div className="card-grid">
               <article className="card">
-                <h3>Quay phim sự kiện</h3>
-                <p>Ghi lại những khoảnh khắc đáng nhớ với phong cách chuyên nghiệp.</p>
+                <h3>{t('home.service1Title')}</h3>
+                <p>{t('home.service1Desc')}</p>
               </article>
               <article className="card">
-                <h3>Chụp ảnh thương hiệu</h3>
-                <p>Hình ảnh sắc nét, đúng bản sắc doanh nghiệp và sản phẩm.</p>
+                <h3>{t('home.service2Title')}</h3>
+                <p>{t('home.service2Desc')}</p>
               </article>
               <article className="card">
-                <h3>Dựng video quảng cáo</h3>
-                <p>Tạo nội dung ngắn, thu hút và tối ưu cho các nền tảng số.</p>
+                <h3>{t('home.service3Title')}</h3>
+                <p>{t('home.service3Desc')}</p>
               </article>
             </div>
           </div>
@@ -226,8 +237,8 @@ function HomePage() {
         <section className="section">
           <div className="container">
             <div className="section-heading">
-              <p className="eyebrow">Hình ảnh nổi bật</p>
-              <h2>Một số tác phẩm gần đây</h2>
+              <p className="eyebrow">{t('home.galleryEyebrow')}</p>
+              <h2>{t('home.galleryHeading')}</h2>
             </div>
             <div className="gallery-grid">
               {[1, 3, 5, 6].map((number, index) => (
@@ -235,15 +246,15 @@ function HomePage() {
                   className="gallery-image-button"
                   type="button"
                   onClick={() => setImage(`/gallery/${number}.png`)}
-                  aria-label={`Phóng to tác phẩm ${index + 1}`}
+                  aria-label={t('home.zoomAria', { index: index + 1 })}
                   key={number}
                 >
-                  <img src={`/gallery/${number}.png`} alt={`Tác phẩm ${index + 1}`} />
+                  <img src={`/gallery/${number}.png`} alt={t('home.altWork', { index: index + 1 })} />
                 </button>
               ))}
             </div>
             <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-              <Link to="/gallery" className="btn btn-secondary">Xem thêm hình ảnh</Link>
+              <Link to="/gallery" className="btn btn-secondary">{t('home.viewMoreGallery')}</Link>
             </div>
           </div>
         </section>
@@ -253,16 +264,16 @@ function HomePage() {
           className="modal show"
           role="dialog"
           aria-modal="true"
-          aria-label="Ảnh phóng to"
+          aria-label={t('home.modalAria')}
           onClick={() => setImage(null)}
         >
-          <button className="close-modal" type="button" aria-label="Đóng ảnh" onClick={() => setImage(null)}>
+          <button className="close-modal" type="button" aria-label={t('home.closeModal')} onClick={() => setImage(null)}>
             &times;
           </button>
           <img
             className="modal-content"
             src={image}
-            alt="Tác phẩm NORE MEDIA"
+            alt={t('home.modalAlt')}
             onClick={(event) => event.stopPropagation()}
           />
         </div>
@@ -272,38 +283,22 @@ function HomePage() {
 }
 
 function AboutPage() {
+  const { t } = useTranslation();
   return (
     <main className="page-main">
-      <PageHero eyebrow="Về chúng tôi" title="Chúng tôi tạo nội dung để doanh nghiệp bứt phá">
-        <p>
-          NORE MEDIA là Creative House hàng đầu, tiên phong kết nối giữa sản xuất hình ảnh thương mại cao cấp và hệ
-          thống Marketing bài bản. Chúng tôi không tạo ra những nội dung đại trà - chúng tôi kiến tạo &quot;dấu ấn
-          thị giác&quot; khác biệt, được thiết kế riêng để nâng tầm các thương hiệu của bạn.
-        </p>
-        <p>
-          Bằng việc tinh gọn và đảm nhận trọn vẹn từng giai đoạn của chiến dịch - từ lập kế hoạch chiến lược, sản
-          xuất chất lượng cinema đến thực thi đa kênh - NORE MEDIA loại bỏ triệt để rủi ro đứt gãy vận hành vốn có
-          khi làm việc với nhiều cá nhân tự do hoặc các agency kiểu cũ. Chúng tôi chuyển hóa sức mạnh sáng tạo
-          thành bộ máy tạo đà tăng trưởng doanh thu bền vững.
-        </p>
+      <PageHero eyebrow={t('about.eyebrow')} title={t('about.heroTitle')}>
+        <p>{t('about.heroP1')}</p>
+        <p>{t('about.heroP2')}</p>
       </PageHero>
       <section className="section">
         <div className="container content-grid">
           <div>
-            <h2>VISION</h2>
-            <p>
-              Khao khát lớn nhất của chúng tôi là trở thành Creative House hàng đầu tại Việt Nam - nơi định hình
-              vị thế bằng những dấu ấn thị giác độc bản và hệ thống tăng trưởng đo lường được cho các thương hiệu
-              tầm trung và lớn.
-            </p>
+            <h2>{t('about.visionTitle')}</h2>
+            <p>{t('about.visionDesc')}</p>
           </div>
           <div>
-            <h2>MISSION</h2>
-            <p>
-              Để hiện thực hóa điều đó, chúng tôi cam kết đồng hành cùng các thương hiệu bằng sản xuất hình ảnh
-              thương mại chuẩn thẩm mỹ cao kết hợp hệ thống Marketing bài bản - biến từng sản phẩm sáng tạo thành
-              động cơ tăng trưởng doanh thu.
-            </p>
+            <h2>{t('about.missionTitle')}</h2>
+            <p>{t('about.missionDesc')}</p>
           </div>
         </div>
       </section>
@@ -311,37 +306,17 @@ function AboutPage() {
   );
 }
 
-const servicePackages = [
-  {
-    name: 'SIGNATURE COMMERCIALS',
-    popular: true,
-    intro: 'Giải pháp trọn gói, toàn diện để sản xuất hình ảnh và video quảng cáo mang dấu ấn riêng biệt.',
-    features: [
-      ['Tư vấn Ý tưởng & Storyboard:', ' Trực tiếp phát triển ý tưởng và phác thảo kịch bản hình ảnh (animatic) chi tiết.'],
-      ['Sản xuất In-house:', ' Đảm nhận toàn bộ từ bối cảnh, tuyển chọn diễn viên (talent casting) đến đạo diễn tại hiện trường.'],
-      ['Tối ưu hóa nguồn lực:', ' Kết hợp chụp Key Visual (KV) đồng thời ngay trên set quay.'],
-      ['Hậu kỳ chuyên sâu:', ' Chỉnh màu chuẩn điện ảnh (Cinematic color grading) và dựng đa định dạng phù hợp với mọi kênh truyền thông.'],
-      ['Quản lý tập trung:', ' Có Nhà sản xuất (Producer) riêng theo sát tiến độ và làm việc trực tiếp với khách hàng.'],
-    ],
-  },
-  {
-    name: 'PREMIUM SHOWCASE',
-    popular: false,
-    intro: 'Giải pháp hình ảnh & TVC cao cấp, định hình đẳng cấp thương hiệu cho các chiến dịch lớn.',
-    features: [
-      ['Giám đốc Nghệ thuật (Art Direction):', ' Art Director trực tiếp dẫn dắt định hướng chiến dịch và thiết kế bối cảnh độc bản.'],
-      ['Sản xuất Cao cấp:', ' Thiết bị chuẩn điện ảnh, quay đa bối cảnh cùng đội ngũ chuyên gia hàng đầu (stylist, makeup artist, gaffer).'],
-      ['Quản lý Talent:', ' Đảm nhận trọn gói việc booking KOLs/Celebrities hạng A và bản quyền hình ảnh thương mại.'],
-      ['Hậu kỳ Nâng cao:', ' Kỹ xảo, âm thanh bản quyền và chỉnh màu đạt tiêu chuẩn điện ảnh.'],
-      ['Tích hợp IMC:', ' Chiến lược phân phối đa kênh tích hợp nhằm tiếp cận đúng công chúng mục tiêu và tối ưu hóa tỷ lệ chuyển đổi.'],
-    ],
-  },
-];
-
 function ServicesPage() {
+  const { t } = useTranslation();
+
+  const packagesConfig = [
+    { key: 'signature', popular: true },
+    { key: 'premium', popular: false },
+  ];
+
   return (
     <main className="page-main">
-      <PageHero eyebrow="Service Packages" title="Các Gói Dịch Vụ" />
+      <PageHero eyebrow={t('services.eyebrow')} title={t('services.title')} />
       <section className="section">
         <motion.div 
           className="container card-grid service-grid"
@@ -356,74 +331,80 @@ function ServicesPage() {
             }
           }}
         >
-          {servicePackages.map((service) => (
-            <motion.article 
-              className="card framer-card" 
-              key={service.name}
-              variants={{
-                hidden: { opacity: 0, y: 40 },
-                visible: { 
-                  opacity: 1, 
-                  y: 0, 
-                  transition: { type: "spring", stiffness: 80, damping: 20 }
-                }
-              }}
-              whileHover={{
-                y: -12,
-                transition: { type: "spring", stiffness: 300, damping: 12 }
-              }}
-              style={service.popular ? { 
-                borderColor: "rgba(255, 255, 255, 0.4)", 
-                boxShadow: "0 0 40px rgba(255,255,255,0.1)",
-                background: "linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%)"
-              } : {}}
-            >
-              <div className={`service-heading${service.popular ? '' : ' service-heading-spaced'}`}>
-                {service.popular && (
-                  <motion.span 
-                    className="eyebrow"
-                    animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
-                    transition={{ duration: 4, ease: "linear", repeat: Infinity }}
-                    style={{
-                      background: "linear-gradient(90deg, #fff, #888, #fff)",
-                      backgroundSize: "200% 200%",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      display: "inline-block",
-                      fontWeight: 800
-                    }}
-                  >
-                    PHỔ BIẾN NHẤT
-                  </motion.span>
-                )}
-                <h2>{service.name}</h2>
-              </div>
-              <h3>Theo dự án (Project-based)</h3>
-              <p className="service-intro">{service.intro}</p>
-              <motion.ul 
-                className="service-features"
+          {packagesConfig.map(({ key, popular }) => {
+            const name = t(`services.packages.${key}.name`);
+            const intro = t(`services.packages.${key}.intro`);
+            const features = t(`services.packages.${key}.features`, { returnObjects: true }) || [];
+
+            return (
+              <motion.article 
+                className="card framer-card" 
+                key={key}
                 variants={{
-                  hidden: { opacity: 0 },
-                  visible: {
-                    opacity: 1,
-                    transition: { staggerChildren: 0.15, delayChildren: 0.3 }
+                  hidden: { opacity: 0, y: 40 },
+                  visible: { 
+                    opacity: 1, 
+                    y: 0, 
+                    transition: { type: "spring", stiffness: 80, damping: 20 }
                   }
                 }}
+                whileHover={{
+                  y: -12,
+                  transition: { type: "spring", stiffness: 300, damping: 12 }
+                }}
+                style={popular ? { 
+                  borderColor: "rgba(255, 255, 255, 0.4)", 
+                  boxShadow: "0 0 40px rgba(255,255,255,0.1)",
+                  background: "linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%)"
+                } : {}}
               >
-                {service.features.map(([title, text]) => (
-                  <motion.li 
-                    key={title}
-                    variants={{
-                      hidden: { opacity: 0, x: -20 },
-                      visible: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 100 } }
-                    }}
-                  >
-                    <strong>{title}</strong>{text}
-                  </motion.li>
-                ))}
-              </motion.ul>
-            </motion.article>
-          ))}
+                <div className={`service-heading${popular ? '' : ' service-heading-spaced'}`}>
+                  {popular && (
+                    <motion.span 
+                      className="eyebrow"
+                      animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
+                      transition={{ duration: 4, ease: "linear", repeat: Infinity }}
+                      style={{
+                        background: "linear-gradient(90deg, #fff, #888, #fff)",
+                        backgroundSize: "200% 200%",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                        display: "inline-block",
+                        fontWeight: 800
+                      }}
+                    >
+                      {t('services.popularBadge')}
+                    </motion.span>
+                  )}
+                  <h2>{name}</h2>
+                </div>
+                <h3>{t('services.projectBased')}</h3>
+                <p className="service-intro">{intro}</p>
+                <motion.ul 
+                  className="service-features"
+                  variants={{
+                    hidden: { opacity: 0 },
+                    visible: {
+                      opacity: 1,
+                      transition: { staggerChildren: 0.15, delayChildren: 0.3 }
+                    }
+                  }}
+                >
+                  {Array.isArray(features) && features.map(([title, text], idx) => (
+                    <motion.li 
+                      key={idx}
+                      variants={{
+                        hidden: { opacity: 0, x: -20 },
+                        visible: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 100 } }
+                      }}
+                    >
+                      <strong>{title}</strong>{text}
+                    </motion.li>
+                  ))}
+                </motion.ul>
+              </motion.article>
+            );
+          })}
         </motion.div>
       </section>
     </main>
@@ -431,9 +412,10 @@ function ServicesPage() {
 }
 
 function GalleryPage() {
+  const { t } = useTranslation();
   return (
     <main className="page-main">
-      <PageHero eyebrow="Hình ảnh" title="Image Production" />
+      <PageHero eyebrow={t('gallery.eyebrow')} title={t('gallery.title')} />
       <section className="section">
         <div className="container">
           <article className="card canva-card">
@@ -441,7 +423,7 @@ function GalleryPage() {
               <iframe
                 loading="lazy"
                 src="https://www.canva.com/design/DAHJ40demyc/haPQFA94SUbCfZWUdvxPNw/view?embed"
-                title="NORE MEDIA - Image Production"
+                title={t('gallery.iframeTitle')}
                 allowFullScreen
                 allow="fullscreen"
               />
@@ -453,7 +435,7 @@ function GalleryPage() {
                 rel="noopener noreferrer"
                 className="text-link"
               >
-                Mở bản trình bày trên Canva
+                {t('gallery.openCanva')}
               </a>
             </div>
           </article>
@@ -463,7 +445,7 @@ function GalleryPage() {
   );
 }
 
-const VIDEO_BASE_URL = "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev"; // e.g. "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev"
+const VIDEO_BASE_URL = "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev";
 
 function VideoCard({ src, vertical = false, eager = false }) {
   const fullSrc = src.startsWith('http') ? src : `${VIDEO_BASE_URL}${src}`;
@@ -491,9 +473,10 @@ function VideoCard({ src, vertical = false, eager = false }) {
 }
 
 function VideoPage() {
+  const { t } = useTranslation();
+
   useEffect(() => {
     const handlePlay = (e) => {
-      // Find the closest video-card if the target is a video element
       const target = e.target;
       if (target && target.tagName === 'VIDEO') {
         const card = target.closest('.video-card');
@@ -504,7 +487,6 @@ function VideoPage() {
       }
     };
     
-    // Add event listener in capture phase (true) because media events don't bubble
     document.addEventListener('play', handlePlay, true);
     document.addEventListener('playing', handlePlay, true);
     
@@ -516,54 +498,56 @@ function VideoPage() {
 
   return (
     <main className="page-main">
-      <PageHero eyebrow="Video" title="Video Production" />
+      <PageHero eyebrow={t('video.eyebrow')} title={t('video.title')} />
       <section className="section">
         <div className="container">
           
-          {videoData.map((category) => (
-            <div className="video-category" key={category.id}>
-              <h2 className="video-category-title">{category.title}</h2>
-              <p className="video-category-desc">{category.desc}</p>
+          {videoData.map((category) => {
+            const catTitle = t(`video.categories.${category.id}.title`, { defaultValue: category.title });
+            const catDesc = t(`video.categories.${category.id}.desc`, { defaultValue: category.desc });
 
-              {category.projects.map((project, pIdx) => {
-                // If it's short vertical videos, we use video-grid-vertical
-                // If it has > 1 video but not vertical, we use video-grid
-                // If it has 1 video and not vertical, we use video-featured
-                const isVertical = category.isVertical;
-                const isGrid = project.videos.length > 1;
-                let containerClass = "video-featured";
-                if (isVertical) containerClass = "video-grid video-grid-vertical";
-                else if (isGrid) containerClass = "video-grid";
+            return (
+              <div className="video-category" key={category.id}>
+                <h2 className="video-category-title">{catTitle}</h2>
+                <p className="video-category-desc">{catDesc}</p>
 
-                return (
-                  <div key={pIdx}>
-                    <h3 className="video-project-title">{project.title}</h3>
-                    <div className={containerClass}>
-                      {project.videos.map((src, vIdx) => (
-                        <VideoCard key={vIdx} src={encodeURI(src)} vertical={isVertical} />
-                      ))}
+                {category.projects.map((project, pIdx) => {
+                  const isVertical = category.isVertical;
+                  const isGrid = project.videos.length > 1;
+                  let containerClass = "video-featured";
+                  if (isVertical) containerClass = "video-grid video-grid-vertical";
+                  else if (isGrid) containerClass = "video-grid";
+
+                  return (
+                    <div key={pIdx}>
+                      <h3 className="video-project-title">{project.title}</h3>
+                      <div className={containerClass}>
+                        {project.videos.map((src, vIdx) => (
+                          <VideoCard key={vIdx} src={encodeURI(src)} vertical={isVertical} />
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          ))}
+                  );
+                })}
+              </div>
+            );
+          })}
 
         </div>
       </section>
       <section className="section alt">
         <div className="container card-grid">
           <article className="card">
-            <h3>Video ngắn viral</h3>
-            <p>Thiết kế nội dung ngắn, sáng tạo và tối ưu cho Facebook, TikTok, Instagram.</p>
+            <h3>{t('video.serviceCards.card1Title')}</h3>
+            <p>{t('video.serviceCards.card1Desc')}</p>
           </article>
           <article className="card">
-            <h3>Video sự kiện</h3>
-            <p>Ghi lại toàn bộ trải nghiệm và cảm xúc của mỗi sự kiện một cách chân thực.</p>
+            <h3>{t('video.serviceCards.card2Title')}</h3>
+            <p>{t('video.serviceCards.card2Desc')}</p>
           </article>
           <article className="card">
-            <h3>Video quảng cáo</h3>
-            <p>Biến sản phẩm và dịch vụ thành câu chuyện thu hút khách hàng.</p>
+            <h3>{t('video.serviceCards.card3Title')}</h3>
+            <p>{t('video.serviceCards.card3Desc')}</p>
           </article>
         </div>
       </section>
@@ -683,14 +667,23 @@ function ContactPage() {
                 <p>093 599 71 74</p>
               </div>
               <div>
-                <strong>{t('contact.email')}</strong>
+                <strong>{t('contact.emailLabel')}</strong>
                 <p>admin@noreagency.com</p>
               </div>
             </div>
             <div className="social-links contact-social">
-              <a href="https://zalo.me/0935997174" target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>Zalo</a>
-              <a href="https://www.facebook.com/profile.php?id=61550981890739" target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>Facebook</a>
-              <a href="https://www.instagram.com/noreagencymedia/" target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>Instagram</a>
+              <a href="https://zalo.me/0935997174" target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                Zalo
+              </a>
+              <a href="https://www.facebook.com/profile.php?id=61550981890739" target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+                Facebook
+              </a>
+              <a href="https://www.instagram.com/noreagencymedia/" target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                Instagram
+              </a>
             </div>
           </div>
         </div>
@@ -700,10 +693,11 @@ function ContactPage() {
 }
 
 function NotFoundPage() {
+  const { t } = useTranslation();
   return (
     <main className="page-main">
-      <PageHero eyebrow="404" title="Không tìm thấy trang">
-        <p><Link className="text-link" to="/">Quay về Trang Chủ</Link></p>
+      <PageHero eyebrow={t('notFound.eyebrow')} title={t('notFound.title')}>
+        <p><Link className="text-link" to="/">{t('notFound.backHome')}</Link></p>
       </PageHero>
     </main>
   );
@@ -719,23 +713,17 @@ const pageComponents = {
   'not-found': NotFoundPage,
 };
 
-const pageTitles = {
-  home: 'NORE MEDIA',
-  about: 'Về Chúng Tôi | NORE MEDIA',
-  services: 'Dịch Vụ | NORE MEDIA',
-  gallery: 'Hình Ảnh | NORE MEDIA',
-  video: 'Video | NORE MEDIA',
-  contact: 'Liên Hệ | NORE MEDIA',
-  'not-found': 'Không tìm thấy trang | NORE MEDIA',
-};
-
 export default function App() {
+  const { t, i18n } = useTranslation();
   const location = useLocation();
   const activePage = currentPage(location.pathname);
 
   useEffect(() => {
-    document.title = pageTitles[activePage];
+    const titleKey = activePage === 'not-found' ? 'notFound' : activePage;
+    document.title = t(`site.pageTitles.${titleKey}`, { defaultValue: 'NORE MEDIA' });
+  }, [activePage, t, i18n.language]);
 
+  useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -759,16 +747,14 @@ export default function App() {
       });
     };
 
-    // Initial check (DOM is already mounted)
     observeElements();
-    // Safety check for any delayed components
     const timeout = setTimeout(observeElements, 500);
 
     return () => {
       observer.disconnect();
       clearTimeout(timeout);
     };
-  }, [location.pathname]); // re-run when path changes
+  }, [location.pathname]);
 
   // Scroll to top on page change
   useEffect(() => {
@@ -820,8 +806,3 @@ export default function App() {
     </>
   );
 }
-
-
-
-
-
