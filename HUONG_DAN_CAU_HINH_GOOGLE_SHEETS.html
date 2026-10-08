@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hướng Dẫn Cấu Hình Google Sheets - NORE MEDIA</title>
+  <style>
+    @media print {
+      body {
+        margin: 1cm;
+        font-size: 11pt;
+      }
+
+      .no-print {
+        display: none;
+      }
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.6;
+      color: #24292e;
+      background: #f8fafc;
+      margin: 0;
+      padding: 2.5rem 1rem;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 3rem 3.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      border: 1px solid #e2e8f0;
+    }
+
+    .header {
+      border-bottom: 2px solid #0f172a;
+      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .brand {
+      font-size: 0.9rem;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      color: #64748b;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-size: 1.85rem;
+      color: #0f172a;
+      margin: 0 0 0.5rem;
+    }
+
+    h2 {
+      font-size: 1.35rem;
+      color: #1e293b;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 0.5rem;
+      margin-top: 2rem;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      color: #334155;
+      margin-top: 1.5rem;
+      margin-bottom: 0.6rem;
+    }
+
+    p,
+    li {
+      color: #475569;
+      font-size: 0.98rem;
+    }
+
+    ol,
+    ul {
+      padding-left: 1.4rem;
+    }
+
+    li {
+      margin-bottom: 0.4rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.2rem 0;
+      font-size: 0.95rem;
+    }
+
+    th,
+    td {
+      border: 1px solid #cbd5e1;
+      padding: 0.7rem 0.9rem;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f1f5f9;
+      color: #0f172a;
+      font-weight: 600;
+    }
+
+    .callout {
+      background: #eff6ff;
+      border-left: 4px solid #3b82f6;
+      padding: 1rem 1.25rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1.2rem 0;
+    }
+
+    .callout.warning {
+      background: #fffbeb;
+      border-left-color: #f59e0b;
+    }
+
+    .callout p {
+      margin: 0;
+      color: #1e3a8a;
+      font-size: 0.94rem;
+    }
+
+    .callout.warning p {
+      color: #78350f;
+    }
+
+    code {
+      background: #f1f5f9;
+      color: #0f172a;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 0.9em;
+    }
+
+    pre {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 1.25rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .footer-note {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #e2e8f0;
+      text-align: center;
+      color: #94a3b8;
+      font-size: 0.9rem;
+    }
+
+    .print-btn {
+      float: right;
+      background: #0f172a;
+      color: #ffffff;
+      border: none;
+      padding: 0.55rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    .print-btn:hover {
+      background: #334155;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <button class="print-btn no-print" onclick="window.print()">In / Xuất PDF</button>
+      <div class="brand">NORE MEDIA &bull; KỸ THUẬT & TRIỂN KHAI</div>
+      <h1>Hướng Dẫn Cấu Hình Google Sheets Tự Động</h1>
+      <p style="margin: 0; color: #64748b;">Tài liệu hướng dẫn kết nối Form Website với Google Sheets qua Google Cloud
+        Service Account</p>
+    </div>
+
+    <h2>1. Mục Đích</h2>
+    <p>Tài liệu này hướng dẫn quý khách hàng các bước thiết lập bảng tính <strong>Google Sheets</strong> và tài khoản
+      <strong>Google Cloud Service Account</strong> để website tự động ghi nhận thông tin khách hàng từ form liên hệ/tư
+      vấn.</p>
+
+    <h2>2. Các Bước Thực Hiện</h2>
+
+    <h3>Bước 1: Tạo Google Sheet và Định Dạng Cột</h3>
+    <ol>
+      <li>Truy cập <a href="https://sheets.google.com" target="_blank">Google Sheets</a> và tạo một bảng tính mới.</li>
+      <li>Đặt tên file (ví dụ: <code>NORE MEDIA - Khách Hàng</code>).</li>
+      <li>Đổi tên sheet (tab ở góc dưới cùng bên trái) thành: <strong><code>KhachHang</code></strong> <em>(viết liền,
+          đúng chữ hoa chữ thường)</em>.</li>
+      <li>Tại <strong>Dòng 1</strong>, nhập tiêu đề các cột theo chuẩn sau:</li>
+    </ol>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 10%;">Cột</th>
+          <th style="width: 35%;">Tiêu đề cột</th>
+          <th>Mô tả</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>A</strong></td>
+          <td><code>Thời gian (UTC)</code></td>
+          <td>Thời điểm người dùng gửi form</td>
+        </tr>
+        <tr>
+          <td><strong>B</strong></td>
+          <td><code>Họ và tên</code></td>
+          <td>Họ và tên của khách hàng</td>
+        </tr>
+        <tr>
+          <td><strong>C</strong></td>
+          <td><code>Số điện thoại</code></td>
+          <td>Số điện thoại liên hệ</td>
+        </tr>
+        <tr>
+          <td><strong>D</strong></td>
+          <td><code>Email</code></td>
+          <td>Địa chỉ email của khách</td>
+        </tr>
+        <tr>
+          <td><strong>E</strong></td>
+          <td><code>Nội dung tin nhắn</code></td>
+          <td>Nhu cầu hoặc câu hỏi tư vấn</td>
+        </tr>
+        <tr>
+          <td><strong>F</strong></td>
+          <td><code>Nguồn</code></td>
+          <td>Mặc định: <code>Website</code></td>
+        </tr>
+        <tr>
+          <td><strong>G</strong></td>
+          <td><code>Mã gửi form (Submission ID)</code></td>
+          <td><strong>Bắt buộc:</strong> Dùng để kiểm tra chống gửi trùng lặp</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Bước 2: Tạo Service Account Trên Google Cloud</h3>
+    <ol>
+      <li>Đăng nhập <a href="https://console.cloud.google.com/" target="_blank">Google Cloud Console</a>.</li>
+      <li>Tạo một <strong>Project mới</strong> (ví dụ: <code>Nore Media Form</code>).</li>
+      <li>Vào ô tìm kiếm trên cùng, gõ <strong>Google Sheets API</strong> &rarr; Nhấp chọn và bấm <strong>Enable
+          (Bật)</strong>.</li>
+      <li>Vào menu trái: <strong>APIs & Services</strong> &rarr; <strong>Credentials</strong> &rarr; Bấm <strong>+
+          CREATE CREDENTIALS</strong> &rarr; Chọn <strong>Service account</strong>.</li>
+      <li>Đặt tên tài khoản (ví dụ: <code>nore-sheets-bot</code>) rồi nhấn <strong>Done</strong> để hoàn tất.</li>
+    </ol>
+
+    <h3>Bước 3: Lấy File Khóa Bảo Mật (JSON Key)</h3>
+    <ol>
+      <li>Tại mục <strong>Service Accounts</strong>, bấm vào email vừa tạo (có dạng
+        <code>...@...iam.gserviceaccount.com</code>).</li>
+      <li>Chuyển sang thẻ <strong>KEYS (Khóa)</strong> ở thanh trên &rarr; Bấm <strong>ADD KEY</strong> &rarr;
+        <strong>Create new key</strong>.</li>
+      <li>Chọn loại <strong>JSON</strong> rồi bấm <strong>CREATE</strong>.</li>
+      <li>File <code>.json</code> sẽ tải về máy tính. Mở file bằng Notepad để xem 2 giá trị quan trọng:
+        <ul>
+          <li><code>client_email</code>: Email của tài khoản dịch vụ.</li>
+          <li><code>private_key</code>: Khóa bảo mật (bắt đầu bằng <code>-----BEGIN PRIVATE KEY-----</code>).</li>
+        </ul>
+      </li>
+    </ol>
+
+    <div class="callout warning">
+      <p><strong>CẢNH BÁO QUAN TRỌNG Ở BƯỚC 4:</strong> Nếu không chia sẻ quyền cho email bot, hệ thống sẽ báo lỗi và
+        không thể lưu dữ liệu vào Google Sheet!</p>
+    </div>
+
+    <h3>Bước 4: Chia Sẻ Quyền Cho Bot Trên Google Sheet</h3>
+    <ol>
+      <li>Mở lại file Google Sheet đã tạo ở <strong>Bước 1</strong>.</li>
+      <li>Bấm nút <strong>Chia sẻ (Share)</strong> ở góc trên bên phải.</li>
+      <li>Dán địa chỉ <code>client_email</code> ở Bước 3 vào ô chia sẻ.</li>
+      <li>Phân quyền: <strong>Người chỉnh sửa (Editor)</strong>.</li>
+      <li>Bỏ tích ô <em>"Thông báo cho mọi người"</em> rồi nhấn <strong>Chia sẻ (Share)</strong>.</li>
+    </ol>
+
+    <h3>Bước 5: Lấy Spreadsheet ID</h3>
+    <p>Trên thanh địa chỉ trình duyệt khi đang mở file Google Sheet, link sẽ có dạng:</p>
+    <p><code>https://docs.google.com/spreadsheets/d/<strong>1a2B3c4D5e6F7g8H9i_xyz</strong>/edit#gid=0</code></p>
+    <p>Phần chữ và số nằm giữa <code>/d/</code> và <code>/edit</code> chính là <strong>Spreadsheet ID</strong>.</p>
+
+    <h2>3. Template File Cấu Hình (.env)</h2>
+    <p>Quý khách sao chép nội dung bên dưới, điền các thông tin tương ứng và gửi lại cho đội ngũ kỹ thuật:</p>
+
+    <pre># ==============================================================================
+# CẤU HÌNH GOOGLE SHEETS
+# ==============================================================================
+
+# 1. Email Service Account (Lấy từ trường client_email trong file JSON)
+GOOGLE_SERVICE_ACCOUNT_EMAIL="nore-sheets-bot@project-name.iam.gserviceaccount.com"
+
+# 2. Khóa Private Key (Lấy từ trường private_key trong file JSON)
+# Lưu ý: Giữ nguyên các ký tự \n xuống dòng và bọc trong cặp dấu ngoặc kép ""
+GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQD...\n-----END PRIVATE KEY-----\n"
+
+# 3. ID của bảng tính Google Sheet (Lấy từ thanh địa chỉ trình duyệt)
+GOOGLE_SHEETS_SPREADSHEET_ID="1a2B3c4D5e6F7g8H9i_xyz"
+
+# 4. Tên tab làm việc trong bảng tính (Mặc định: KhachHang)
+GOOGLE_SHEETS_SHEET_NAME="KhachHang"
+
+
+# ==============================================================================
+# CẤU HÌNH GỬI EMAIL THÔNG BÁO (SMTP - NẾU CÓ DÙNG THÊM EMAIL)
+# ==============================================================================
+
+# Email nhận thông báo khi có khách đăng ký
+CONTACT_EMAIL_TO="admin@noreagency.com"
+
+# Máy chủ SMTP gửi mail (Ví dụ: smtp.gmail.com hoặc máy chủ riêng)
+SMTP_HOST="smtp.gmail.com"
+SMTP_PORT=465
+SMTP_SECURE=true
+
+# Tài khoản email và Mật khẩu ứng dụng (App Password)
+SMTP_USER="your-email@gmail.com"
+SMTP_PASS="your-app-password"</pre>
+
+
+  </div>
+</body>
+
+</html>

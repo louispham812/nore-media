@@ -88,7 +88,7 @@ export function getConfiguration(env = process.env) {
     smtpUser: env.SMTP_USER,
     smtpPass: env.SMTP_PASS,
     serviceAccountEmail: env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-    privateKey: env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+    privateKey: env.GOOGLE_PRIVATE_KEY?.replace(/^"|"$/g, '').replace(/\\n/g, '\n'),
     spreadsheetId: env.GOOGLE_SHEETS_SPREADSHEET_ID,
     sheetName: env.GOOGLE_SHEETS_SHEET_NAME || 'KhachHang',
   };
@@ -202,13 +202,29 @@ async function appendToSheet(config, data, submissionId) {
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
   });
   const sheets = google.sheets({ version: 'v4', auth });
-  const sheetName = config.sheetName.replace(/'/g, "''");
+
+  let targetSheet = config.sheetName;
+  try {
+    const meta = await sheets.spreadsheets.get({ spreadsheetId: config.spreadsheetId });
+    const availableSheets = meta.data.sheets?.map((s) => s.properties.title) || [];
+    if (!availableSheets.includes(targetSheet) && availableSheets.length > 0) {
+      targetSheet = availableSheets[0];
+    }
+  } catch {
+    // Proceed with configured sheet name if meta check fails
+  }
+
+  const sheetName = targetSheet.replace(/'/g, "''");
   const range = `'${sheetName}'!G:G`;
-  const existingIds = await sheets.spreadsheets.values.get({
-    spreadsheetId: config.spreadsheetId,
-    range,
-  });
-  if (existingIds.data.values?.some(([id]) => id === submissionId)) return;
+  try {
+    const existingIds = await sheets.spreadsheets.values.get({
+      spreadsheetId: config.spreadsheetId,
+      range,
+    });
+    if (existingIds.data.values?.some(([id]) => id === submissionId)) return;
+  } catch {
+    // Range might be empty or unformatted, continue to append
+  }
 
   await sheets.spreadsheets.values.append({
     spreadsheetId: config.spreadsheetId,
@@ -247,6 +263,8 @@ export async function deliverSubmission(
       status: 502,
       body: {
         error: `Chưa thể hoàn tất gửi thông tin đến ${failedDestinations.join(' và ')} sau nhiều lần thử. Vui lòng gửi lại sau; yêu cầu này sẽ được thử tiếp mà không gửi lặp đến kênh đã nhận.`,
+        errorKey: 'contact.errorDelivery',
+        failedDestinations: failedDestinations.join(' & '),
       },
     };
   }
@@ -267,6 +285,7 @@ export async function deliverSubmission(
       message: config.sheetsEnabled
         ? 'Thông tin đã được gửi thành công. NORE MEDIA sẽ phản hồi bạn sớm nhất có thể.'
         : 'Thông báo đã được gửi qua email. Google Sheets chưa được cấu hình nên thông tin chưa được lưu vào sheet.',
+      messageKey: 'contact.success',
       confirmationWarning,
       sheetsEnabled: config.sheetsEnabled,
     },
@@ -277,6 +296,7 @@ app.post('/api/contact', contactRateLimit, async (req, res) => {
   if (typeof req.body?.website === 'string' && req.body.website.trim()) {
     return res.status(200).json({
       message: 'Thông tin đã được gửi thành công. NORE MEDIA sẽ phản hồi bạn sớm nhất có thể.',
+      messageKey: 'contact.success',
     });
   }
 

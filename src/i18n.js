@@ -13,6 +13,7 @@ const resources = {
           home: 'NORE MEDIA',
           about: 'Về Chúng Tôi | NORE MEDIA',
           services: 'Dịch Vụ | NORE MEDIA',
+          projects: 'Dự Án | NORE MEDIA',
           gallery: 'Hình Ảnh | NORE MEDIA',
           video: 'Video | NORE MEDIA',
           contact: 'Liên Hệ | NORE MEDIA',
@@ -23,6 +24,7 @@ const resources = {
         home: 'Trang Chủ',
         about: 'Về Chúng Tôi',
         services: 'Dịch Vụ',
+        projects: 'Dự Án',
         gallery: 'Hình Ảnh',
         video: 'Video',
         contact: 'Liên Hệ',
@@ -96,6 +98,12 @@ const resources = {
           }
         }
       },
+      projects: {
+        eyebrow: 'Dự Án',
+        title: 'Projects Showcase',
+        tabVideo: 'Video Production',
+        tabGallery: 'Image Production'
+      },
       gallery: {
         eyebrow: 'Hình ảnh',
         title: 'Image Production',
@@ -163,6 +171,8 @@ const resources = {
         errorMissing: 'Thiếu cấu hình máy chủ',
         errorFail: 'Không thể gửi thông tin. Vui lòng thử lại.',
         errorConnect: 'Không thể kết nối đến máy chủ. Vui lòng thử lại sau.',
+        errorRateLimit: 'Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau 15 phút.',
+        errorDelivery: 'Chưa thể hoàn tất gửi thông tin đến {{destinations}} sau nhiều lần thử. Vui lòng thử lại sau.',
         successWarn: 'Tuy nhiên, email xác nhận chưa gửi được; vui lòng kiểm tra hộp thư sau.',
         success: 'Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi sớm nhất có thể.'
       },
@@ -183,6 +193,7 @@ const resources = {
           home: 'NORE MEDIA',
           about: 'About Us | NORE MEDIA',
           services: 'Services | NORE MEDIA',
+          projects: 'Projects | NORE MEDIA',
           gallery: 'Photography | NORE MEDIA',
           video: 'Video | NORE MEDIA',
           contact: 'Contact | NORE MEDIA',
@@ -193,6 +204,7 @@ const resources = {
         home: 'Home',
         about: 'About Us',
         services: 'Services',
+        projects: 'Projects',
         gallery: 'Photography',
         video: 'Video',
         contact: 'Contact',
@@ -266,6 +278,12 @@ const resources = {
           }
         }
       },
+      projects: {
+        eyebrow: 'Projects',
+        title: 'Projects Showcase',
+        tabVideo: 'Video Production',
+        tabGallery: 'Image Production'
+      },
       gallery: {
         eyebrow: 'Photography',
         title: 'Image Production',
@@ -333,6 +351,8 @@ const resources = {
         errorMissing: 'Missing server configuration',
         errorFail: 'Could not send information. Please try again.',
         errorConnect: 'Could not connect to the server. Please try later.',
+        errorRateLimit: 'Too many requests. Please try again after 15 minutes.',
+        errorDelivery: 'Could not complete delivery to {{destinations}} after multiple attempts. Please try again later.',
         successWarn: 'However, the confirmation email could not be sent; please check your inbox later.',
         success: 'Thank you for reaching out! We will get in touch with you as soon as possible.'
       },

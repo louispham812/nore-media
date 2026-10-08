@@ -6,10 +6,26 @@ import { Plyr } from 'plyr-react';
 import 'plyr/dist/plyr.css';
 import videoData from './data/videos.json';
 
+const navItems = [
+  { path: '/', key: 'home' },
+  { path: '/about', key: 'about' },
+  { path: '/services', key: 'services' },
+  { 
+    path: '/projects', 
+    key: 'projects',
+    children: [
+      { path: '/projects?tab=video', key: 'video' },
+      { path: '/projects?tab=gallery', key: 'gallery' },
+    ]
+  },
+  { path: '/contact', key: 'contact' },
+];
+
 const pages = [
   { path: '/', key: 'home' },
   { path: '/about', key: 'about' },
   { path: '/services', key: 'services' },
+  { path: '/projects', key: 'projects' },
   { path: '/gallery', key: 'gallery' },
   { path: '/video', key: 'video' },
   { path: '/contact', key: 'contact' },
@@ -19,13 +35,16 @@ const pages = [
 
 function currentPage(pathname) {
   if (pathname === '/' || pathname === '/index') return 'home';
+  if (pathname === '/projects' || pathname === '/gallery' || pathname === '/video') return 'projects';
   const match = pages.find((page) => page.path === pathname);
   return match ? match.key : 'not-found';
 }
 
 function Header({ activePage }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileProjectsOpen, setMobileProjectsOpen] = useState(activePage === 'projects');
   const { t, i18n } = useTranslation();
+  const location = useLocation();
 
   const isEn = i18n.resolvedLanguage === 'en' || (i18n.language && i18n.language.startsWith('en'));
   const currentLang = isEn ? 'en' : 'vi';
@@ -42,7 +61,10 @@ function Header({ activePage }) {
 
   useEffect(() => {
     const closeOnResize = () => {
-      if (window.innerWidth > 720) setMenuOpen(false);
+      if (window.innerWidth > 720) {
+        setMenuOpen(false);
+        setMobileProjectsOpen(false);
+      }
     };
     window.addEventListener('resize', closeOnResize);
     return () => window.removeEventListener('resize', closeOnResize);
@@ -53,25 +75,107 @@ function Header({ activePage }) {
     return () => document.body.classList.remove('menu-open');
   }, [menuOpen]);
 
-  // Unique pages for the menu
-  const menuPages = pages.slice(0, 6);
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname, location.search]);
 
   return (
     <header className={`site-header${menuOpen ? ' nav-open' : ''}`}>
       <div className="container nav-wrap">
-        <Link className="brand" to="/">
+        <Link className="brand" to="/" onClick={() => setMenuOpen(false)}>
           <img src="/logo.jpg" alt="NORE" />
           <span>NORE MEDIA</span>
         </Link>
         <nav className={`main-nav${menuOpen ? ' is-open' : ''}`} aria-label={t('nav.mainAria')}>
-          {menuPages.map((page) => {
-            const isActive = activePage === page.key;
+          {navItems.map((item) => {
+            const isActive = activePage === item.key;
+            if (item.children) {
+              const isGalleryActive = activePage === 'projects' && (location.search.includes('tab=gallery') || location.pathname === '/gallery');
+              const isVideoActive = activePage === 'projects' && !isGalleryActive;
+
+              return (
+                <div
+                  key={item.key}
+                  className={`nav-item-dropdown${mobileProjectsOpen ? ' mobile-open' : ''}`}
+                >
+                  <div className="nav-dropdown-trigger-row">
+                    <Link
+                      to={item.path}
+                      className={`nav-dropdown-trigger${isActive ? ' active' : ''}`}
+                      aria-current={isActive ? 'page' : undefined}
+                      onClick={() => setMenuOpen(false)}
+                      style={{ position: 'relative' }}
+                    >
+                      {isActive && (
+                        <motion.div
+                          layoutId="active-pill"
+                          style={{
+                            position: 'absolute',
+                            inset: 0,
+                            background: 'rgba(255,255,255,0.12)',
+                            borderRadius: '999px',
+                            zIndex: -1
+                          }}
+                          transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                        />
+                      )}
+                      <span>{t(`nav.${item.key}`)}</span>
+                      <svg className="dropdown-chevron" viewBox="0 0 10 6" width="8" height="6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M1 1L5 5L9 1" />
+                      </svg>
+                    </Link>
+                    <button
+                      type="button"
+                      className="mobile-submenu-toggle"
+                      aria-label={mobileProjectsOpen ? t('nav.closeMenu') : t('nav.openMenu')}
+                      aria-expanded={mobileProjectsOpen}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setMobileProjectsOpen((prev) => !prev);
+                      }}
+                    >
+                      <svg viewBox="0 0 10 6" width="10" height="6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ transform: mobileProjectsOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }}>
+                        <path d="M1 1L5 5L9 1" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  <div className="nav-dropdown-menu">
+                    <Link
+                      to="/projects?tab=video"
+                      className={`nav-dropdown-item${isVideoActive ? ' active-sub' : ''}`}
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="dropdown-item-icon">
+                        <polygon points="23 7 16 12 23 17 23 7" />
+                        <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+                      </svg>
+                      <span>{t('nav.video')}</span>
+                    </Link>
+                    <Link
+                      to="/projects?tab=gallery"
+                      className={`nav-dropdown-item${isGalleryActive ? ' active-sub' : ''}`}
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="dropdown-item-icon">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <polyline points="21 15 16 10 5 21" />
+                      </svg>
+                      <span>{t('nav.gallery')}</span>
+                    </Link>
+                  </div>
+                </div>
+              );
+            }
+
             return (
               <Link
-                to={page.path}
+                to={item.path}
                 className={isActive ? 'active' : ''}
                 aria-current={isActive ? 'page' : undefined}
-                key={page.key}
+                key={item.key}
                 onClick={() => setMenuOpen(false)}
                 style={{ position: 'relative' }}
               >
@@ -88,7 +192,7 @@ function Header({ activePage }) {
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
-                {t(`nav.${page.key}`)}
+                {t(`nav.${item.key}`)}
               </Link>
             );
           })}
@@ -254,7 +358,7 @@ function HomePage() {
               ))}
             </div>
             <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-              <Link to="/gallery" className="btn btn-secondary">{t('home.viewMoreGallery')}</Link>
+              <Link to="/projects?tab=gallery" className="btn btn-secondary">{t('home.viewMoreGallery')}</Link>
             </div>
           </div>
         </section>
@@ -411,37 +515,34 @@ function ServicesPage() {
   );
 }
 
-function GalleryPage() {
+function GalleryContent() {
   const { t } = useTranslation();
   return (
-    <main className="page-main">
-      <PageHero eyebrow={t('gallery.eyebrow')} title={t('gallery.title')} />
-      <section className="section">
-        <div className="container">
-          <article className="card canva-card">
-            <div className="canva-embed">
-              <iframe
-                loading="lazy"
-                src="https://www.canva.com/design/DAHJ40demyc/haPQFA94SUbCfZWUdvxPNw/view?embed"
-                title={t('gallery.iframeTitle')}
-                allowFullScreen
-                allow="fullscreen"
-              />
-            </div>
-            <div className="canva-credit">
-              <a
-                href="https://canva.link/lx72u295xwn5sel"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-link"
-              >
-                {t('gallery.openCanva')}
-              </a>
-            </div>
-          </article>
-        </div>
-      </section>
-    </main>
+    <section className="section">
+      <div className="container">
+        <article className="card canva-card">
+          <div className="canva-embed">
+            <iframe
+              loading="lazy"
+              src="https://www.canva.com/design/DAHJ40demyc/haPQFA94SUbCfZWUdvxPNw/view?embed"
+              title={t('gallery.iframeTitle')}
+              allowFullScreen
+              allow="fullscreen"
+            />
+          </div>
+          <div className="canva-credit">
+            <a
+              href="https://canva.link/lx72u295xwn5sel"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-link"
+            >
+              {t('gallery.openCanva')}
+            </a>
+          </div>
+        </article>
+      </div>
+    </section>
   );
 }
 
@@ -492,7 +593,7 @@ const categoryIcons = {
   ),
 };
 
-function VideoPage() {
+function VideoContent() {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryParam = searchParams.get('category');
@@ -520,18 +621,25 @@ function VideoPage() {
   }, []);
 
   const handleSelectCategory = (catId) => {
-    setSearchParams({ category: catId });
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set('category', catId);
+      return next;
+    });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleBackToHub = () => {
-    setSearchParams({});
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.delete('category');
+      return next;
+    });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <main className="page-main">
-      <PageHero eyebrow={t('video.eyebrow')} title={t('video.title')} />
+    <>
       <section className="section">
         <div className="container">
           <AnimatePresence mode="wait">
@@ -667,20 +775,135 @@ function VideoPage() {
           </article>
         </div>
       </section>
+    </>
+  );
+}
+
+function ProjectsPage({ initialTab = 'video' }) {
+  const { t } = useTranslation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
+
+  let activeTab = initialTab;
+  if (location.pathname === '/gallery') {
+    activeTab = 'gallery';
+  } else if (location.pathname === '/video') {
+    activeTab = 'video';
+  } else {
+    activeTab = searchParams.get('tab') === 'gallery' ? 'gallery' : 'video';
+  }
+
+  const handleTabChange = (newTab) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set('tab', newTab);
+      if (newTab === 'gallery') {
+        next.delete('category');
+      }
+      return next;
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  return (
+    <main className="page-main">
+      <section className="page-hero">
+        <div className="container">
+          <p className="eyebrow">{t('projects.eyebrow')}</p>
+          <h1>{activeTab === 'gallery' ? t('gallery.title') : t('video.title')}</h1>
+          <div className="projects-tab-wrap">
+            <div className="projects-tab-bar" role="tablist" aria-label={t('projects.eyebrow')}>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeTab === 'video'}
+                className={`projects-tab-btn${activeTab === 'video' ? ' active' : ''}`}
+                onClick={() => handleTabChange('video')}
+              >
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polygon points="23 7 16 12 23 17 23 7" />
+                  <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+                </svg>
+                <span>{t('nav.video')}</span>
+                {activeTab === 'video' && (
+                  <motion.div
+                    layoutId="projects-tab-indicator"
+                    className="projects-tab-indicator"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeTab === 'gallery'}
+                className={`projects-tab-btn${activeTab === 'gallery' ? ' active' : ''}`}
+                onClick={() => handleTabChange('gallery')}
+              >
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                  <circle cx="8.5" cy="8.5" r="1.5" />
+                  <polyline points="21 15 16 10 5 21" />
+                </svg>
+                <span>{t('nav.gallery')}</span>
+                {activeTab === 'gallery' && (
+                  <motion.div
+                    layoutId="projects-tab-indicator"
+                    className="projects-tab-indicator"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <AnimatePresence mode="wait">
+        {activeTab === 'gallery' ? (
+          <motion.div
+            key="gallery-content"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.25 }}
+          >
+            <GalleryContent />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="video-content"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.25 }}
+          >
+            <VideoContent />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
+}
+
+function GalleryPage() {
+  return <ProjectsPage initialTab="gallery" />;
+}
+
+function VideoPage() {
+  return <ProjectsPage initialTab="video" />;
 }
 
 function ContactPage() {
   const { t } = useTranslation();
   const [submitting, setSubmitting] = useState(false);
-  const [feedback, setFeedback] = useState({ type: '', message: '' });
+  const [feedback, setFeedback] = useState(null);
   const submission = useRef({ key: (window.crypto && window.crypto.randomUUID) ? window.crypto.randomUUID() : Math.random().toString(36).substring(2), details: null });
 
   async function submitContact(event) {
     event.preventDefault();
     setSubmitting(true);
-    setFeedback({ type: '', message: '' });
+    setFeedback(null);
     const form = event.currentTarget;
     const details = Object.fromEntries(new FormData(form).entries());
     if (submission.current.details && JSON.stringify(submission.current.details) !== JSON.stringify(details)) {
@@ -699,12 +922,12 @@ function ContactPage() {
       });
       const result = await response.json();
       if (!response.ok) {
-        const missingSettings = Array.isArray(result.missing) && result.missing.length
-          ? ` ${t('contact.errorMissing')}: ${result.missing.join(', ')}.`
-          : '';
         setFeedback({
           type: 'error',
-          message: `${result.error || t('contact.errorFail')}${missingSettings}`,
+          key: result.errorKey || (result.missing?.length ? 'contact.errorMissing' : (!result.error ? 'contact.errorFail' : null)),
+          fallback: result.error || '',
+          missing: result.missing,
+          destinations: result.failedDestinations,
         });
         return;
       }
@@ -712,16 +935,34 @@ function ContactPage() {
       submission.current = { key: (window.crypto && window.crypto.randomUUID) ? window.crypto.randomUUID() : Math.random().toString(36).substring(2), details: null };
       setFeedback({
         type: 'success',
-        message: result.confirmationWarning
-          ? `${t(result.messageKey || 'contact.success')} ${t('contact.successWarn')}`
-          : t(result.messageKey || 'contact.success'),
+        key: result.messageKey || 'contact.success',
+        warning: Boolean(result.confirmationWarning),
+        fallback: result.message || '',
       });
     } catch {
-      setFeedback({ type: 'error', message: t('contact.errorConnect') });
+      setFeedback({ type: 'error', key: 'contact.errorConnect' });
     } finally {
       setSubmitting(false);
     }
   }
+
+  const getFeedbackMessage = () => {
+    if (!feedback) return '';
+    if (feedback.key) {
+      let msg = t(feedback.key, {
+        defaultValue: feedback.fallback || '',
+        destinations: feedback.destinations || '',
+      });
+      if (feedback.warning) {
+        msg += ` ${t('contact.successWarn')}`;
+      }
+      if (feedback.missing && feedback.missing.length > 0) {
+        msg += `: ${feedback.missing.join(', ')}.`;
+      }
+      return msg;
+    }
+    return feedback.fallback || '';
+  };
 
   return (
     <main className="page-main">
@@ -761,9 +1002,9 @@ function ContactPage() {
               <button type="submit" className="btn btn-primary" disabled={submitting}>
                 {submitting ? t('contact.submitting') : t('contact.submit')}
               </button>
-              {feedback.message && (
+              {feedback && (
                 <p className={`form-feedback ${feedback.type}`} role="status" aria-live="polite">
-                  {feedback.message}
+                  {getFeedbackMessage()}
                 </p>
               )}
             </form>
@@ -823,6 +1064,7 @@ const pageComponents = {
   home: HomePage,
   about: AboutPage,
   services: ServicesPage,
+  projects: ProjectsPage,
   gallery: GalleryPage,
   video: VideoPage,
   contact: ContactPage,
