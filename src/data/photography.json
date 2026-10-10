@@ -15,34 +15,44 @@
         "descEn": "Royal mooncake luxury gift set collection on water reflection and architecture arches.",
         "images": [
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/BanhTrungThu_LeMeridien/01_LeMeridien_Mooncake_Collection_ArchesWaterReflection.png",
-            "key": "Photography/Product/BanhTrungThu_LeMeridien/01_LeMeridien_Mooncake_Collection_ArchesWaterReflection.png",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/BanhTrungThu_LeMeridien/01_LeMeridien_Mooncake_Collection_ArchesWaterReflection_large.webp",
+            "key": "Photography/Product/BanhTrungThu_LeMeridien/01_LeMeridien_Mooncake_Collection_ArchesWaterReflection_large.webp",
             "title": "BST Hoàng Gia Trên Mặt Nước",
-            "titleEn": "Royal Collection On Water Reflection"
+            "titleEn": "Royal Collection On Water Reflection",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/BanhTrungThu_LeMeridien/01_LeMeridien_Mooncake_Collection_ArchesWaterReflection_thumb.webp",
+            "thumbKey": "Photography/Product/BanhTrungThu_LeMeridien/01_LeMeridien_Mooncake_Collection_ArchesWaterReflection_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/BanhTrungThu_LeMeridien/02_LeMeridien_Mooncake_LuxuryRedTrunk_WineTea.png",
-            "key": "Photography/Product/BanhTrungThu_LeMeridien/02_LeMeridien_Mooncake_LuxuryRedTrunk_WineTea.png",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/BanhTrungThu_LeMeridien/02_LeMeridien_Mooncake_LuxuryRedTrunk_WineTea_large.webp",
+            "key": "Photography/Product/BanhTrungThu_LeMeridien/02_LeMeridien_Mooncake_LuxuryRedTrunk_WineTea_large.webp",
             "title": "Vali Đỏ Sang Trọng & Rượu Vang",
-            "titleEn": "Luxury Red Trunk With Wine & Tea"
+            "titleEn": "Luxury Red Trunk With Wine & Tea",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/BanhTrungThu_LeMeridien/02_LeMeridien_Mooncake_LuxuryRedTrunk_WineTea_thumb.webp",
+            "thumbKey": "Photography/Product/BanhTrungThu_LeMeridien/02_LeMeridien_Mooncake_LuxuryRedTrunk_WineTea_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/BanhTrungThu_LeMeridien/03_LeMeridien_Mooncake_VerticalTower_GlowingDrawer.png",
-            "key": "Photography/Product/BanhTrungThu_LeMeridien/03_LeMeridien_Mooncake_VerticalTower_GlowingDrawer.png",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/BanhTrungThu_LeMeridien/03_LeMeridien_Mooncake_VerticalTower_GlowingDrawer_large.webp",
+            "key": "Photography/Product/BanhTrungThu_LeMeridien/03_LeMeridien_Mooncake_VerticalTower_GlowingDrawer_large.webp",
             "title": "Tháp Quà Phát Sáng Ngân Hà",
-            "titleEn": "Glowing Drawer Vertical Tower"
+            "titleEn": "Glowing Drawer Vertical Tower",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/BanhTrungThu_LeMeridien/03_LeMeridien_Mooncake_VerticalTower_GlowingDrawer_thumb.webp",
+            "thumbKey": "Photography/Product/BanhTrungThu_LeMeridien/03_LeMeridien_Mooncake_VerticalTower_GlowingDrawer_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/BanhTrungThu_LeMeridien/04_LeMeridien_Mooncake_Pedestals_EggYolkDetails.png",
-            "key": "Photography/Product/BanhTrungThu_LeMeridien/04_LeMeridien_Mooncake_Pedestals_EggYolkDetails.png",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/BanhTrungThu_LeMeridien/04_LeMeridien_Mooncake_Pedestals_EggYolkDetails_large.webp",
+            "key": "Photography/Product/BanhTrungThu_LeMeridien/04_LeMeridien_Mooncake_Pedestals_EggYolkDetails_large.webp",
             "title": "Chi Tiết Trứng Muối Óng Ả",
-            "titleEn": "Egg Yolk & Crust Details"
+            "titleEn": "Egg Yolk & Crust Details",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/BanhTrungThu_LeMeridien/04_LeMeridien_Mooncake_Pedestals_EggYolkDetails_thumb.webp",
+            "thumbKey": "Photography/Product/BanhTrungThu_LeMeridien/04_LeMeridien_Mooncake_Pedestals_EggYolkDetails_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/BanhTrungThu_LeMeridien/05_LeMeridien_Mooncake_FloatingTrunks_SpaceOrbit.png",
-            "key": "Photography/Product/BanhTrungThu_LeMeridien/05_LeMeridien_Mooncake_FloatingTrunks_SpaceOrbit.png",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/BanhTrungThu_LeMeridien/05_LeMeridien_Mooncake_FloatingTrunks_SpaceOrbit_large.webp",
+            "key": "Photography/Product/BanhTrungThu_LeMeridien/05_LeMeridien_Mooncake_FloatingTrunks_SpaceOrbit_large.webp",
             "title": "Vali Bay Không Trọng Lực",
-            "titleEn": "Floating Trunks In Orbit Concept"
+            "titleEn": "Floating Trunks In Orbit Concept",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/BanhTrungThu_LeMeridien/05_LeMeridien_Mooncake_FloatingTrunks_SpaceOrbit_thumb.webp",
+            "thumbKey": "Photography/Product/BanhTrungThu_LeMeridien/05_LeMeridien_Mooncake_FloatingTrunks_SpaceOrbit_thumb.webp"
           }
         ]
       },
@@ -54,34 +64,44 @@
         "descEn": "Fine dining and beverage artistry at 5-star hotels Hilton, Mövenpick, Intercontinental, Ussina 77.",
         "images": [
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/AmThuc_DoUong_FB/01_Hilton_SongBar_Cocktail_Detail.jpg",
-            "key": "Photography/Product/AmThuc_DoUong_FB/01_Hilton_SongBar_Cocktail_Detail.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/AmThuc_DoUong_FB/01_Hilton_SongBar_Cocktail_Detail_large.webp",
+            "key": "Photography/Product/AmThuc_DoUong_FB/01_Hilton_SongBar_Cocktail_Detail_large.webp",
             "title": "Cocktail Nghệ Thuật - SongBar Hilton",
-            "titleEn": "Artisan Cocktail - SongBar Hilton Saigon"
+            "titleEn": "Artisan Cocktail - SongBar Hilton Saigon",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/AmThuc_DoUong_FB/01_Hilton_SongBar_Cocktail_Detail_thumb.webp",
+            "thumbKey": "Photography/Product/AmThuc_DoUong_FB/01_Hilton_SongBar_Cocktail_Detail_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/AmThuc_DoUong_FB/02_Hilton_Residence_RoastQuail_CharcoalStove.jpg",
-            "key": "Photography/Product/AmThuc_DoUong_FB/02_Hilton_Residence_RoastQuail_CharcoalStove.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/AmThuc_DoUong_FB/02_Hilton_Residence_RoastQuail_CharcoalStove_large.webp",
+            "key": "Photography/Product/AmThuc_DoUong_FB/02_Hilton_Residence_RoastQuail_CharcoalStove_large.webp",
             "title": "Chim Cút Nướng Khói Than Gốm",
-            "titleEn": "Roast Quail On Ceramic Charcoal Stove"
+            "titleEn": "Roast Quail On Ceramic Charcoal Stove",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/AmThuc_DoUong_FB/02_Hilton_Residence_RoastQuail_CharcoalStove_thumb.webp",
+            "thumbKey": "Photography/Product/AmThuc_DoUong_FB/02_Hilton_Residence_RoastQuail_CharcoalStove_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/AmThuc_DoUong_FB/03_Movenpick_PhuQuoc_FreshSpringRolls.jpg",
-            "key": "Photography/Product/AmThuc_DoUong_FB/03_Movenpick_PhuQuoc_FreshSpringRolls.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/AmThuc_DoUong_FB/03_Movenpick_PhuQuoc_FreshSpringRolls_large.webp",
+            "key": "Photography/Product/AmThuc_DoUong_FB/03_Movenpick_PhuQuoc_FreshSpringRolls_large.webp",
             "title": "Gỏi Cuốn Tươi - Mövenpick Phú Quốc",
-            "titleEn": "Fresh Spring Rolls - Mövenpick Phu Quoc"
+            "titleEn": "Fresh Spring Rolls - Mövenpick Phu Quoc",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/AmThuc_DoUong_FB/03_Movenpick_PhuQuoc_FreshSpringRolls_thumb.webp",
+            "thumbKey": "Photography/Product/AmThuc_DoUong_FB/03_Movenpick_PhuQuoc_FreshSpringRolls_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/AmThuc_DoUong_FB/04_Intercontinental_PhuQuoc_SeafoodFeast_Boat.jpg",
-            "key": "Photography/Product/AmThuc_DoUong_FB/04_Intercontinental_PhuQuoc_SeafoodFeast_Boat.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/AmThuc_DoUong_FB/04_Intercontinental_PhuQuoc_SeafoodFeast_Boat_large.webp",
+            "key": "Photography/Product/AmThuc_DoUong_FB/04_Intercontinental_PhuQuoc_SeafoodFeast_Boat_large.webp",
             "title": "Thuyền Hải Sản Hoàng Gia - Intercontinental",
-            "titleEn": "Seafood Feast Boat - Intercontinental Phu Quoc"
+            "titleEn": "Seafood Feast Boat - Intercontinental Phu Quoc",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/AmThuc_DoUong_FB/04_Intercontinental_PhuQuoc_SeafoodFeast_Boat_thumb.webp",
+            "thumbKey": "Photography/Product/AmThuc_DoUong_FB/04_Intercontinental_PhuQuoc_SeafoodFeast_Boat_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/AmThuc_DoUong_FB/05_Ussina77_Wagyu_SkyDining.jpg",
-            "key": "Photography/Product/AmThuc_DoUong_FB/05_Ussina77_Wagyu_SkyDining.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/AmThuc_DoUong_FB/05_Ussina77_Wagyu_SkyDining_large.webp",
+            "key": "Photography/Product/AmThuc_DoUong_FB/05_Ussina77_Wagyu_SkyDining_large.webp",
             "title": "Bò Wagyu Ủ Tuyết Trên Mây - Landmark 81",
-            "titleEn": "Snow Aging Wagyu - Ussina 77 Landmark 81"
+            "titleEn": "Snow Aging Wagyu - Ussina 77 Landmark 81",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/AmThuc_DoUong_FB/05_Ussina77_Wagyu_SkyDining_thumb.webp",
+            "thumbKey": "Photography/Product/AmThuc_DoUong_FB/05_Ussina77_Wagyu_SkyDining_thumb.webp"
           }
         ]
       },
@@ -93,34 +113,44 @@
         "descEn": "Tech device commercial display, East West craft beer and creative food styling.",
         "images": [
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/AmThuc_DoUong_FB/06_LauChayNhaNat_FoodStyling.jpg",
-            "key": "Photography/Product/AmThuc_DoUong_FB/06_LauChayNhaNat_FoodStyling.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/AmThuc_DoUong_FB/06_LauChayNhaNat_FoodStyling_large.webp",
+            "key": "Photography/Product/AmThuc_DoUong_FB/06_LauChayNhaNat_FoodStyling_large.webp",
             "title": "Food Styling Nghệ Thuật - Nhà Nát",
-            "titleEn": "Artistic Food Styling - Nha Nat"
+            "titleEn": "Artistic Food Styling - Nha Nat",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/AmThuc_DoUong_FB/06_LauChayNhaNat_FoodStyling_thumb.webp",
+            "thumbKey": "Photography/Product/AmThuc_DoUong_FB/06_LauChayNhaNat_FoodStyling_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/AmThuc_DoUong_FB/07_EastWest_Festbier_CraftBeer_Can.jpg",
-            "key": "Photography/Product/AmThuc_DoUong_FB/07_EastWest_Festbier_CraftBeer_Can.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/AmThuc_DoUong_FB/07_EastWest_Festbier_CraftBeer_Can_large.webp",
+            "key": "Photography/Product/AmThuc_DoUong_FB/07_EastWest_Festbier_CraftBeer_Can_large.webp",
             "title": "Bia Lon Thủ Công - East West Festbier",
-            "titleEn": "Craft Beer Can - East West Festbier"
+            "titleEn": "Craft Beer Can - East West Festbier",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/AmThuc_DoUong_FB/07_EastWest_Festbier_CraftBeer_Can_thumb.webp",
+            "thumbKey": "Photography/Product/AmThuc_DoUong_FB/07_EastWest_Festbier_CraftBeer_Can_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/SanPham_CongNghe_Panasonic/01_Panasonic_Product_Commercial_Display.png",
-            "key": "Photography/Product/SanPham_CongNghe_Panasonic/01_Panasonic_Product_Commercial_Display.png",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/SanPham_CongNghe_Panasonic/01_Panasonic_Product_Commercial_Display_large.webp",
+            "key": "Photography/Product/SanPham_CongNghe_Panasonic/01_Panasonic_Product_Commercial_Display_large.webp",
             "title": "Trưng Bày Thiết Bị Công Nghệ Panasonic",
-            "titleEn": "Panasonic Commercial Tech Display"
+            "titleEn": "Panasonic Commercial Tech Display",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/SanPham_CongNghe_Panasonic/01_Panasonic_Product_Commercial_Display_thumb.webp",
+            "thumbKey": "Photography/Product/SanPham_CongNghe_Panasonic/01_Panasonic_Product_Commercial_Display_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/Highlights_Top5_Product/01_LeMeridien_Mooncake_LuxuryCollection.png",
-            "key": "Photography/Product/Highlights_Top5_Product/01_LeMeridien_Mooncake_LuxuryCollection.png",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/Highlights_Top5_Product/01_LeMeridien_Mooncake_LuxuryCollection_large.webp",
+            "key": "Photography/Product/Highlights_Top5_Product/01_LeMeridien_Mooncake_LuxuryCollection_large.webp",
             "title": "Chi Tiết Bộ Hộp Quà Le Méridien",
-            "titleEn": "Le Méridien Luxury Box Detail"
+            "titleEn": "Le Méridien Luxury Box Detail",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/Highlights_Top5_Product/01_LeMeridien_Mooncake_LuxuryCollection_thumb.webp",
+            "thumbKey": "Photography/Product/Highlights_Top5_Product/01_LeMeridien_Mooncake_LuxuryCollection_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/Highlights_Top5_Product/02_LeMeridien_Mooncake_Pedestal_Details.png",
-            "key": "Photography/Product/Highlights_Top5_Product/02_LeMeridien_Mooncake_Pedestal_Details.png",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/Highlights_Top5_Product/02_LeMeridien_Mooncake_Pedestal_Details_large.webp",
+            "key": "Photography/Product/Highlights_Top5_Product/02_LeMeridien_Mooncake_Pedestal_Details_large.webp",
             "title": "Bục Trưng Bày Bánh Trung Thu",
-            "titleEn": "Mooncake Pedestal Presentation"
+            "titleEn": "Mooncake Pedestal Presentation",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/Highlights_Top5_Product/02_LeMeridien_Mooncake_Pedestal_Details_thumb.webp",
+            "thumbKey": "Photography/Product/Highlights_Top5_Product/02_LeMeridien_Mooncake_Pedestal_Details_thumb.webp"
           }
         ]
       }
@@ -142,34 +172,44 @@
         "descEn": "Craft Beer Oktoberfest: welcome entrance, merchandise booth, VIP tables and celebration.",
         "images": [
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/SuKien_BrandActivation_EastWest/01_EastWest_Oktoberfest_WelcomePG_Standee.jpg",
-            "key": "Photography/Brand/SuKien_BrandActivation_EastWest/01_EastWest_Oktoberfest_WelcomePG_Standee.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/SuKien_BrandActivation_EastWest/01_EastWest_Oktoberfest_WelcomePG_Standee_large.webp",
+            "key": "Photography/Brand/SuKien_BrandActivation_EastWest/01_EastWest_Oktoberfest_WelcomePG_Standee_large.webp",
             "title": "Cổng Chào & PG Sự Kiện Oktoberfest",
-            "titleEn": "Welcome Entrance & Event PGs"
+            "titleEn": "Welcome Entrance & Event PGs",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/SuKien_BrandActivation_EastWest/01_EastWest_Oktoberfest_WelcomePG_Standee_thumb.webp",
+            "thumbKey": "Photography/Brand/SuKien_BrandActivation_EastWest/01_EastWest_Oktoberfest_WelcomePG_Standee_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/SuKien_BrandActivation_EastWest/02_EastWest_Oktoberfest_CraftBeer_MerchBooth.jpg",
-            "key": "Photography/Brand/SuKien_BrandActivation_EastWest/02_EastWest_Oktoberfest_CraftBeer_MerchBooth.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/SuKien_BrandActivation_EastWest/02_EastWest_Oktoberfest_CraftBeer_MerchBooth_large.webp",
+            "key": "Photography/Brand/SuKien_BrandActivation_EastWest/02_EastWest_Oktoberfest_CraftBeer_MerchBooth_large.webp",
             "title": "Quầy Trưng Bày Merchandise Thương Hiệu",
-            "titleEn": "Brand Merchandise & Apparel Booth"
+            "titleEn": "Brand Merchandise & Apparel Booth",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/SuKien_BrandActivation_EastWest/02_EastWest_Oktoberfest_CraftBeer_MerchBooth_thumb.webp",
+            "thumbKey": "Photography/Brand/SuKien_BrandActivation_EastWest/02_EastWest_Oktoberfest_CraftBeer_MerchBooth_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/SuKien_BrandActivation_EastWest/03_EastWest_Oktoberfest_VIPTable_Sunflower.jpg",
-            "key": "Photography/Brand/SuKien_BrandActivation_EastWest/03_EastWest_Oktoberfest_VIPTable_Sunflower.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/SuKien_BrandActivation_EastWest/03_EastWest_Oktoberfest_VIPTable_Sunflower_large.webp",
+            "key": "Photography/Brand/SuKien_BrandActivation_EastWest/03_EastWest_Oktoberfest_VIPTable_Sunflower_large.webp",
             "title": "Bàn Tiệc VIP Hoa Hướng Dương",
-            "titleEn": "VIP Table With Sunflower Centerpiece"
+            "titleEn": "VIP Table With Sunflower Centerpiece",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/SuKien_BrandActivation_EastWest/03_EastWest_Oktoberfest_VIPTable_Sunflower_thumb.webp",
+            "thumbKey": "Photography/Brand/SuKien_BrandActivation_EastWest/03_EastWest_Oktoberfest_VIPTable_Sunflower_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/SuKien_BrandActivation_EastWest/04_EastWest_Oktoberfest_Guests_Toast.jpg",
-            "key": "Photography/Brand/SuKien_BrandActivation_EastWest/04_EastWest_Oktoberfest_Guests_Toast.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/SuKien_BrandActivation_EastWest/04_EastWest_Oktoberfest_Guests_Toast_large.webp",
+            "key": "Photography/Brand/SuKien_BrandActivation_EastWest/04_EastWest_Oktoberfest_Guests_Toast_large.webp",
             "title": "Khách Mời Nâng Ly Chúc Mừng",
-            "titleEn": "Guests Cheer & Celebration Toast"
+            "titleEn": "Guests Cheer & Celebration Toast",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/SuKien_BrandActivation_EastWest/04_EastWest_Oktoberfest_Guests_Toast_thumb.webp",
+            "thumbKey": "Photography/Brand/SuKien_BrandActivation_EastWest/04_EastWest_Oktoberfest_Guests_Toast_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/Highlights_Top5_Brand/05_EastWest_Oktoberfest_BrandCommunity.jpg",
-            "key": "Photography/Brand/Highlights_Top5_Brand/05_EastWest_Oktoberfest_BrandCommunity.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/Highlights_Top5_Brand/05_EastWest_Oktoberfest_BrandCommunity_large.webp",
+            "key": "Photography/Brand/Highlights_Top5_Brand/05_EastWest_Oktoberfest_BrandCommunity_large.webp",
             "title": "Kết Nối Cộng Đồng Thương Hiệu",
-            "titleEn": "Brand Community Connection"
+            "titleEn": "Brand Community Connection",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/Highlights_Top5_Brand/05_EastWest_Oktoberfest_BrandCommunity_thumb.webp",
+            "thumbKey": "Photography/Brand/Highlights_Top5_Brand/05_EastWest_Oktoberfest_BrandCommunity_thumb.webp"
           }
         ]
       },
@@ -181,34 +221,44 @@
         "descEn": "Luxury architectural spaces at La Siesta Premium Saigon, The Charm Ho Tram & Intercontinental.",
         "images": [
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/KhachSan_Resort_Hospitality/01_Lasiesta_Saigon_WineCellar_Dining.jpg",
-            "key": "Photography/Brand/KhachSan_Resort_Hospitality/01_Lasiesta_Saigon_WineCellar_Dining.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/KhachSan_Resort_Hospitality/01_Lasiesta_Saigon_WineCellar_Dining_large.webp",
+            "key": "Photography/Brand/KhachSan_Resort_Hospitality/01_Lasiesta_Saigon_WineCellar_Dining_large.webp",
             "title": "Hầm Rượu Kính Sang Trọng - La Siesta Saigon",
-            "titleEn": "Glass Wine Cellar & Dining - La Siesta Saigon"
+            "titleEn": "Glass Wine Cellar & Dining - La Siesta Saigon",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/KhachSan_Resort_Hospitality/01_Lasiesta_Saigon_WineCellar_Dining_thumb.webp",
+            "thumbKey": "Photography/Brand/KhachSan_Resort_Hospitality/01_Lasiesta_Saigon_WineCellar_Dining_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/KhachSan_Resort_Hospitality/02_TheCharm_HoTram_Resort_Architecture.jpg",
-            "key": "Photography/Brand/KhachSan_Resort_Hospitality/02_TheCharm_HoTram_Resort_Architecture.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/KhachSan_Resort_Hospitality/02_TheCharm_HoTram_Resort_Architecture_large.webp",
+            "key": "Photography/Brand/KhachSan_Resort_Hospitality/02_TheCharm_HoTram_Resort_Architecture_large.webp",
             "title": "Kiến Trúc Nghỉ Dưỡng - The Charm Hồ Tràm",
-            "titleEn": "Resort Architecture - The Charm Ho Tram"
+            "titleEn": "Resort Architecture - The Charm Ho Tram",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/KhachSan_Resort_Hospitality/02_TheCharm_HoTram_Resort_Architecture_thumb.webp",
+            "thumbKey": "Photography/Brand/KhachSan_Resort_Hospitality/02_TheCharm_HoTram_Resort_Architecture_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/KhachSan_Resort_Hospitality/03_Intercontinental_PhuQuoc_BeachFeast.jpg",
-            "key": "Photography/Brand/KhachSan_Resort_Hospitality/03_Intercontinental_PhuQuoc_BeachFeast.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/KhachSan_Resort_Hospitality/03_Intercontinental_PhuQuoc_BeachFeast_large.webp",
+            "key": "Photography/Brand/KhachSan_Resort_Hospitality/03_Intercontinental_PhuQuoc_BeachFeast_large.webp",
             "title": "Không Gian Tiệc Bãi Biển - Intercontinental",
-            "titleEn": "Beachfront Banquet Space - Intercontinental"
+            "titleEn": "Beachfront Banquet Space - Intercontinental",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/KhachSan_Resort_Hospitality/03_Intercontinental_PhuQuoc_BeachFeast_thumb.webp",
+            "thumbKey": "Photography/Brand/KhachSan_Resort_Hospitality/03_Intercontinental_PhuQuoc_BeachFeast_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/ChienDich_ThuongMai_OldNavy/01_OldNavy_SummerLifestyle_Commercial.jpg",
-            "key": "Photography/Brand/ChienDich_ThuongMai_OldNavy/01_OldNavy_SummerLifestyle_Commercial.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/ChienDich_ThuongMai_OldNavy/01_OldNavy_SummerLifestyle_Commercial_large.webp",
+            "key": "Photography/Brand/ChienDich_ThuongMai_OldNavy/01_OldNavy_SummerLifestyle_Commercial_large.webp",
             "title": "Chiến Dịch Lifestyle Resort - Old Navy",
-            "titleEn": "Resort Lifestyle Campaign - Old Navy"
+            "titleEn": "Resort Lifestyle Campaign - Old Navy",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/ChienDich_ThuongMai_OldNavy/01_OldNavy_SummerLifestyle_Commercial_thumb.webp",
+            "thumbKey": "Photography/Brand/ChienDich_ThuongMai_OldNavy/01_OldNavy_SummerLifestyle_Commercial_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/Highlights_Top5_Brand/02_Lasiesta_Saigon_LuxuryHospitality.jpg",
-            "key": "Photography/Brand/Highlights_Top5_Brand/02_Lasiesta_Saigon_LuxuryHospitality.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/Highlights_Top5_Brand/02_Lasiesta_Saigon_LuxuryHospitality_large.webp",
+            "key": "Photography/Brand/Highlights_Top5_Brand/02_Lasiesta_Saigon_LuxuryHospitality_large.webp",
             "title": "Không Gian Thưởng Rượu Đẳng Cấp",
-            "titleEn": "Premium Hospitality Dining Ambience"
+            "titleEn": "Premium Hospitality Dining Ambience",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/Highlights_Top5_Brand/02_Lasiesta_Saigon_LuxuryHospitality_thumb.webp",
+            "thumbKey": "Photography/Brand/Highlights_Top5_Brand/02_Lasiesta_Saigon_LuxuryHospitality_thumb.webp"
           }
         ]
       },
@@ -220,34 +270,44 @@
         "descEn": "Fashion brand campaign for Old Navy and artistic band concept portrait for THE FLOB.",
         "images": [
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/Highlights_Top5_Brand/01_OldNavy_Commercial_FashionBrand.jpg",
-            "key": "Photography/Brand/Highlights_Top5_Brand/01_OldNavy_Commercial_FashionBrand.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/Highlights_Top5_Brand/01_OldNavy_Commercial_FashionBrand_large.webp",
+            "key": "Photography/Brand/Highlights_Top5_Brand/01_OldNavy_Commercial_FashionBrand_large.webp",
             "title": "Thời Trang Mùa Hè - Old Navy Brand",
-            "titleEn": "Summer Lifestyle Fashion - Old Navy"
+            "titleEn": "Summer Lifestyle Fashion - Old Navy",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/Highlights_Top5_Brand/01_OldNavy_Commercial_FashionBrand_thumb.webp",
+            "thumbKey": "Photography/Brand/Highlights_Top5_Brand/01_OldNavy_Commercial_FashionBrand_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/Highlights_Top5_Brand/03_TheCharm_HoTram_Resort_Architecture.jpg",
-            "key": "Photography/Brand/Highlights_Top5_Brand/03_TheCharm_HoTram_Resort_Architecture.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/Highlights_Top5_Brand/03_TheCharm_HoTram_Resort_Architecture_large.webp",
+            "key": "Photography/Brand/Highlights_Top5_Brand/03_TheCharm_HoTram_Resort_Architecture_large.webp",
             "title": "Toàn Cảnh Hồ Bơi & Biển The Charm",
-            "titleEn": "Infinity Pool & Ocean View - The Charm"
+            "titleEn": "Infinity Pool & Ocean View - The Charm",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/Highlights_Top5_Brand/03_TheCharm_HoTram_Resort_Architecture_thumb.webp",
+            "thumbKey": "Photography/Brand/Highlights_Top5_Brand/03_TheCharm_HoTram_Resort_Architecture_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/Highlights_Top5_Brand/04_EastWest_BrandActivation_Oktoberfest.jpg",
-            "key": "Photography/Brand/Highlights_Top5_Brand/04_EastWest_BrandActivation_Oktoberfest.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/Highlights_Top5_Brand/04_EastWest_BrandActivation_Oktoberfest_large.webp",
+            "key": "Photography/Brand/Highlights_Top5_Brand/04_EastWest_BrandActivation_Oktoberfest_large.webp",
             "title": "Cổng Sự Kiện Thương Hiệu East West",
-            "titleEn": "East West Event Gate Activation"
+            "titleEn": "East West Event Gate Activation",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/Highlights_Top5_Brand/04_EastWest_BrandActivation_Oktoberfest_thumb.webp",
+            "thumbKey": "Photography/Brand/Highlights_Top5_Brand/04_EastWest_BrandActivation_Oktoberfest_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/ChanDung_NgheThuat_TheFlobBand/01_TheFlob_IndieBand_ConceptPortrait.jpg",
-            "key": "Photography/Brand/ChanDung_NgheThuat_TheFlobBand/01_TheFlob_IndieBand_ConceptPortrait.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/ChanDung_NgheThuat_TheFlobBand/01_TheFlob_IndieBand_ConceptPortrait_large.webp",
+            "key": "Photography/Brand/ChanDung_NgheThuat_TheFlobBand/01_TheFlob_IndieBand_ConceptPortrait_large.webp",
             "title": "Concept Chân Dung Nghệ Thuật - The Flob Band",
-            "titleEn": "Artistic Band Portrait - THE FLOB"
+            "titleEn": "Artistic Band Portrait - THE FLOB",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/ChanDung_NgheThuat_TheFlobBand/01_TheFlob_IndieBand_ConceptPortrait_thumb.webp",
+            "thumbKey": "Photography/Brand/ChanDung_NgheThuat_TheFlobBand/01_TheFlob_IndieBand_ConceptPortrait_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/SuKien_BrandActivation_EastWest/04_EastWest_Oktoberfest_FestbierCans_FloralProduct.jpg",
-            "key": "Photography/Brand/SuKien_BrandActivation_EastWest/04_EastWest_Oktoberfest_FestbierCans_FloralProduct.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/SuKien_BrandActivation_EastWest/04_EastWest_Oktoberfest_FestbierCans_FloralProduct_large.webp",
+            "key": "Photography/Brand/SuKien_BrandActivation_EastWest/04_EastWest_Oktoberfest_FestbierCans_FloralProduct_large.webp",
             "title": "Sản Phẩm Sự Kiện & Hoa Trang Trí",
-            "titleEn": "Event Product & Floral Setting"
+            "titleEn": "Event Product & Floral Setting",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/SuKien_BrandActivation_EastWest/04_EastWest_Oktoberfest_FestbierCans_FloralProduct_thumb.webp",
+            "thumbKey": "Photography/Brand/SuKien_BrandActivation_EastWest/04_EastWest_Oktoberfest_FestbierCans_FloralProduct_thumb.webp"
           }
         ]
       }
@@ -269,34 +329,44 @@
         "descEn": "Traditional silk bodice, calligraphy fan, antique heritage hall and cinematic B&W.",
         "images": [
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ChanDung_CoPhong_AoYem/01_CoPhong_CloseUp_BeautyFan_Calligraphy.jpg",
-            "key": "Photography/CaNhan/ChanDung_CoPhong_AoYem/01_CoPhong_CloseUp_BeautyFan_Calligraphy.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ChanDung_CoPhong_AoYem/01_CoPhong_CloseUp_BeautyFan_Calligraphy_large.webp",
+            "key": "Photography/CaNhan/ChanDung_CoPhong_AoYem/01_CoPhong_CloseUp_BeautyFan_Calligraphy_large.webp",
             "title": "Chân Dung Beauty Cầm Quạt Đỏ",
-            "titleEn": "Beauty Portrait With Calligraphy Fan"
+            "titleEn": "Beauty Portrait With Calligraphy Fan",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ChanDung_CoPhong_AoYem/01_CoPhong_CloseUp_BeautyFan_Calligraphy_thumb.webp",
+            "thumbKey": "Photography/CaNhan/ChanDung_CoPhong_AoYem/01_CoPhong_CloseUp_BeautyFan_Calligraphy_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ChanDung_CoPhong_AoYem/02_CoPhong_Temple_SilkDress_MorningSunbeam.jpg",
-            "key": "Photography/CaNhan/ChanDung_CoPhong_AoYem/02_CoPhong_Temple_SilkDress_MorningSunbeam.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ChanDung_CoPhong_AoYem/02_CoPhong_Temple_SilkDress_MorningSunbeam_large.webp",
+            "key": "Photography/CaNhan/ChanDung_CoPhong_AoYem/02_CoPhong_Temple_SilkDress_MorningSunbeam_large.webp",
             "title": "Áo Yếm Lụa Bên Vạt Nắng Sớm",
-            "titleEn": "Silk Bodice In Morning Sunbeams"
+            "titleEn": "Silk Bodice In Morning Sunbeams",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ChanDung_CoPhong_AoYem/02_CoPhong_Temple_SilkDress_MorningSunbeam_thumb.webp",
+            "thumbKey": "Photography/CaNhan/ChanDung_CoPhong_AoYem/02_CoPhong_Temple_SilkDress_MorningSunbeam_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ChanDung_CoPhong_AoYem/03_CoPhong_FullLength_HeritageHall_Staircase.jpg",
-            "key": "Photography/CaNhan/ChanDung_CoPhong_AoYem/03_CoPhong_FullLength_HeritageHall_Staircase.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ChanDung_CoPhong_AoYem/03_CoPhong_FullLength_HeritageHall_Staircase_large.webp",
+            "key": "Photography/CaNhan/ChanDung_CoPhong_AoYem/03_CoPhong_FullLength_HeritageHall_Staircase_large.webp",
             "title": "Toàn Thân Tại Sảnh Gỗ Di Sản",
-            "titleEn": "Full-Length In Heritage Wooden Hall"
+            "titleEn": "Full-Length In Heritage Wooden Hall",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ChanDung_CoPhong_AoYem/03_CoPhong_FullLength_HeritageHall_Staircase_thumb.webp",
+            "thumbKey": "Photography/CaNhan/ChanDung_CoPhong_AoYem/03_CoPhong_FullLength_HeritageHall_Staircase_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ChanDung_CoPhong_AoYem/04_CoPhong_Editorial_AntiqueWoodChairs_Paintings.jpg",
-            "key": "Photography/CaNhan/ChanDung_CoPhong_AoYem/04_CoPhong_Editorial_AntiqueWoodChairs_Paintings.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ChanDung_CoPhong_AoYem/04_CoPhong_Editorial_AntiqueWoodChairs_Paintings_large.webp",
+            "key": "Photography/CaNhan/ChanDung_CoPhong_AoYem/04_CoPhong_Editorial_AntiqueWoodChairs_Paintings_large.webp",
             "title": "Editorial Bên Ghế Gỗ Cẩn Xà Cừ",
-            "titleEn": "Editorial Beside Antique Wood Chairs"
+            "titleEn": "Editorial Beside Antique Wood Chairs",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ChanDung_CoPhong_AoYem/04_CoPhong_Editorial_AntiqueWoodChairs_Paintings_thumb.webp",
+            "thumbKey": "Photography/CaNhan/ChanDung_CoPhong_AoYem/04_CoPhong_Editorial_AntiqueWoodChairs_Paintings_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ChanDung_CoPhong_AoYem/05_CoPhong_Cinematic_BW_Courtyard_Columns.jpg",
-            "key": "Photography/CaNhan/ChanDung_CoPhong_AoYem/05_CoPhong_Cinematic_BW_Courtyard_Columns.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ChanDung_CoPhong_AoYem/05_CoPhong_Cinematic_BW_Courtyard_Columns_large.webp",
+            "key": "Photography/CaNhan/ChanDung_CoPhong_AoYem/05_CoPhong_Cinematic_BW_Courtyard_Columns_large.webp",
             "title": "Cinematic B&W Hàng Cột Sân Đình",
-            "titleEn": "Cinematic B&W Courtyard Columns"
+            "titleEn": "Cinematic B&W Courtyard Columns",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ChanDung_CoPhong_AoYem/05_CoPhong_Cinematic_BW_Courtyard_Columns_thumb.webp",
+            "thumbKey": "Photography/CaNhan/ChanDung_CoPhong_AoYem/05_CoPhong_Cinematic_BW_Courtyard_Columns_thumb.webp"
           }
         ]
       },
@@ -308,34 +378,44 @@
         "descEn": "Blonde model in dramatic couture red gown at futuristic Ba Son underground metro station.",
         "images": [
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/01_Final_CoutureRedGown_BlondeModel_EscalatorPortrait.jpg",
-            "key": "Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/01_Final_CoutureRedGown_BlondeModel_EscalatorPortrait.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/01_Final_CoutureRedGown_BlondeModel_EscalatorPortrait_large.webp",
+            "key": "Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/01_Final_CoutureRedGown_BlondeModel_EscalatorPortrait_large.webp",
             "title": "Chân Dung Thang Cuốn Kính Đầm Đỏ",
-            "titleEn": "Escalator Portrait In Red Gown"
+            "titleEn": "Escalator Portrait In Red Gown",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/01_Final_CoutureRedGown_BlondeModel_EscalatorPortrait_thumb.webp",
+            "thumbKey": "Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/01_Final_CoutureRedGown_BlondeModel_EscalatorPortrait_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/02_Final_DiagonalPose_MetroEscalator_Architecture.jpg",
-            "key": "Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/02_Final_DiagonalPose_MetroEscalator_Architecture.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/02_Final_DiagonalPose_MetroEscalator_Architecture_large.webp",
+            "key": "Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/02_Final_DiagonalPose_MetroEscalator_Architecture_large.webp",
             "title": "Dáng Chéo Kiến Trúc Thang Cuốn",
-            "titleEn": "Diagonal Architectural Pose"
+            "titleEn": "Diagonal Architectural Pose",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/02_Final_DiagonalPose_MetroEscalator_Architecture_thumb.webp",
+            "thumbKey": "Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/02_Final_DiagonalPose_MetroEscalator_Architecture_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/03_Final_BaSonMetro_PrismFlare_DreamyCitylights.jpg",
-            "key": "Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/03_Final_BaSonMetro_PrismFlare_DreamyCitylights.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/03_Final_BaSonMetro_PrismFlare_DreamyCitylights_large.webp",
+            "key": "Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/03_Final_BaSonMetro_PrismFlare_DreamyCitylights_large.webp",
             "title": "Lăng Kính Prism Flare Mơ Màng",
-            "titleEn": "Dreamy Prism Flare Citylights"
+            "titleEn": "Dreamy Prism Flare Citylights",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/03_Final_BaSonMetro_PrismFlare_DreamyCitylights_thumb.webp",
+            "thumbKey": "Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/03_Final_BaSonMetro_PrismFlare_DreamyCitylights_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/04_Final_BaSonMetroStation_Symmetrical_GrandEntrance.jpg",
-            "key": "Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/04_Final_BaSonMetroStation_Symmetrical_GrandEntrance.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/04_Final_BaSonMetroStation_Symmetrical_GrandEntrance_large.webp",
+            "key": "Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/04_Final_BaSonMetroStation_Symmetrical_GrandEntrance_large.webp",
             "title": "Khung Hình Đối Xứng Cổng Ga Metro",
-            "titleEn": "Symmetrical Grand Metro Entrance"
+            "titleEn": "Symmetrical Grand Metro Entrance",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/04_Final_BaSonMetroStation_Symmetrical_GrandEntrance_thumb.webp",
+            "thumbKey": "Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/04_Final_BaSonMetroStation_Symmetrical_GrandEntrance_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/05_Final_DynamicFlowingGown_NightCityLights.jpg",
-            "key": "Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/05_Final_DynamicFlowingGown_NightCityLights.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/05_Final_DynamicFlowingGown_NightCityLights_large.webp",
+            "key": "Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/05_Final_DynamicFlowingGown_NightCityLights_large.webp",
             "title": "Tà Váy Tung Bay Ánh Đèn Đêm",
-            "titleEn": "Flowing Gown In Night Lights"
+            "titleEn": "Flowing Gown In Night Lights",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/05_Final_DynamicFlowingGown_NightCityLights_thumb.webp",
+            "thumbKey": "Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/05_Final_DynamicFlowingGown_NightCityLights_thumb.webp"
           }
         ]
       },
@@ -347,34 +427,44 @@
         "descEn": "Vibrant Y2K streetwear lookbook at Saigon River pier, Ba Son Bridge and vintage warehouse.",
         "images": [
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/Lookbook_DuongPho_Y2K/01_Look2_BaSonBridge_RiversideSkyline_Outdoor.jpg",
-            "key": "Photography/CaNhan/Lookbook_DuongPho_Y2K/01_Look2_BaSonBridge_RiversideSkyline_Outdoor.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/Lookbook_DuongPho_Y2K/01_Look2_BaSonBridge_RiversideSkyline_Outdoor_large.webp",
+            "key": "Photography/CaNhan/Lookbook_DuongPho_Y2K/01_Look2_BaSonBridge_RiversideSkyline_Outdoor_large.webp",
             "title": "Bến Tàu Skyline Cầu Ba Son",
-            "titleEn": "Ba Son Bridge Riverside Skyline"
+            "titleEn": "Ba Son Bridge Riverside Skyline",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/Lookbook_DuongPho_Y2K/01_Look2_BaSonBridge_RiversideSkyline_Outdoor_thumb.webp",
+            "thumbKey": "Photography/CaNhan/Lookbook_DuongPho_Y2K/01_Look2_BaSonBridge_RiversideSkyline_Outdoor_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/Lookbook_DuongPho_Y2K/02_Look2_RedNeon_GraffitiWall_HairFlip.jpg",
-            "key": "Photography/CaNhan/Lookbook_DuongPho_Y2K/02_Look2_RedNeon_GraffitiWall_HairFlip.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/Lookbook_DuongPho_Y2K/02_Look2_RedNeon_GraffitiWall_HairFlip_large.webp",
+            "key": "Photography/CaNhan/Lookbook_DuongPho_Y2K/02_Look2_RedNeon_GraffitiWall_HairFlip_large.webp",
             "title": "Hất Tóc Tường Neon Graffiti",
-            "titleEn": "Red Neon Graffiti Hair Flip"
+            "titleEn": "Red Neon Graffiti Hair Flip",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/Lookbook_DuongPho_Y2K/02_Look2_RedNeon_GraffitiWall_HairFlip_thumb.webp",
+            "thumbKey": "Photography/CaNhan/Lookbook_DuongPho_Y2K/02_Look2_RedNeon_GraffitiWall_HairFlip_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/Lookbook_DuongPho_Y2K/03_Look2_Warehouse_Denim501_PlayfulPose.jpg",
-            "key": "Photography/CaNhan/Lookbook_DuongPho_Y2K/03_Look2_Warehouse_Denim501_PlayfulPose.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/Lookbook_DuongPho_Y2K/03_Look2_Warehouse_Denim501_PlayfulPose_large.webp",
+            "key": "Photography/CaNhan/Lookbook_DuongPho_Y2K/03_Look2_Warehouse_Denim501_PlayfulPose_large.webp",
             "title": "Áo Denim 501 Xưởng Công Nghiệp",
-            "titleEn": "Denim 501 Pose In Warehouse"
+            "titleEn": "Denim 501 Pose In Warehouse",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/Lookbook_DuongPho_Y2K/03_Look2_Warehouse_Denim501_PlayfulPose_thumb.webp",
+            "thumbKey": "Photography/CaNhan/Lookbook_DuongPho_Y2K/03_Look2_Warehouse_Denim501_PlayfulPose_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/Lookbook_DuongPho_Y2K/04_Look2_LowAngle_Sunlight_IndustrialSet.jpg",
-            "key": "Photography/CaNhan/Lookbook_DuongPho_Y2K/04_Look2_LowAngle_Sunlight_IndustrialSet.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/Lookbook_DuongPho_Y2K/04_Look2_LowAngle_Sunlight_IndustrialSet_large.webp",
+            "key": "Photography/CaNhan/Lookbook_DuongPho_Y2K/04_Look2_LowAngle_Sunlight_IndustrialSet_large.webp",
             "title": "Góc Thấp Đón Nắng Công Nghiệp",
-            "titleEn": "Low Angle Industrial Sunlight"
+            "titleEn": "Low Angle Industrial Sunlight",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/Lookbook_DuongPho_Y2K/04_Look2_LowAngle_Sunlight_IndustrialSet_thumb.webp",
+            "thumbKey": "Photography/CaNhan/Lookbook_DuongPho_Y2K/04_Look2_LowAngle_Sunlight_IndustrialSet_thumb.webp"
           },
           {
-            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/Lookbook_DuongPho_Y2K/05_Look2_ConfidentAttitude_VintageWindows.jpg",
-            "key": "Photography/CaNhan/Lookbook_DuongPho_Y2K/05_Look2_ConfidentAttitude_VintageWindows.jpg",
+            "url": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/Lookbook_DuongPho_Y2K/05_Look2_ConfidentAttitude_VintageWindows_large.webp",
+            "key": "Photography/CaNhan/Lookbook_DuongPho_Y2K/05_Look2_ConfidentAttitude_VintageWindows_large.webp",
             "title": "Thần Thái Tự Tin Ô Cửa Vintage",
-            "titleEn": "Confident Pose By Vintage Windows"
+            "titleEn": "Confident Pose By Vintage Windows",
+            "thumbUrl": "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/Lookbook_DuongPho_Y2K/05_Look2_ConfidentAttitude_VintageWindows_thumb.webp",
+            "thumbKey": "Photography/CaNhan/Lookbook_DuongPho_Y2K/05_Look2_ConfidentAttitude_VintageWindows_thumb.webp"
           }
         ]
       }

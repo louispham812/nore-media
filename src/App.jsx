@@ -428,7 +428,8 @@ const homeFeaturedWorks = [
     titleVi: "BST Bánh Trung Thu Hoàng Gia - Le Méridien",
     titleEn: "Royal Mooncake Collection - Le Méridien",
     client: "Le Méridien Saigon",
-    src: "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/BanhTrungThu_LeMeridien/01_LeMeridien_Mooncake_Collection_ArchesWaterReflection.png",
+    thumbSrc: "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/BanhTrungThu_LeMeridien/01_LeMeridien_Mooncake_Collection_ArchesWaterReflection_thumb.webp",
+    src: "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/BanhTrungThu_LeMeridien/01_LeMeridien_Mooncake_Collection_ArchesWaterReflection_large.webp",
   },
   {
     id: "cocktail",
@@ -438,7 +439,8 @@ const homeFeaturedWorks = [
     titleVi: "Cocktail Nghệ Thuật - SongBar Hilton",
     titleEn: "Artisan Cocktail - SongBar Hilton Saigon",
     client: "Hilton Saigon",
-    src: "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/AmThuc_DoUong_FB/01_Hilton_SongBar_Cocktail_Detail.jpg",
+    thumbSrc: "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/AmThuc_DoUong_FB/01_Hilton_SongBar_Cocktail_Detail_thumb.webp",
+    src: "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Product/AmThuc_DoUong_FB/01_Hilton_SongBar_Cocktail_Detail_large.webp",
   },
   {
     id: "oktoberfest",
@@ -448,7 +450,8 @@ const homeFeaturedWorks = [
     titleVi: "Lễ Hội Bia Oktoberfest - East West Brewing",
     titleEn: "Oktoberfest Activation - East West Brewing",
     client: "East West Brewing Co.",
-    src: "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/SuKien_BrandActivation_EastWest/01_EastWest_Oktoberfest_WelcomePG_Standee.jpg",
+    thumbSrc: "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/SuKien_BrandActivation_EastWest/01_EastWest_Oktoberfest_WelcomePG_Standee_thumb.webp",
+    src: "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/SuKien_BrandActivation_EastWest/01_EastWest_Oktoberfest_WelcomePG_Standee_large.webp",
   },
   {
     id: "lasiesta",
@@ -458,7 +461,8 @@ const homeFeaturedWorks = [
     titleVi: "Hầm Rượu Kính & Không Gian - La Siesta Saigon",
     titleEn: "Luxury Glass Wine Cellar - La Siesta Saigon",
     client: "La Siesta Premium Saigon",
-    src: "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/KhachSan_Resort_Hospitality/01_Lasiesta_Saigon_WineCellar_Dining.jpg",
+    thumbSrc: "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/KhachSan_Resort_Hospitality/01_Lasiesta_Saigon_WineCellar_Dining_thumb.webp",
+    src: "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/Brand/KhachSan_Resort_Hospitality/01_Lasiesta_Saigon_WineCellar_Dining_large.webp",
   },
   {
     id: "cophong-disan",
@@ -468,7 +472,8 @@ const homeFeaturedWorks = [
     titleVi: "Cổ Phong Di Sản Áo Yếm Lụa",
     titleEn: "Heritage Fine Art Silk Bodice",
     client: "Cổ Phong Di Sản",
-    src: "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ChanDung_CoPhong_AoYem/01_CoPhong_CloseUp_BeautyFan_Calligraphy.jpg",
+    thumbSrc: "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ChanDung_CoPhong_AoYem/01_CoPhong_CloseUp_BeautyFan_Calligraphy_thumb.webp",
+    src: "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ChanDung_CoPhong_AoYem/01_CoPhong_CloseUp_BeautyFan_Calligraphy_large.webp",
   },
   {
     id: "bason",
@@ -478,7 +483,8 @@ const homeFeaturedWorks = [
     titleVi: "Thời Trang Dạ Hội Haute Couture - Ga Ba Son",
     titleEn: "Haute Couture Red Gown - Ba Son Metro",
     client: "Editorial Haute Couture",
-    src: "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/01_Final_CoutureRedGown_BlondeModel_EscalatorPortrait.jpg",
+    thumbSrc: "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/01_Final_CoutureRedGown_BlondeModel_EscalatorPortrait_thumb.webp",
+    src: "https://pub-c58cdc739b3e41f093d0676c704c7618.r2.dev/Photography/CaNhan/ThoiTrang_DaHoi_BaSonMetro/01_Final_CoutureRedGown_BlondeModel_EscalatorPortrait_large.webp",
   },
 ];
 
@@ -642,7 +648,7 @@ function HomePage() {
                   >
                     <div className="home-work-img-wrap">
                       <img
-                        src={work.src}
+                        src={work.thumbSrc || work.src}
                         alt={workTitle}
                         loading="lazy"
                         decoding="async"
@@ -1194,7 +1200,7 @@ function GalleryContent() {
                               >
                                 <div className="gallery-photo-img-wrap">
                                   <img
-                                    src={img.url}
+                                    src={img.thumbUrl || img.url}
                                     alt={imgTitle}
                                     loading="lazy"
                                     decoding="async"
