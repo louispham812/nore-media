@@ -56,9 +56,12 @@ const resources = {
           "Tạo nội dung ngắn, thu hút và tối ưu cho các nền tảng số.",
         galleryEyebrow: "Hình ảnh nổi bật",
         galleryHeading: "Một số tác phẩm gần đây",
-        viewMoreGallery: "Xem thêm hình ảnh",
-        zoomAria: "Phóng to tác phẩm {{index}}",
-        altWork: "Tác phẩm {{index}}",
+        gallerySubtitle:
+          "Tuyển chọn các tác phẩm nhiếp ảnh thương mại, thương hiệu và nghệ thuật cá nhân tiêu biểu của NORE MEDIA.",
+        filterAll: "Tất cả",
+        viewMoreGallery: "Xem tất cả 45 tác phẩm nhiếp ảnh",
+        zoomAria: "Phóng to tác phẩm {{title}}",
+        altWork: "Tác phẩm {{title}}",
         modalAlt: "Tác phẩm NORE MEDIA",
         closeModal: "Đóng ảnh",
         modalAria: "Ảnh phóng to",
@@ -136,8 +139,37 @@ const resources = {
       gallery: {
         eyebrow: "Hình ảnh",
         title: "Image Production",
-        iframeTitle: "NORE MEDIA - Image Production",
-        openCanva: "Mở bản trình bày trên Canva",
+        hub: {
+          subtitle:
+            "Khám phá các bộ sưu tập nhiếp ảnh thương mại, thương hiệu và nghệ thuật của NORE MEDIA",
+          explore: "Khám phá bộ sưu tập",
+          backToCategories: "← Tất cả danh mục",
+          collectionsCount_one: "{{count}} bộ sưu tập",
+          collectionsCount_other: "{{count}} bộ sưu tập",
+          photosCount_one: "{{count}} hình ảnh",
+          photosCount_other: "{{count}} hình ảnh",
+          photosPerCollection: "{{count}} ảnh / bộ",
+        },
+        lightbox: {
+          close: "Đóng (Esc)",
+          prev: "Ảnh trước",
+          next: "Ảnh tiếp theo",
+          photoCount: "Ảnh {{current}} / {{total}}",
+        },
+        categories: {
+          product: {
+            title: "Product (Sản phẩm)",
+            desc: "Nhiếp ảnh sản phẩm thương mại, bao bì cao cấp tĩnh vật và nghệ thuật ẩm thực F&B.",
+          },
+          brand: {
+            title: "Brand (Thương hiệu)",
+            desc: "Nhiếp ảnh kiến trúc không gian khách sạn, resort 5 sao và sự kiện kích hoạt thương hiệu.",
+          },
+          personal: {
+            title: "Cá nhân (Chân dung & Lookbook)",
+            desc: "Nhiếp ảnh chân dung nghệ thuật cổ phong di sản, dạ hội Haute Couture và lookbook Y2K.",
+          },
+        },
       },
       video: {
         eyebrow: "Video",
@@ -272,11 +304,14 @@ const resources = {
         service3Title: "Commercial Video Editing",
         service3Desc:
           "Creating engaging, high-retention short-form content optimized for digital platforms.",
-        galleryEyebrow: "Featured Gallery",
-        galleryHeading: "Recent Works",
-        viewMoreGallery: "Explore More Images",
-        zoomAria: "Enlarge artwork {{index}}",
-        altWork: "Artwork {{index}}",
+        galleryEyebrow: "Featured Works",
+        galleryHeading: "Recent Works Showcase",
+        gallerySubtitle:
+          "Curated commercial product, brand space, and artistic portrait photography from NORE MEDIA.",
+        filterAll: "All",
+        viewMoreGallery: "Explore All 45 Photography Works",
+        zoomAria: "Enlarge artwork {{title}}",
+        altWork: "Artwork {{title}}",
         modalAlt: "NORE MEDIA Artwork",
         closeModal: "Close image",
         modalAria: "Enlarged image",
@@ -355,8 +390,37 @@ const resources = {
       gallery: {
         eyebrow: "Photography",
         title: "Image Production",
-        iframeTitle: "NORE MEDIA - Image Production",
-        openCanva: "Open Presentation on Canva",
+        hub: {
+          subtitle:
+            "Explore our curated commercial product, brand spaces, and fine art photography collections",
+          explore: "Explore Collection",
+          backToCategories: "← All Categories",
+          collectionsCount_one: "{{count}} collection",
+          collectionsCount_other: "{{count}} collections",
+          photosCount_one: "{{count}} photo",
+          photosCount_other: "{{count}} photos",
+          photosPerCollection: "{{count}} photos / set",
+        },
+        lightbox: {
+          close: "Close (Esc)",
+          prev: "Previous Photo",
+          next: "Next Photo",
+          photoCount: "Photo {{current}} / {{total}}",
+        },
+        categories: {
+          product: {
+            title: "Product",
+            desc: "Commercial product photography, luxury packaging, still life and culinary fine dining.",
+          },
+          brand: {
+            title: "Brand",
+            desc: "Architecture, 5-star hotel & resort hospitality spaces, and brand activation events.",
+          },
+          personal: {
+            title: "Personal (Portrait & Lookbook)",
+            desc: "Heritage fine art portraits, haute couture evening gowns and Y2K streetwear lookbook.",
+          },
+        },
       },
       video: {
         eyebrow: "Video",
