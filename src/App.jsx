@@ -850,7 +850,7 @@ function ServicesPage() {
               return (
                 <motion.article
                   key={key}
-                  className="card framer-card nore-service-card"
+                  className={`card framer-card nore-service-card nore-service-card-${key}`}
                   variants={cardVariants}
                   whileHover={{
                     y: -8,
