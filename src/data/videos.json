@@ -2,7 +2,7 @@
   {
     "id": "tvc",
     "title": "TVC Doanh Nghiệp",
-    "desc": "Các dự án quảng cáo, giới thiệu doanh nghiệp tiêu biểu",
+    "desc": "Các dự\u00A0án quảng\u00A0cáo, giới\u00A0thiệu doanh\u00A0nghiệp tiêu\u00A0biểu",
     "projects": [
       {
         "title": "A By Tung",
@@ -40,7 +40,7 @@
   {
     "id": "short",
     "title": "Short-video Content",
-    "desc": "Nội dung ngắn tối ưu cho TikTok, Reels, Shorts",
+    "desc": "Nội\u00A0dung ngắn tối\u00A0ưu cho TikTok, Reels,\u00A0Shorts",
     "isVertical": true,
     "projects": [
       {
@@ -93,7 +93,7 @@
   {
     "id": "recap",
     "title": "Recap Event",
-    "desc": "Ghi lại những khoảnh khắc đáng nhớ của các sự kiện",
+    "desc": "Ghi\u00A0lại những khoảnh\u00A0khắc đáng\u00A0nhớ của các\u00A0sự\u00A0kiện",
     "projects": [
       {
         "title": "Turkish Airlines",
