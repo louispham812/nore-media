@@ -2735,6 +2735,8 @@ iframe {
   position: relative;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  content-visibility: auto;
+  contain-intrinsic-size: 320px 220px;
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
               border-color 0.35s ease,
               box-shadow 0.35s ease;
@@ -2756,7 +2758,14 @@ iframe {
   width: 100%;
   aspect-ratio: 16 / 10;
   overflow: hidden;
-  background: #080808;
+  background: linear-gradient(110deg, #0d0d0d 8%, #1c1c1c 18%, #0d0d0d 33%);
+  background-size: 200% 100%;
+  animation: img-shimmer 2.2s linear infinite;
+}
+
+@keyframes img-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 .gallery-photo-img {
@@ -3106,6 +3115,8 @@ iframe {
   position: relative;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  content-visibility: auto;
+  contain-intrinsic-size: 380px 260px;
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
               border-color 0.35s ease,
               box-shadow 0.35s ease;
@@ -3122,7 +3133,9 @@ iframe {
   width: 100%;
   aspect-ratio: 16 / 11;
   overflow: hidden;
-  background: #0a0a0a;
+  background: linear-gradient(110deg, #0d0d0d 8%, #1c1c1c 18%, #0d0d0d 33%);
+  background-size: 200% 100%;
+  animation: img-shimmer 2.2s linear infinite;
 }
 
 .home-work-img {
