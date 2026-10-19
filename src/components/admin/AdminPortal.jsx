@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import CustomSelect from './CustomSelect.jsx';
+import DatePicker from './DatePicker.jsx';
 
 function formatTime(isoString) {
   if (!isoString) return '';
@@ -1023,23 +1024,21 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
                 <div className="admin-modal-grid">
                   <div className="admin-modal-field">
                     <label>Ngày Bắt Đầu</label>
-                    <input
-                      type="text"
-                      className="admin-modal-input"
-                      placeholder="VD: 10/10/2026"
+                    <DatePicker
                       value={formData.startDate}
-                      onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                      onChange={(val) => setFormData({ ...formData, startDate: val })}
+                      placeholder="VD: 10/10/2026"
+                      direction="up"
                     />
                   </div>
 
                   <div className="admin-modal-field">
                     <label>Hạn Hoàn Thành</label>
-                    <input
-                      type="text"
-                      className="admin-modal-input"
-                      placeholder="VD: 25/10/2026"
+                    <DatePicker
                       value={formData.dueDate}
-                      onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
+                      onChange={(val) => setFormData({ ...formData, dueDate: val })}
+                      placeholder="VD: 25/10/2026"
+                      direction="up"
                     />
                   </div>
                 </div>
