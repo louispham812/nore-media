@@ -6,6 +6,15 @@ import { google } from 'googleapis';
 import { fileURLToPath } from 'node:url';
 import { pathToFileURL } from 'node:url';
 import path from 'node:path';
+import {
+  signAdminToken,
+  verifyAdminToken,
+  safeCompare,
+  getSheetsAdminData,
+  addProjectToSheet,
+  updateProjectInSheet,
+  deleteProjectFromSheet,
+} from './adminService.js';
 
 const app = express();
 const port = Number(process.env.PORT || 3001);
@@ -28,6 +37,16 @@ const contactRateLimit = rateLimit({
   legacyHeaders: false,
   handler: (_req, res) => {
     res.status(429).json({ error: 'Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau 15 phút.' });
+  },
+});
+
+const adminLoginRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+  handler: (_req, res) => {
+    res.status(429).json({ error: 'Quá nhiều lần thử đăng nhập thất bại. Vui lòng thử lại sau 15 phút.' });
   },
 });
 
@@ -343,6 +362,119 @@ app.post('/api/contact', contactRateLimit, async (req, res) => {
   }
   const result = await entry.inFlight;
   return res.status(result.status).json(result.body);
+});
+
+function authAdmin(req, res, next) {
+  const authHeader = req.get('Authorization') || '';
+  const match = authHeader.match(/^Bearer\s+(.+)$/i);
+  if (!match) {
+    return res.status(401).json({ error: 'Yêu cầu đăng nhập quản trị viên để tiếp tục.' });
+  }
+  const token = match[1];
+  const secret = process.env.ADMIN_TOKEN_SECRET || 'nore-media-admin-default-secret';
+  const admin = verifyAdminToken(token, secret);
+  if (!admin) {
+    return res.status(401).json({ error: 'Phiên đăng nhập đã hết hạn hoặc không hợp lệ. Vui lòng đăng nhập lại.' });
+  }
+  req.admin = admin;
+  next();
+}
+
+app.post('/api/admin/login', adminLoginRateLimit, (req, res) => {
+  const { email, password } = req.body || {};
+  const expectedEmail = (process.env.ADMIN_EMAIL || 'admin@noreagency.com').toLowerCase().trim();
+  const expectedPassword = process.env.ADMIN_PASSWORD || 'NoreAdmin@2026!';
+  const secret = process.env.ADMIN_TOKEN_SECRET || 'nore-media-admin-default-secret';
+
+  const providedEmail = typeof email === 'string' ? email.toLowerCase().trim() : '';
+  const providedPassword = typeof password === 'string' ? password : '';
+
+  if (!providedEmail || !providedPassword) {
+    return res.status(400).json({ error: 'Vui lòng nhập đầy đủ Email và Mật khẩu.' });
+  }
+
+  const isEmailMatch = providedEmail === expectedEmail;
+  const isPassMatch = safeCompare(providedPassword, expectedPassword);
+
+  if (!isEmailMatch || !isPassMatch) {
+    return res.status(401).json({ error: 'Email hoặc mật khẩu không chính xác.' });
+  }
+
+  const token = signAdminToken({ email: expectedEmail }, secret);
+  return res.status(200).json({
+    message: 'Đăng nhập thành công.',
+    token,
+    admin: { email: expectedEmail },
+  });
+});
+
+app.get('/api/admin/me', authAdmin, (req, res) => {
+  res.status(200).json({ ok: true, admin: req.admin });
+});
+
+app.get('/api/admin/sheets-data', authAdmin, async (req, res) => {
+  try {
+    const config = getConfiguration();
+    const forceRefresh = req.query.refresh === 'true';
+    const data = await getSheetsAdminData(config, forceRefresh);
+    res.status(200).json(data);
+  } catch (error) {
+    console.error('Error fetching sheets admin data:', error);
+    res.status(500).json({
+      error: error.message || 'Không thể đọc dữ liệu hệ thống. Vui lòng thử lại.',
+    });
+  }
+});
+
+app.post('/api/admin/projects', authAdmin, async (req, res) => {
+  try {
+    const { name } = req.body || {};
+    if (!name || typeof name !== 'string' || !name.trim()) {
+      return res.status(400).json({ error: 'Vui lòng nhập Tên khách hàng / Dự án.' });
+    }
+    const config = getConfiguration();
+    const result = await addProjectToSheet(config, req.body);
+    res.status(201).json(result);
+  } catch (error) {
+    console.error('Error adding project to sheets:', error);
+    res.status(500).json({
+      error: error.message || 'Không thể thêm dự án vào hệ thống.',
+    });
+  }
+});
+
+app.put('/api/admin/projects/:id', authAdmin, async (req, res) => {
+  try {
+    const projectId = req.params.id;
+    if (!projectId) {
+      return res.status(400).json({ error: 'Mã khách hàng / dự án không hợp lệ.' });
+    }
+    const config = getConfiguration();
+    const result = await updateProjectInSheet(config, projectId, req.body);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('Error updating project in sheets:', error);
+    res.status(500).json({
+      error: error.message || 'Không thể cập nhật thông tin dự án.',
+    });
+  }
+});
+
+app.delete('/api/admin/projects/:id', authAdmin, async (req, res) => {
+  try {
+    const projectId = req.params.id;
+    if (!projectId) {
+      return res.status(400).json({ error: 'Mã khách hàng / dự án không hợp lệ.' });
+    }
+    const config = getConfiguration();
+    const result = await deleteProjectFromSheet(config, projectId);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('Error deleting project from sheets:', error);
+    res.status(500).json({
+      error: error.message || 'Không thể xóa dự án.',
+    });
+  }
 });
 
 app.use('/api', (_req, res) => {

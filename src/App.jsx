@@ -12,6 +12,7 @@ import { Plyr } from "plyr-react";
 import "plyr/dist/plyr.css";
 import videoData from "./data/videos.json";
 import photographyData from "./data/photography.json";
+import AdminPage from "./pages/AdminPage.jsx";
 
 const navItems = [
   { path: "/", key: "home" },
@@ -2141,11 +2142,15 @@ export default function App() {
   const activePage = currentPage(location.pathname);
 
   useEffect(() => {
+    if (location.pathname.startsWith('/admin')) {
+      document.title = "Admin Portal | NORE MEDIA";
+      return;
+    }
     const titleKey = activePage === "not-found" ? "notFound" : activePage;
     document.title = t(`site.pageTitles.${titleKey}`, {
       defaultValue: "NORE MEDIA",
     });
-  }, [activePage, t, i18n.language]);
+  }, [activePage, location.pathname, t, i18n.language]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -2184,6 +2189,15 @@ export default function App() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
+
+  if (location.pathname.startsWith('/admin')) {
+    return (
+      <Routes>
+        <Route path="/admin" element={<AdminPage />} />
+        <Route path="/admin/*" element={<AdminPage />} />
+      </Routes>
+    );
+  }
 
   return (
     <>
