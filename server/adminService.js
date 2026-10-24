@@ -199,6 +199,23 @@ function createSheetsClient(config) {
   return google.sheets({ version: 'v4', auth });
 }
 
+function extractValidationValues(sheetDetail, colIndex) {
+  try {
+    const rowData = sheetDetail?.sheets?.[0]?.data?.[0]?.rowData || [];
+    for (const row of rowData) {
+      const cell = (row?.values || [])[colIndex];
+      const condition = cell?.dataValidation?.condition;
+      if (condition?.type === 'ONE_OF_LIST' && Array.isArray(condition.values)) {
+        const list = condition.values.map((v) => (v.userEnteredValue || '').trim()).filter(Boolean);
+        if (list.length > 0) return list;
+      }
+    }
+  } catch {
+    // fallback gracefully if structure is unexpected
+  }
+  return [];
+}
+
 export async function getSheetsAdminData(config, forceRefresh = false) {
   const now = Date.now();
   if (!forceRefresh && sheetsCache.data && now - sheetsCache.cachedAt < CACHE_TTL_MS) {
@@ -207,7 +224,7 @@ export async function getSheetsAdminData(config, forceRefresh = false) {
 
   const sheets = createSheetsClient(config);
 
-  const [dashRes, projRes, formsRes] = await Promise.all([
+  const [dashRes, projRes, formsRes, validationRes] = await Promise.all([
     sheets.spreadsheets.values.get({
       spreadsheetId: config.spreadsheetId,
       range: "'Dashboard'!A1:I30",
@@ -220,17 +237,87 @@ export async function getSheetsAdminData(config, forceRefresh = false) {
       spreadsheetId: config.spreadsheetId,
       range: "'KhachHang'!A1:G1000",
     }).catch(() => ({ data: { values: [] } })),
+    sheets.spreadsheets.get({
+      spreadsheetId: config.spreadsheetId,
+      ranges: ["'Khách hàng & Dự án'!A2:J2"],
+      includeGridData: true,
+    }).catch(() => ({ data: { sheets: [] } })),
   ]);
 
   const dashboard = parseDashboardSheet(dashRes.data.values || []);
   const projects = parseProjectsSheet(projRes.data.values || []);
   const formSubmissions = parseFormSubmissionsSheet(formsRes.data.values || []);
 
+  // Extract Data Validation rules directly from Google Sheet: Col D = 3 (Service), Col F = 5 (Stage), Col H = 7 (Payment)
+  const validatedServices = extractValidationValues(validationRes.data, 3);
+  const validatedStages = extractValidationValues(validationRes.data, 5);
+  const validatedPayments = extractValidationValues(validationRes.data, 7);
+
+  // Extract from Dashboard breakdown tables
+  const dashboardGenres = (dashboard.revenueByGenre || [])
+    .map((g) => (g.genre || '').trim())
+    .filter((g) => g && !g.toLowerCase().includes('tổng cộng') && g !== 'Thể loại sản xuất');
+  const dashboardStages = (dashboard.stageDistribution || [])
+    .map((s) => (s.stage || '').trim())
+    .filter((s) => s && s !== 'Giai đoạn');
+
+  // Extract from existing projects
+  const projectServices = projects.map((p) => p.service).filter((s) => s && s !== '—');
+  const projectStages = projects.map((p) => p.stage).filter((s) => s && s !== '—');
+  const projectPayments = projects.map((p) => p.paymentStatus).filter((s) => s && s !== '—');
+
+  // Default fallbacks only if sheet has no validation configured
+  const DEFAULT_SERVICES = [
+    'TVC Quảng cáo',
+    'Viral Video',
+    'MV Ca nhạc',
+    'Photoshoot',
+  ];
+  const DEFAULT_STAGES = [
+    'Đề xuất / Pitching',
+    'Đang đàm phán',
+    'Tiền kỳ',
+    'Đang sản xuất',
+    'Hậu kỳ',
+    'Hoàn thành',
+  ];
+  const DEFAULT_PAYMENTS = [
+    'Chưa thanh toán',
+    'Chờ tạm ứng',
+    'Đã tạm ứng 50%',
+    'Đã tạm ứng 70%',
+    'Đã thanh toán 100%',
+  ];
+
+  // Prioritize exact Google Sheet Data Validation rules
+  const finalServices = validatedServices.length > 0
+    ? Array.from(new Set([...validatedServices, ...projectServices])).filter(Boolean)
+    : (dashboardGenres.length > 0
+        ? Array.from(new Set([...dashboardGenres, ...projectServices])).filter(Boolean)
+        : DEFAULT_SERVICES);
+
+  const finalStages = validatedStages.length > 0
+    ? Array.from(new Set([...validatedStages, ...projectStages])).filter(Boolean)
+    : (dashboardStages.length > 0
+        ? Array.from(new Set([...dashboardStages, ...projectStages])).filter(Boolean)
+        : DEFAULT_STAGES);
+
+  const finalPayments = validatedPayments.length > 0
+    ? Array.from(new Set([...validatedPayments, ...projectPayments])).filter(Boolean)
+    : DEFAULT_PAYMENTS;
+
+  const dropdownOptions = {
+    services: finalServices,
+    stages: finalStages,
+    paymentStatuses: finalPayments,
+  };
+
   const result = {
     updatedAt: new Date().toISOString(),
     dashboard,
     projects,
     formSubmissions,
+    dropdownOptions,
     cached: false,
   };
 

@@ -30,7 +30,14 @@ function getStatusColor(val) {
   if (lower.includes('tiền kỳ')) return '#3b82f6';
   if (lower.includes('hậu kỳ')) return '#a855f7';
   if (lower.includes('pitching') || lower.includes('đề xuất')) return '#ec4899';
-  return null;
+  if (lower.includes('tvc') || lower.includes('quảng cáo')) return '#38bdf8';
+  if (lower.includes('viral')) return '#a855f7';
+  if (lower.includes('photo') || lower.includes('chụp')) return '#f59e0b';
+  if (lower.includes('mv') || lower.includes('ca nhạc')) return '#ec4899';
+  if (lower.includes('corporate') || lower.includes('doanh nghiệp')) return '#14b8a6';
+  if (lower.includes('3d') || lower.includes('vfx') || lower.includes('animation')) return '#6366f1';
+  if (lower.includes('livestream') || lower.includes('event')) return '#e11d48';
+  return '#94a3b8';
 }
 
 export default function CustomSelect({
@@ -42,12 +49,15 @@ export default function CustomSelect({
   direction = 'auto',
   className = '',
   disabled = false,
+  allowCustom = false,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [openUpwards, setOpenUpwards] = useState(direction === 'up');
   const [alignRight, setAlignRight] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const containerRef = useRef(null);
   const triggerRef = useRef(null);
+  const searchInputRef = useRef(null);
 
   // Normalize options to [{ value, label }]
   const normalizedOptions = useMemo(() => {
@@ -68,13 +78,29 @@ export default function CustomSelect({
   }, [options]);
 
   const selectedOption = normalizedOptions.find((opt) => opt.value === value);
-  const displayLabel = selectedOption ? selectedOption.label : placeholder;
-  const currentColor = selectedOption ? selectedOption.color : null;
+  const displayLabel = selectedOption ? selectedOption.label : (value || placeholder);
+  const currentColor = selectedOption ? selectedOption.color : (value ? getStatusColor(value) : null);
+
+  // Filter options when user searches in custom mode
+  const filteredOptions = useMemo(() => {
+    if (!allowCustom || !searchQuery.trim()) return normalizedOptions;
+    const q = searchQuery.toLowerCase().trim();
+    return normalizedOptions.filter((opt) =>
+      String(opt.label).toLowerCase().includes(q)
+    );
+  }, [normalizedOptions, searchQuery, allowCustom]);
+
+  const isExactMatch = useMemo(() => {
+    if (!searchQuery.trim()) return false;
+    const q = searchQuery.toLowerCase().trim();
+    return normalizedOptions.some((opt) => String(opt.value).toLowerCase() === q);
+  }, [normalizedOptions, searchQuery]);
 
   // Toggle open and calculate flip direction
   const handleToggle = useCallback(() => {
     if (disabled) return;
     if (!isOpen && triggerRef.current) {
+      setSearchQuery('');
       const rect = triggerRef.current.getBoundingClientRect();
       if (rect.left + 240 > window.innerWidth) {
         setAlignRight(true);
@@ -106,9 +132,13 @@ export default function CustomSelect({
           }
         }
       }
+
+      if (allowCustom) {
+        setTimeout(() => searchInputRef.current?.focus(), 60);
+      }
     }
     setIsOpen((prev) => !prev);
-  }, [disabled, isOpen, direction]);
+  }, [disabled, isOpen, direction, allowCustom]);
 
   // Click outside listener
   useEffect(() => {
@@ -199,8 +229,65 @@ export default function CustomSelect({
             transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
             role="listbox"
           >
+            {allowCustom && (
+              <div className="admin-custom-select-search-wrap">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  className="admin-custom-select-search-input"
+                  placeholder="Tìm hoặc nhập thể loại mới..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      if (searchQuery.trim()) {
+                        handleSelect(searchQuery.trim());
+                      }
+                    }
+                  }}
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    className="admin-custom-select-clear-btn"
+                    onClick={() => {
+                      setSearchQuery('');
+                      searchInputRef.current?.focus();
+                    }}
+                    title="Xóa tìm kiếm"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+            )}
+
+            {allowCustom && searchQuery.trim() && !isExactMatch && (
+              <button
+                type="button"
+                className="admin-custom-select-add-custom-btn"
+                onClick={() => handleSelect(searchQuery.trim())}
+              >
+                <span className="admin-add-custom-icon">＋</span>
+                <span>
+                  Sử dụng thể loại mới: <strong>"{searchQuery.trim()}"</strong>
+                </span>
+              </button>
+            )}
+
             <div className="admin-custom-select-options-list">
-              {normalizedOptions.map((opt) => {
+              {filteredOptions.length === 0 && (
+                <div className="admin-custom-select-empty">
+                  <span>Không tìm thấy thể loại có sẵn trùng khớp.</span>
+                </div>
+              )}
+
+              {filteredOptions.map((opt) => {
                 const isSelected = opt.value === value;
                 return (
                   <button

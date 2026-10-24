@@ -13,6 +13,7 @@ import "plyr/dist/plyr.css";
 import videoData from "./data/videos.json";
 import photographyData from "./data/photography.json";
 import AdminPage from "./pages/AdminPage.jsx";
+import { useAdminAuth } from "./hooks/useAdminAuth.js";
 
 const navItems = [
   { path: "/", key: "home" },
@@ -60,6 +61,7 @@ function Header({ activePage }) {
   );
   const { t, i18n } = useTranslation();
   const location = useLocation();
+  const { isAdmin } = useAdminAuth();
 
   const isEn =
     i18n.resolvedLanguage === "en" ||
@@ -287,6 +289,32 @@ function Header({ activePage }) {
               </Link>
             );
           })}
+          {isAdmin && (
+            <Link
+              to="/admin"
+              className="nav-admin-link"
+              onClick={() => setMenuOpen(false)}
+              title={t("nav.adminTooltip", "Truy cập Bảng điều khiển Quản trị")}
+            >
+              <span className="nav-admin-dot" aria-hidden="true" />
+              <svg
+                viewBox="0 0 24 24"
+                className="nav-admin-icon"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <rect x="3" y="3" width="7" height="7" rx="1.5" />
+                <rect x="14" y="3" width="7" height="7" rx="1.5" />
+                <rect x="14" y="14" width="7" height="7" rx="1.5" />
+                <rect x="3" y="14" width="7" height="7" rx="1.5" />
+              </svg>
+              <span>{t("nav.admin", "Quản Lý")}</span>
+            </Link>
+          )}
           <button
             type="button"
             className="lang-switch"

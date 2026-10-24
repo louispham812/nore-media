@@ -54,9 +54,8 @@ const PAYMENT_OPTIONS = [
 const SERVICE_SUGGESTIONS = [
   'TVC Quảng cáo',
   'Viral Video',
-  'Photoshoot',
   'MV Ca nhạc',
-  'Corporate Video',
+  'Photoshoot',
 ];
 
 export default function AdminPortal({ admin, data, loading, refreshing, onRefresh, onLogout, token }) {
@@ -140,6 +139,47 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
     });
   }, [formSubmissions, formSearchQuery]);
 
+  // Service options from Google Sheet dropdownOptions, with project fallback
+  const serviceOptions = useMemo(() => {
+    const fromApi = data?.dropdownOptions?.services;
+    if (Array.isArray(fromApi) && fromApi.length > 0) {
+      return fromApi;
+    }
+    const set = new Set(SERVICE_SUGGESTIONS);
+    (projects || []).forEach((p) => {
+      if (p.service && p.service !== '—') set.add(p.service);
+    });
+    return Array.from(set).filter(Boolean);
+  }, [data?.dropdownOptions?.services, projects]);
+
+  // Modal Stage options from Google Sheet dropdownOptions
+  const allStageOptions = useMemo(() => {
+    const fromApi = data?.dropdownOptions?.stages;
+    const set = new Set(
+      Array.isArray(fromApi) && fromApi.length > 0
+        ? fromApi
+        : STAGE_OPTIONS
+    );
+    (projects || []).forEach((p) => {
+      if (p.stage && p.stage !== '—') set.add(p.stage);
+    });
+    return Array.from(set).filter(Boolean);
+  }, [data?.dropdownOptions?.stages, projects]);
+
+  // Modal Payment options from Google Sheet dropdownOptions
+  const allPaymentOptions = useMemo(() => {
+    const fromApi = data?.dropdownOptions?.paymentStatuses;
+    const set = new Set(
+      Array.isArray(fromApi) && fromApi.length > 0
+        ? fromApi
+        : PAYMENT_OPTIONS
+    );
+    (projects || []).forEach((p) => {
+      if (p.paymentStatus && p.paymentStatus !== '—') set.add(p.paymentStatus);
+    });
+    return Array.from(set).filter(Boolean);
+  }, [data?.dropdownOptions?.paymentStatuses, projects]);
+
   // Unique stages and payments for filters
   const stageOptions = useMemo(() => {
     const set = new Set(projects.map((p) => p.stage).filter(Boolean));
@@ -163,6 +203,24 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
     return max || 1;
   }, [dashboard.revenueByGenre]);
 
+  // Quick Summary Stats for modern executive overview ribbon
+  const quickStats = useMemo(() => {
+    const totalP = projects.length;
+    const prodCount = projects.filter((p) => {
+      const s = (p.stage || '').toLowerCase();
+      return s.includes('sản xuất') || s.includes('tiền kỳ') || s.includes('hậu kỳ');
+    }).length;
+    const doneCount = projects.filter((p) => (p.stage || '').toLowerCase().includes('hoàn thành')).length;
+    const totalLeads = formSubmissions.length;
+
+    return {
+      totalP,
+      prodCount,
+      doneCount,
+      totalLeads,
+    };
+  }, [projects, formSubmissions]);
+
   // Handle Open Add Modal
   const handleOpenAddModal = () => {
     const existingIds = projects
@@ -174,11 +232,11 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
       id: String(nextId),
       name: '',
       brand: '',
-      service: 'TVC Quảng cáo',
+      service: serviceOptions[0] || 'TVC Quảng cáo',
       assignee: '',
-      stage: 'Đang đàm phán',
+      stage: allStageOptions[0] || 'Đang đàm phán',
       value: '',
-      paymentStatus: 'Chưa thanh toán',
+      paymentStatus: allPaymentOptions[0] || 'Chưa thanh toán',
       startDate: new Date().toLocaleDateString('vi-VN'),
       dueDate: '',
     });
@@ -294,24 +352,29 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
       <header className="admin-site-header">
         <div className="container admin-nav-wrap">
           <div className="admin-brand-group">
-            <Link to="/admin" className="admin-brand-link" title="NORE MEDIA — Admin Portal">
+            <Link to="/admin" className="admin-brand-link" title="NORE MEDIA — Admin Workspace">
               <img src="/logo.jpg" alt="NORE" className="admin-brand-img" />
-              <span className="admin-brand-name">NORE MEDIA</span>
-              <span className="admin-brand-pill">ADMIN</span>
+              <div className="admin-brand-meta">
+                <span className="admin-brand-name">NORE MEDIA</span>
+                <span className="admin-brand-sep">/</span>
+                <span className="admin-brand-sub">Workspace</span>
+              </div>
             </Link>
           </div>
 
-          <div className="admin-tab-group">
+          <div className="admin-tab-group" role="tablist">
             <button
               type="button"
               className={`admin-tab-btn ${activeTab === 'dashboard' ? 'active' : ''}`}
               onClick={() => setActiveTab('dashboard')}
+              role="tab"
+              aria-selected={activeTab === 'dashboard'}
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                <rect x="3" y="3" width="7" height="9" />
-                <rect x="14" y="3" width="7" height="5" />
-                <rect x="14" y="12" width="7" height="9" />
-                <rect x="3" y="16" width="7" height="5" />
+                <rect x="3" y="3" width="7" height="9" rx="1.5" />
+                <rect x="14" y="3" width="7" height="5" rx="1.5" />
+                <rect x="14" y="12" width="7" height="9" rx="1.5" />
+                <rect x="3" y="16" width="7" height="5" rx="1.5" />
               </svg>
               <span>Tổng quan</span>
             </button>
@@ -320,6 +383,8 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
               type="button"
               className={`admin-tab-btn ${activeTab === 'projects' ? 'active' : ''}`}
               onClick={() => setActiveTab('projects')}
+              role="tab"
+              aria-selected={activeTab === 'projects'}
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
@@ -327,7 +392,7 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
                 <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
                 <path d="M16 3.13a4 4 0 0 1 0 7.75" />
               </svg>
-              <span>Khách hàng & Dự án</span>
+              <span>Dự án</span>
               <span className="admin-tab-count">{projects.length}</span>
             </button>
 
@@ -335,6 +400,8 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
               type="button"
               className={`admin-tab-btn ${activeTab === 'form_submissions' ? 'active' : ''}`}
               onClick={() => setActiveTab('form_submissions')}
+              role="tab"
+              aria-selected={activeTab === 'form_submissions'}
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
@@ -346,18 +413,12 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
           </div>
 
           <div className="admin-header-actions">
-            {data?.updatedAt && (
-              <span className="admin-sync-text" title={new Date(data.updatedAt).toLocaleString('vi-VN')}>
-                Đồng bộ: {formatTime(data.updatedAt)}
-              </span>
-            )}
-
             <button
               type="button"
-              className="admin-pill-btn"
+              className="admin-sync-btn"
               onClick={onRefresh}
               disabled={refreshing || loading}
-              title="Đồng bộ dữ liệu thời gian thực mới nhất"
+              title={`Đồng bộ lúc ${data?.updatedAt ? formatTime(data.updatedAt) : 'vừa xong'} • Nhấn để làm mới`}
             >
               <svg
                 width="14"
@@ -365,12 +426,14 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="2.5"
-                className={refreshing ? 'admin-spinner-circle admin-spinner-sm' : ''}
+                strokeWidth="2.2"
+                className={refreshing ? 'admin-spinner-circle' : ''}
               >
                 <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
               </svg>
-              <span>{refreshing ? 'Đang tải...' : 'Làm mới'}</span>
+              <span className="admin-sync-time">
+                {refreshing ? 'Đang tải...' : (data?.updatedAt ? formatTime(data.updatedAt) : 'Đồng bộ')}
+              </span>
             </button>
 
             <Link to="/" className="admin-pill-btn" title="Về trang chủ NORE MEDIA">
@@ -381,19 +444,101 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
               <span>Trang chủ</span>
             </Link>
 
-            <span className="admin-user-badge" title="Tài khoản đang đăng nhập">
-              {admin?.email || 'admin@noreagency.com'}
-            </span>
-
-            <button type="button" className="admin-btn-logout-pill" onClick={onLogout} title="Đăng xuất">
-              <span>Đăng xuất</span>
-            </button>
+            <div className="admin-user-group">
+              <div className="admin-user-info" title={admin?.email || 'admin@noreagency.com'}>
+                <span className="admin-user-avatar">
+                  {(admin?.email || 'A')[0].toUpperCase()}
+                </span>
+                <span className="admin-user-name">
+                  {(admin?.email || 'admin').split('@')[0]}
+                </span>
+              </div>
+              <div className="admin-user-divider" />
+              <button
+                type="button"
+                className="admin-user-logout-btn"
+                onClick={onLogout}
+                title="Đăng xuất khỏi hệ thống"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                <span>Đăng xuất</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
 
       {/* Main Container */}
       <main className="admin-main-container">
+        {/* Modern Executive Stat Cards Ribbon */}
+        <div className="admin-quick-stats-ribbon">
+          <div className="admin-quick-stat-card">
+            <div className="admin-quick-stat-icon-wrap icon-projects">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+              </svg>
+            </div>
+            <div className="admin-quick-stat-info">
+              <span className="admin-quick-stat-label">Tổng Dự Án CRM</span>
+              <div className="admin-quick-stat-value-row">
+                <span className="admin-quick-stat-value">{quickStats.totalP}</span>
+                <span className="admin-quick-stat-badge badge-cyan">Hồ sơ lưu trữ</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="admin-quick-stat-card">
+            <div className="admin-quick-stat-icon-wrap icon-production">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                <polygon points="23 7 16 12 23 17 23 7" />
+                <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+              </svg>
+            </div>
+            <div className="admin-quick-stat-info">
+              <span className="admin-quick-stat-label">Đang Sản Xuất</span>
+              <div className="admin-quick-stat-value-row">
+                <span className="admin-quick-stat-value">{quickStats.prodCount}</span>
+                <span className="admin-quick-stat-badge badge-indigo">Đang triển khai</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="admin-quick-stat-card">
+            <div className="admin-quick-stat-icon-wrap icon-leads">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                <polyline points="22,6 12,13 2,6" />
+              </svg>
+            </div>
+            <div className="admin-quick-stat-info">
+              <span className="admin-quick-stat-label">Khách Điền Form</span>
+              <div className="admin-quick-stat-value-row">
+                <span className="admin-quick-stat-value">{quickStats.totalLeads}</span>
+                <span className="admin-quick-stat-badge badge-amber">Yêu cầu từ web</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="admin-quick-stat-card">
+            <div className="admin-quick-stat-icon-wrap icon-completed">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                <polyline points="22 4 12 14.01 9 11.01" />
+              </svg>
+            </div>
+            <div className="admin-quick-stat-info">
+              <span className="admin-quick-stat-label">Dự Án Hoàn Thành</span>
+              <div className="admin-quick-stat-value-row">
+                <span className="admin-quick-stat-value">{quickStats.doneCount}</span>
+                <span className="admin-quick-stat-badge badge-emerald">Đã nghiệm thu</span>
+              </div>
+            </div>
+          </div>
+        </div>
         {loading ? (
           <div className="admin-loader-center">
             <div className="admin-spinner-circle" />
@@ -691,8 +836,7 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
                                     <span className="admin-cell-main">{p.name}</span>
                                   </div>
                                   <div className="admin-cell-sub">
-                                    <span>🏷️ Thương hiệu:</span>
-                                    <strong style={{ color: '#ffffff' }}>{p.brand}</strong>
+                                    <span className="admin-brand-tag">🏷️ {p.brand || 'Khách cá nhân'}</span>
                                   </div>
                                 </div>
                               </td>
@@ -700,10 +844,14 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
                               {/* Cột 2: Thể loại + Người phụ trách */}
                               <td>
                                 <div className="admin-cell-stack">
-                                  <div style={{ color: '#ffffff', fontWeight: 600 }}>{p.service}</div>
+                                  <div className="admin-cell-service">{p.service}</div>
                                   <div className="admin-cell-sub">
-                                    <span>👤 Phụ trách:</span>
-                                    <span>{p.assignee}</span>
+                                    <span className="admin-assignee-chip">
+                                      <span className="admin-assignee-avatar">
+                                        {(p.assignee || '—')[0].toUpperCase()}
+                                      </span>
+                                      <span>{p.assignee || 'Chưa phân công'}</span>
+                                    </span>
                                   </div>
                                 </div>
                               </td>
@@ -711,8 +859,12 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
                               {/* Cột 3: Giai đoạn & Thanh toán */}
                               <td>
                                 <div className="admin-badge-stack">
-                                  <span className={`admin-badge ${stageClass}`}>{p.stage}</span>
+                                  <span className={`admin-badge ${stageClass}`}>
+                                    <span className="admin-badge-dot" />
+                                    {p.stage}
+                                  </span>
                                   <span className={`admin-badge ${isPaid ? 'badge-paid' : 'badge-unpaid'}`}>
+                                    <span className="admin-badge-dot" />
                                     {p.paymentStatus}
                                   </span>
                                 </div>
@@ -720,24 +872,30 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
 
                               {/* Cột 4: Kế hoạch thời gian */}
                               <td>
-                                <div className="admin-cell-stack" style={{ fontSize: '0.8rem' }}>
-                                  <div>Bắt đầu: {p.startDate || '—'}</div>
-                                  <div style={{ color: 'var(--muted)', opacity: 0.85 }}>Hạn chót: {p.dueDate || '—'}</div>
+                                <div className="admin-cell-stack admin-cell-dates">
+                                  <div className="admin-date-row">
+                                    <span className="admin-date-label">Bắt đầu:</span>
+                                    <span className="admin-date-val">{p.startDate || '—'}</span>
+                                  </div>
+                                  <div className="admin-date-row due">
+                                    <span className="admin-date-label">Hạn chót:</span>
+                                    <span className="admin-date-val">{p.dueDate || '—'}</span>
+                                  </div>
                                 </div>
                               </td>
 
                               {/* Cột 5: Giá trị hợp đồng & Nút Thao tác */}
                               <td style={{ textAlign: 'right' }}>
                                 <div className="admin-cell-stack" style={{ alignItems: 'flex-end' }}>
-                                  <span className="admin-amount-highlight" style={{ fontSize: '1rem' }}>{p.value}</span>
+                                  <span className="admin-amount-highlight">{p.value}</span>
                                   <div className="admin-action-btns">
                                     <button
                                       type="button"
-                                      className="admin-icon-btn"
+                                      className="admin-icon-btn edit"
                                       onClick={() => handleOpenEditModal(p)}
                                       title="Chỉnh sửa dự án này"
                                     >
-                                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                                       </svg>
@@ -831,11 +989,23 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
                         <div key={sub.id || idx} className="admin-submission-card">
                           <div className="admin-submission-header">
                             <div className="admin-submission-user">
-                              <span className="admin-submission-name">{sub.name}</span>
-                              <span className="admin-submission-source">{sub.source}</span>
+                              <span className="admin-submission-avatar">
+                                {(sub.name || 'K')[0].toUpperCase()}
+                              </span>
+                              <div className="admin-submission-user-info">
+                                <span className="admin-submission-name">{sub.name}</span>
+                                <span className="admin-submission-source">
+                                  <span className="admin-live-dot" />
+                                  {sub.source || 'Website Lead'}
+                                </span>
+                              </div>
                             </div>
                             <span className="admin-submission-time">
-                              🕒 {formatDateTime(sub.submittedAt)}
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <polyline points="12 6 12 12 16 14" />
+                              </svg>
+                              <span>{formatDateTime(sub.submittedAt)}</span>
                             </span>
                           </div>
 
@@ -844,20 +1014,25 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
                               <>
                                 <a
                                   href={`tel:${cleanPhone}`}
-                                  className="admin-contact-link"
+                                  className="admin-contact-link phone"
                                   title="Gọi điện ngay"
                                 >
-                                  📞 {sub.phone}
+                                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                                  </svg>
+                                  <span>{sub.phone}</span>
                                 </a>
                                 <a
                                   href={`https://zalo.me/${cleanPhone.replace('+', '')}`}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="admin-contact-link"
-                                  style={{ background: 'rgba(56, 189, 248, 0.12)', borderColor: 'rgba(56, 189, 248, 0.35)', color: '#38bdf8' }}
+                                  className="admin-contact-link zalo"
                                   title="Mở nhắn tin Zalo"
                                 >
-                                  💬 Nhắn Zalo
+                                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+                                  </svg>
+                                  <span>Nhắn Zalo</span>
                                 </a>
                               </>
                             )}
@@ -865,17 +1040,21 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
                             {sub.email && (
                               <a
                                 href={`mailto:${sub.email}`}
-                                className="admin-contact-link"
-                                title="Gửi email"
+                                className="admin-contact-link email"
+                                title="Gửi email phản hồi"
                               >
-                                ✉️ {sub.email}
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                  <polyline points="22,6 12,13 2,6" />
+                                </svg>
+                                <span>{sub.email}</span>
                               </a>
                             )}
                           </div>
 
                           <div className="admin-submission-msg-box">
-                            <strong>Tin nhắn yêu cầu: </strong>
-                            <span>{sub.message || '—'}</span>
+                            <span className="admin-msg-tag">Nội dung yêu cầu tư vấn:</span>
+                            <p className="admin-msg-content">{sub.message || '—'}</p>
                           </div>
                         </div>
                       );
@@ -959,19 +1138,14 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
 
                   <div className="admin-modal-field">
                     <label>Dịch Vụ / Thể Loại</label>
-                    <input
-                      type="text"
-                      list="service-suggestions"
-                      className="admin-modal-input"
-                      placeholder="VD: TVC Quảng cáo, Photoshoot..."
+                    <CustomSelect
+                      direction="auto"
                       value={formData.service}
-                      onChange={(e) => setFormData({ ...formData, service: e.target.value })}
+                      onChange={(val) => setFormData({ ...formData, service: val })}
+                      options={serviceOptions}
+                      allowCustom={true}
+                      placeholder="Chọn hoặc nhập thể loại..."
                     />
-                    <datalist id="service-suggestions">
-                      {SERVICE_SUGGESTIONS.map((s) => (
-                        <option key={s} value={s} />
-                      ))}
-                    </datalist>
                   </div>
                 </div>
 
@@ -1006,7 +1180,7 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
                       direction="up"
                       value={formData.stage}
                       onChange={(val) => setFormData({ ...formData, stage: val })}
-                      options={STAGE_OPTIONS}
+                      options={allStageOptions}
                     />
                   </div>
 
@@ -1016,7 +1190,7 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
                       direction="up"
                       value={formData.paymentStatus}
                       onChange={(val) => setFormData({ ...formData, paymentStatus: val })}
-                      options={PAYMENT_OPTIONS}
+                      options={allPaymentOptions}
                     />
                   </div>
                 </div>

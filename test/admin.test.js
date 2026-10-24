@@ -7,6 +7,7 @@ import {
   verifyAdminToken,
   safeCompare,
 } from '../server/adminService.js';
+import { isJwtValid } from '../src/hooks/useAdminAuth.js';
 
 test('adminService token signing and verification', () => {
   const secret = 'super-secret-key-12345';
@@ -31,6 +32,20 @@ test('adminService safeCompare utility', () => {
   assert.equal(safeCompare('Password123', 'Password123'), true);
   assert.equal(safeCompare('Password123', 'Password124'), false);
   assert.equal(safeCompare('Short', 'MuchLongerPassword'), false);
+});
+
+test('useAdminAuth isJwtValid utility', () => {
+  const secret = 'super-secret-key-12345';
+  const token = signAdminToken({ email: 'admin@noreagency.com' }, secret);
+  assert.equal(isJwtValid(token), true, 'Valid token should pass');
+  assert.equal(isJwtValid(''), false, 'Empty token should fail');
+  assert.equal(isJwtValid('invalid.jwt'), false, 'Invalid format should fail');
+
+  // Expired token check
+  const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url');
+  const exp = Math.floor(Date.now() / 1000) - 100;
+  const expiredBody = Buffer.from(JSON.stringify({ email: 'admin@noreagency.com', exp })).toString('base64url');
+  assert.equal(isJwtValid(`${header}.${expiredBody}.sig`), false, 'Expired token should fail');
 });
 
 test('admin API endpoints authentication and authorization', async (t) => {

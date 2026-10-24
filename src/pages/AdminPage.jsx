@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import AdminLogin from '../components/admin/AdminLogin.jsx';
 import AdminPortal from '../components/admin/AdminPortal.jsx';
+import { ADMIN_TOKEN_KEY, ADMIN_AUTH_EVENT } from '../hooks/useAdminAuth.js';
 import '../styles/admin.css';
 
-const TOKEN_KEY = 'nore_admin_token';
+const TOKEN_KEY = ADMIN_TOKEN_KEY;
 
 export default function AdminPage() {
   const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY) || '');
@@ -41,6 +42,7 @@ export default function AdminPage() {
         localStorage.removeItem(TOKEN_KEY);
         setToken('');
         setAdmin(null);
+        window.dispatchEvent(new Event(ADMIN_AUTH_EVENT));
         setError('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
         return;
       }
@@ -108,6 +110,7 @@ export default function AdminPage() {
     localStorage.setItem(TOKEN_KEY, newToken);
     setToken(newToken);
     setAdmin(adminInfo);
+    window.dispatchEvent(new Event(ADMIN_AUTH_EVENT));
     fetchSheetsData(newToken);
   };
 
@@ -117,6 +120,7 @@ export default function AdminPage() {
     setToken('');
     setAdmin(null);
     setSheetsData(null);
+    window.dispatchEvent(new Event(ADMIN_AUTH_EVENT));
   };
 
   // Handle Manual Refresh
@@ -128,8 +132,9 @@ export default function AdminPage() {
 
   if (authChecking) {
     return (
-      <div className="admin-layout" style={{ justifyContent: 'center', alignItems: 'center' }}>
-        <div className="admin-spinner" />
+      <div className="admin-layout admin-loading-fullscreen">
+        <div className="admin-spinner-circle admin-spinner-lg" />
+        <p className="admin-loading-text">Đang xác thực phiên quản trị NORE MEDIA...</p>
       </div>
     );
   }
@@ -141,14 +146,22 @@ export default function AdminPage() {
   return (
     <>
       {error && (
-        <div style={{ background: '#7f1d1d', color: '#fee2e2', padding: '0.75rem 1.5rem', textAlign: 'center', fontSize: '0.85rem' }}>
-          {error}
-          <button
-            onClick={handleRefresh}
-            style={{ marginLeft: '1rem', background: '#ffffff', color: '#000000', border: 'none', padding: '0.2rem 0.6rem', borderRadius: '4px', cursor: 'pointer', fontWeight: 600 }}
-          >
-            Thử lại
-          </button>
+        <div className="admin-global-error-banner">
+          <div className="admin-global-error-content">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+              <line x1="12" y1="9" x2="12" y2="13" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+            <span>{error}</span>
+            <button
+              type="button"
+              onClick={handleRefresh}
+              className="admin-error-retry-btn"
+            >
+              Thử lại
+            </button>
+          </div>
         </div>
       )}
       <AdminPortal
