@@ -918,8 +918,8 @@ async function run() {
     // Mở modal sửa hợp đồng
     const firstEditBtn = page.locator('button.admin-icon-btn.edit').first();
     await smartClick(page, firstEditBtn);
-    await page.waitForSelector('.admin-modal-card', { state: 'visible', timeout: 8000 });
-    await zoomTo(page, '.admin-modal-card', 1.15);
+    await page.waitForSelector('.admin-modal-dialog', { state: 'visible', timeout: 8000 });
+    await zoomTo(page, '.admin-modal-dialog', 1.15);
     await smartHover(page, '.admin-modal-grid', { waitAfter: 2000 });
 
     // Đóng modal
@@ -977,7 +977,7 @@ async function run() {
     );
     const progressEditBtn = page.locator('.admin-compact-table button.admin-icon-btn.edit').first();
     await smartClick(page, progressEditBtn);
-    await page.waitForSelector('.admin-modal-card', { state: 'visible', timeout: 8000 });
+    await page.waitForSelector('.admin-modal-dialog', { state: 'visible', timeout: 8000 });
 
     // Chọn mức nhanh 75%
     await zoomTo(page, '.admin-preset-pills-row', 1.25);
