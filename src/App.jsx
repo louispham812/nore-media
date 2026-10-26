@@ -13,7 +13,9 @@ import "plyr/dist/plyr.css";
 import videoData from "./data/videos.json";
 import photographyData from "./data/photography.json";
 import AdminPage from "./pages/AdminPage.jsx";
-import { useAdminAuth } from "./hooks/useAdminAuth.js";
+import LoginPage from "./pages/LoginPage.jsx";
+import ClientProgressPage from "./pages/ClientProgressPage.jsx";
+import { useAuth, useAdminAuth } from "./hooks/useAdminAuth.js";
 
 const navItems = [
   { path: "/", key: "home" },
@@ -61,7 +63,7 @@ function Header({ activePage }) {
   );
   const { t, i18n } = useTranslation();
   const location = useLocation();
-  const { isAdmin } = useAdminAuth();
+  const { isAdmin, isClient, isAuthenticated } = useAuth();
 
   const isEn =
     i18n.resolvedLanguage === "en" ||
@@ -289,7 +291,7 @@ function Header({ activePage }) {
               </Link>
             );
           })}
-          {isAdmin && (
+          {isAdmin ? (
             <Link
               to="/admin"
               className="nav-admin-link"
@@ -313,6 +315,51 @@ function Header({ activePage }) {
                 <rect x="3" y="14" width="7" height="7" rx="1.5" />
               </svg>
               <span>{t("nav.admin", "Quản Lý")}</span>
+            </Link>
+          ) : isClient ? (
+            <Link
+              to="/tien-do"
+              className="nav-admin-link nav-client-link"
+              onClick={() => setMenuOpen(false)}
+              title={t("nav.clientProgressTooltip", "Theo dõi tiến độ dự án")}
+            >
+              <span className="nav-admin-dot nav-client-dot" aria-hidden="true" />
+              <svg
+                viewBox="0 0 24 24"
+                className="nav-admin-icon"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+              </svg>
+              <span>{t("nav.clientProgress", "Tiến Độ")}</span>
+            </Link>
+          ) : (
+            <Link
+              to="/login"
+              className="nav-auth-login-btn"
+              onClick={() => setMenuOpen(false)}
+              title={t("nav.loginTooltip", "Đăng nhập dành cho Admin & Khách hàng")}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                className="nav-auth-icon"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                <polyline points="10 17 15 12 10 7" />
+                <line x1="15" y1="12" x2="3" y2="12" />
+              </svg>
+              <span>{t("nav.login", "Đăng Nhập")}</span>
             </Link>
           )}
           <button
@@ -2223,6 +2270,22 @@ export default function App() {
       <Routes>
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/admin/*" element={<AdminPage />} />
+      </Routes>
+    );
+  }
+
+  if (location.pathname === '/login') {
+    return (
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+      </Routes>
+    );
+  }
+
+  if (location.pathname === '/tien-do') {
+    return (
+      <Routes>
+        <Route path="/tien-do" element={<ClientProgressPage />} />
       </Routes>
     );
   }

@@ -20,10 +20,10 @@ export default function AdminLogin({ onLoginSuccess }) {
 
     setLoading(true);
     try {
-      const res = await fetch('/api/admin/login', {
+      const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim(), password }),
+        body: JSON.stringify({ identifier: email.trim(), password }),
       });
 
       const data = await res.json();
@@ -31,7 +31,15 @@ export default function AdminLogin({ onLoginSuccess }) {
         throw new Error(data.error || 'Đăng nhập không thành công. Vui lòng kiểm tra lại.');
       }
 
-      onLoginSuccess(data.token, data.admin);
+      if (data.role === 'admin') {
+        onLoginSuccess(data.token, data.user || data.admin);
+      } else if (data.role === 'client') {
+        localStorage.setItem('nore_client_token', data.token);
+        if (data.projectCode) {
+          localStorage.setItem('nore_client_project_code', data.projectCode);
+        }
+        window.location.href = '/tien-do';
+      }
     } catch (err) {
       setError(err.message || 'Đã có lỗi xảy ra khi kết nối máy chủ.');
     } finally {
@@ -94,23 +102,23 @@ export default function AdminLogin({ onLoginSuccess }) {
           <form className="admin-login-form" onSubmit={handleSubmit}>
             <div className="admin-form-group">
               <label htmlFor="admin-email" className="admin-form-label">
-                <span>Email Quản Trị</span>
-                <span className="admin-label-hint">Tài khoản nội bộ</span>
+                <span>Mã Dự Án hoặc Email</span>
+                <span className="admin-label-hint">Khách hàng hoặc Quản trị</span>
               </label>
               <div className="admin-input-wrap">
                 <span className="admin-input-icon" aria-hidden="true">
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                    <polyline points="22,6 12,13 2,6" />
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
                   </svg>
                 </span>
                 <input
                   id="admin-email"
-                  type="email"
-                  placeholder="admin@noreagency.com"
+                  type="text"
+                  placeholder="VD: NR-001 hoặc admin@noreagency.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  autoComplete="email"
+                  autoComplete="username"
                   required
                 />
               </div>

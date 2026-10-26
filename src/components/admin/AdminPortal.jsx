@@ -58,8 +58,25 @@ const SERVICE_SUGGESTIONS = [
   'Photoshoot',
 ];
 
+const PROGRESS_STAGES = [
+  'Tiền kỳ',
+  'Đang sản xuất',
+  'Hậu kỳ',
+  'Chỉnh sửa / Feedback',
+  'Hoàn thành',
+];
+
+const DEFAULT_PROGRESS_MILESTONES = [
+  { id: 'm-1', title: 'Họp Kick-off & Moodboard', status: 'completed' },
+  { id: 'm-2', title: 'Kịch bản phân cảnh & Storyboard', status: 'in_progress' },
+  { id: 'm-3', title: 'Tiền kỳ & Chuẩn bị bối cảnh', status: 'pending' },
+  { id: 'm-4', title: 'Sản xuất & Ghi hình on-set', status: 'pending' },
+  { id: 'm-5', title: 'Dựng phim, Màu sắc & Âm thanh', status: 'pending' },
+  { id: 'm-6', title: 'Duyệt bản Master & Bàn giao', status: 'pending' },
+];
+
 export default function AdminPortal({ admin, data, loading, refreshing, onRefresh, onLogout, token }) {
-  const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard' | 'projects' | 'form_submissions'
+  const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard' | 'projects' | 'form_submissions' | 'project_progress'
 
   // Search & Filters for Projects
   const [searchQuery, setSearchQuery] = useState('');
@@ -68,6 +85,40 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
 
   // Search for Form Submissions
   const [formSearchQuery, setFormSearchQuery] = useState('');
+
+  // Progress Tab States
+  const [progressSearchQuery, setProgressSearchQuery] = useState('');
+  const [progressSelectedStage, setProgressSelectedStage] = useState('all');
+  const [visiblePins, setVisiblePins] = useState(new Set());
+  const [copiedPinCode, setCopiedPinCode] = useState(null);
+
+  // Modal State (Add / Edit Project Progress)
+  const [progressModalOpen, setProgressModalOpen] = useState(false);
+  const [progressModalMode, setProgressModalMode] = useState('add'); // 'add' | 'edit'
+  const [progressFormData, setProgressFormData] = useState({
+    id: '',
+    projectCode: '',
+    pin: '123456',
+    projectName: '',
+    clientBrand: '',
+    service: 'TVC Quảng cáo',
+    assignee: '',
+    stage: 'Tiền kỳ',
+    progress: 25,
+    startDate: '',
+    dueDate: '',
+    milestones: [],
+    demoUrl: '',
+    finalUrl: '',
+    notes: '',
+  });
+  const [progressSaving, setProgressSaving] = useState(false);
+  const [progressFormError, setProgressFormError] = useState('');
+
+  // Delete Confirm for Project Progress
+  const [deleteProgressConfirmOpen, setDeleteProgressConfirmOpen] = useState(false);
+  const [progressToDelete, setProgressToDelete] = useState(null);
+  const [deletingProgress, setDeletingProgress] = useState(false);
 
   // Modal State (Add / Edit Project)
   const [modalOpen, setModalOpen] = useState(false);
@@ -105,6 +156,70 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
   const dashboard = data?.dashboard || { kpis: [], revenueByGenre: [], stageDistribution: [] };
   const projects = data?.projects || [];
   const formSubmissions = data?.formSubmissions || [];
+  const projectProgress = data?.projectProgress || [];
+
+  const togglePinVisibility = (code) => {
+    setVisiblePins((prev) => {
+      const next = new Set(prev);
+      if (next.has(code)) next.delete(code);
+      else next.add(code);
+      return next;
+    });
+  };
+
+  const handleCopyClientCredentials = (item) => {
+    const origin = window.location.origin;
+    const text = `NORE MEDIA — THÔNG TIN THEO DÕI TIẾN ĐỘ DỰ ÁN\n` +
+      `• Dự án: ${item.projectName}\n` +
+      `• Khách hàng / Brand: ${item.clientBrand}\n` +
+      `• Đường dẫn đăng nhập: ${origin}/login\n` +
+      `• Mã Dự Án: ${item.projectCode}\n` +
+      `• Mã PIN: ${item.pin}\n\n` +
+      `Quý khách truy cập liên kết trên và nhập Mã Dự Án cùng Mã PIN để xem tiến độ cập nhật mới nhất từ studio.`;
+    navigator.clipboard.writeText(text);
+    setCopiedPinCode(item.projectCode);
+    setTimeout(() => {
+      setCopiedPinCode((prev) => (prev === item.projectCode ? null : prev));
+    }, 2500);
+    showToast(`Đã sao chép thông tin gửi khách (${item.projectCode})!`);
+  };
+
+  const getStageBadgeClass = (stage) => {
+    const s = (stage || '').toLowerCase();
+    if (s.includes('hoàn thành')) return 'badge-paid';
+    if (s.includes('sản xuất') || s.includes('hậu kỳ') || s.includes('tiền kỳ')) return 'badge-production';
+    return 'badge-negotiating';
+  };
+
+  const progressStageFilterOptions = useMemo(() => [
+    { value: 'all', label: `Tất cả giai đoạn (${projectProgress.length})` },
+    ...PROGRESS_STAGES.map((s) => ({ value: s, label: s })),
+  ], [projectProgress.length]);
+
+  const projectQuickOptions = useMemo(() => [
+    { value: '', label: '-- Chọn dự án để tự động điền thông tin --' },
+    ...projects.map((p) => ({
+      value: p.id,
+      label: `#${p.id} - ${p.name} (${p.brand && p.brand !== '—' ? p.brand : 'Khách'}) • ${p.service}`,
+    })),
+  ], [projects]);
+
+  // Filter Project Progress
+  const filteredProgress = useMemo(() => {
+    return projectProgress.filter((p) => {
+      const q = progressSearchQuery.toLowerCase().trim();
+      const matchQuery =
+        !q ||
+        p.projectName.toLowerCase().includes(q) ||
+        p.clientBrand.toLowerCase().includes(q) ||
+        p.projectCode.toLowerCase().includes(q) ||
+        p.assignee.toLowerCase().includes(q) ||
+        p.service.toLowerCase().includes(q);
+
+      const matchStage = progressSelectedStage === 'all' || p.stage === progressSelectedStage;
+      return matchQuery && matchStage;
+    });
+  }, [projectProgress, progressSearchQuery, progressSelectedStage]);
 
   // Filter Projects
   const filteredProjects = useMemo(() => {
@@ -333,6 +448,182 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
     }
   };
 
+  // Progress Handlers
+  const handleOpenAddProgressModal = () => {
+    const existingCodes = projectProgress.map((p) => p.projectCode);
+    let maxNum = 0;
+    for (const code of existingCodes) {
+      const match = code.match(/(\d+)$/);
+      if (match) {
+        const n = parseInt(match[1], 10);
+        if (n > maxNum) maxNum = n;
+      }
+    }
+    const nextCode = `NR-${String(maxNum + 1).padStart(3, '0')}`;
+
+    setProgressFormData({
+      id: nextCode,
+      projectCode: nextCode,
+      pin: '123456',
+      projectName: '',
+      clientBrand: '',
+      service: serviceOptions[0] || 'TVC Quảng cáo',
+      assignee: '',
+      stage: 'Tiền kỳ',
+      progress: 25,
+      startDate: new Date().toLocaleDateString('vi-VN'),
+      dueDate: '',
+      milestones: [...DEFAULT_PROGRESS_MILESTONES],
+      demoUrl: '',
+      finalUrl: '',
+      notes: '',
+    });
+    setProgressFormError('');
+    setProgressModalMode('add');
+    setProgressModalOpen(true);
+  };
+
+  const handleOpenEditProgressModal = (item) => {
+    setProgressFormData({
+      id: item.projectCode,
+      projectCode: item.projectCode,
+      pin: item.pin || '123456',
+      projectName: item.projectName,
+      clientBrand: item.clientBrand === '—' ? '' : item.clientBrand,
+      service: item.service === '—' ? '' : item.service,
+      assignee: item.assignee === '—' ? '' : item.assignee,
+      stage: item.stage || 'Tiền kỳ',
+      progress: item.progress || 0,
+      startDate: item.startDate === '—' ? '' : item.startDate,
+      dueDate: item.dueDate === '—' ? '' : item.dueDate,
+      milestones: Array.isArray(item.milestones) ? JSON.parse(JSON.stringify(item.milestones)) : [...DEFAULT_PROGRESS_MILESTONES],
+      demoUrl: item.demoUrl || '',
+      finalUrl: item.finalUrl || '',
+      notes: item.notes || '',
+    });
+    setProgressFormError('');
+    setProgressModalMode('edit');
+    setProgressModalOpen(true);
+  };
+
+  const handleQuickPickFromProjects = (projectId) => {
+    if (!projectId) return;
+    const found = projects.find((p) => String(p.id).trim() === String(projectId).trim());
+    if (found) {
+      setProgressFormData((prev) => ({
+        ...prev,
+        projectName: found.name !== 'Chưa đặt tên' ? found.name : prev.projectName,
+        clientBrand: found.brand !== '—' ? found.brand : prev.clientBrand,
+        service: found.service !== '—' ? found.service : prev.service,
+        assignee: found.assignee !== '—' ? found.assignee : prev.assignee,
+        startDate: found.startDate !== '—' ? found.startDate : prev.startDate,
+        dueDate: found.dueDate !== '—' ? found.dueDate : prev.dueDate,
+      }));
+    }
+  };
+
+  const handleAutoCalcProgressFromMilestones = () => {
+    const ms = progressFormData.milestones || [];
+    if (ms.length === 0) return;
+    const completed = ms.filter((m) => m.status === 'completed').length;
+    const calculated = Math.round((completed / ms.length) * 100);
+    setProgressFormData((prev) => ({ ...prev, progress: calculated }));
+  };
+
+  const handleModalAddMilestone = () => {
+    setProgressFormData((prev) => ({
+      ...prev,
+      milestones: [
+        ...(prev.milestones || []),
+        { id: `m-${Date.now()}`, title: '', status: 'pending' },
+      ],
+    }));
+  };
+
+  const handleModalRemoveMilestone = (index) => {
+    setProgressFormData((prev) => ({
+      ...prev,
+      milestones: prev.milestones.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleModalMilestoneChange = (index, field, value) => {
+    setProgressFormData((prev) => {
+      const nextMilestones = [...prev.milestones];
+      nextMilestones[index] = { ...nextMilestones[index], [field]: value };
+      return { ...prev, milestones: nextMilestones };
+    });
+  };
+
+  const handleSaveProgress = async (e) => {
+    e.preventDefault();
+    if (!progressFormData.projectName.trim()) {
+      setProgressFormError('Vui lòng nhập Tên dự án.');
+      return;
+    }
+
+    setProgressSaving(true);
+    setProgressFormError('');
+
+    try {
+      const isEdit = progressModalMode === 'edit';
+      const endpoint = isEdit
+        ? `/api/admin/progress/${encodeURIComponent(progressFormData.projectCode)}`
+        : '/api/admin/progress';
+      const method = isEdit ? 'PUT' : 'POST';
+
+      const res = await fetch(endpoint, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(progressFormData),
+      });
+
+      const resData = await res.json();
+      if (!res.ok) {
+        throw new Error(resData.error || 'Thao tác không thành công.');
+      }
+
+      setProgressModalOpen(false);
+      showToast(isEdit ? 'Đã cập nhật tiến độ dự án!' : 'Đã thêm tiến độ dự án mới!');
+      onRefresh();
+    } catch (err) {
+      setProgressFormError(err.message || 'Lỗi khi lưu dữ liệu tiến độ.');
+    } finally {
+      setProgressSaving(false);
+    }
+  };
+
+  const handleDeleteProgressConfirm = async () => {
+    if (!progressToDelete) return;
+    setDeletingProgress(true);
+
+    try {
+      const res = await fetch(`/api/admin/progress/${encodeURIComponent(progressToDelete.projectCode)}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const resData = await res.json();
+      if (!res.ok) {
+        throw new Error(resData.error || 'Không thể xóa tiến độ dự án.');
+      }
+
+      setDeleteProgressConfirmOpen(false);
+      setProgressToDelete(null);
+      showToast('Đã xóa tiến độ dự án thành công!');
+      onRefresh();
+    } catch (err) {
+      alert(err.message || 'Lỗi khi xóa tiến độ dự án.');
+    } finally {
+      setDeletingProgress(false);
+    }
+  };
+
   return (
     <div className="admin-layout">
       {/* Toast Notification */}
@@ -407,8 +698,22 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                 <polyline points="22,6 12,13 2,6" />
               </svg>
-              <span>Khách điền Form</span>
+              <span>Khách Hàng mới</span>
               <span className="admin-tab-count">{formSubmissions.length}</span>
+            </button>
+
+            <button
+              type="button"
+              className={`admin-tab-btn ${activeTab === 'project_progress' ? 'active' : ''}`}
+              onClick={() => setActiveTab('project_progress')}
+              role="tab"
+              aria-selected={activeTab === 'project_progress'}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>
+              <span>Tiến độ dự án</span>
+              <span className="admin-tab-count">{projectProgress.length}</span>
             </button>
           </div>
 
@@ -939,7 +1244,7 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
               >
                 <div className="admin-hero-heading">
                   <span className="admin-section-tag">WEBSITE LEADS & LIÊN HỆ</span>
-                  <h2 className="admin-hero-title">Khách Hàng Đã Điền Form Tư Vấn</h2>
+                  <h2 className="admin-hero-title">Khách Hàng Đã Đăng Ký Tư Vấn</h2>
                   <p className="admin-hero-desc">
                     Tổng cộng {filteredSubmissions.length} / {formSubmissions.length} lượt gửi yêu cầu từ website NORE MEDIA
                   </p>
@@ -1061,6 +1366,312 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
                     })}
                   </div>
                 )}
+              </motion.div>
+            )}
+
+            {/* TAB 4: PROJECT PROGRESS */}
+            {activeTab === 'project_progress' && (
+              <motion.div
+                key="tab-project-progress"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.25 }}
+              >
+                {/* Hero Heading */}
+                <div className="admin-hero-heading" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+                  <div>
+                    <span className="admin-section-tag">TIẾN ĐỘ & CỔNG KHÁCH HÀNG</span>
+                    <h2 className="admin-hero-title">Quản Lý Tiến Độ Dự Án</h2>
+                    <p className="admin-hero-desc">
+                      Cập nhật giai đoạn, mốc công việc (milestones), link demo và tài khoản đăng nhập (Mã Dự Án & PIN) cho khách hàng
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    className="admin-btn-primary"
+                    onClick={handleOpenAddProgressModal}
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <line x1="12" y1="5" x2="12" y2="19" />
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                    <span>Thêm Tiến Độ Dự Án</span>
+                  </button>
+                </div>
+
+                {/* Toolbar */}
+                <div className="admin-toolbar-card">
+                  <div className="admin-search-box">
+                    <svg className="admin-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                      <circle cx="11" cy="11" r="8" />
+                      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <input
+                      type="text"
+                      className="admin-search-input"
+                      placeholder="Tìm theo Mã dự án, Tên dự án, Khách hàng, Phụ trách..."
+                      value={progressSearchQuery}
+                      onChange={(e) => setProgressSearchQuery(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="admin-filter-group">
+                    <CustomSelect
+                      value={progressSelectedStage}
+                      onChange={(val) => setProgressSelectedStage(val)}
+                      options={progressStageFilterOptions}
+                      placeholder="Tất cả giai đoạn"
+                    />
+                    {(progressSearchQuery || progressSelectedStage !== 'all') && (
+                      <button
+                        type="button"
+                        className="admin-pill-btn"
+                        onClick={() => {
+                          setProgressSearchQuery('');
+                          setProgressSelectedStage('all');
+                        }}
+                      >
+                        <span>Xóa bộ lọc</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Progress Table: 5-Column Compact Smart Table */}
+                <div className="admin-table-panel">
+                  <table className="admin-compact-table">
+                    <thead>
+                      <tr>
+                        <th style={{ width: '28%' }}>Dự Án & Khách Hàng</th>
+                        <th style={{ width: '20%' }}>Mã PIN & Truy Cập</th>
+                        <th style={{ width: '22%' }}>Giai Đoạn & Tiến Độ</th>
+                        <th style={{ width: '20%' }}>Tài Liệu & Ghi Chú</th>
+                        <th style={{ width: '10%', textAlign: 'right' }}>Thao Tác</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredProgress.length === 0 ? (
+                        <tr>
+                          <td colSpan={5}>
+                            <div className="admin-empty-box">
+                              {projectProgress.length === 0
+                                ? 'Chưa có dự án nào trong bảng Tiến Độ.'
+                                : 'Không tìm thấy kết quả phù hợp với điều kiện tìm kiếm.'}
+                            </div>
+                          </td>
+                        </tr>
+                      ) : (
+                        filteredProgress.map((item) => {
+                          const isPinShown = visiblePins.has(item.projectCode);
+                          return (
+                            <tr key={item.projectCode}>
+                              {/* Cột 1: Mã dự án + Tên + Khách/Brand + Dịch vụ */}
+                              <td>
+                                <div className="admin-cell-stack">
+                                  <div className="admin-cell-title-row">
+                                    <span className="admin-code-pill">{item.projectCode}</span>
+                                    <span className="admin-cell-main">{item.projectName}</span>
+                                  </div>
+                                  <div className="admin-cell-sub">
+                                    <span className="admin-brand-tag">🏷️ {item.clientBrand || 'Khách cá nhân'}</span>
+                                    {item.service && (
+                                      <span className="admin-assignee-chip" style={{ marginLeft: '0.4rem' }}>
+                                        <span>{item.service}</span>
+                                      </span>
+                                    )}
+                                    {item.assignee && (
+                                      <span className="admin-assignee-chip" style={{ marginLeft: '0.4rem' }}>
+                                        <span className="admin-assignee-avatar">
+                                          {item.assignee[0].toUpperCase()}
+                                        </span>
+                                        <span>{item.assignee}</span>
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              </td>
+
+                              {/* Cột 2: Mã PIN & Truy Cập */}
+                              <td>
+                                <div className="admin-cell-stack">
+                                  <div className="admin-pin-chip">
+                                    <span style={{ color: '#94a3b8', fontSize: '0.74rem' }}>PIN:</span>
+                                    <span style={{ fontWeight: 700, letterSpacing: isPinShown ? '0.08em' : '0.15em', color: '#00e5ff' }}>
+                                      {isPinShown ? item.pin : '••••••'}
+                                    </span>
+                                    <button
+                                      type="button"
+                                      className="admin-pin-toggle-btn"
+                                      onClick={() => togglePinVisibility(item.projectCode)}
+                                      title={isPinShown ? 'Ẩn mã PIN' : 'Hiện mã PIN'}
+                                    >
+                                      {isPinShown ? (
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                                          <line x1="1" y1="1" x2="23" y2="23" />
+                                        </svg>
+                                      ) : (
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                          <circle cx="12" cy="12" r="3" />
+                                        </svg>
+                                      )}
+                                    </button>
+                                  </div>
+                                  <div>
+                                    <button
+                                      type="button"
+                                      className={`admin-copy-creds-btn ${copiedPinCode === item.projectCode ? 'is-copied' : ''}`}
+                                      onClick={() => handleCopyClientCredentials(item)}
+                                      title="Sao chép toàn bộ thông tin đăng nhập gửi cho khách"
+                                    >
+                                      {copiedPinCode === item.projectCode ? (
+                                        <>
+                                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                            <polyline points="20 6 9 17 4 12" />
+                                          </svg>
+                                          <span>Đã chép!</span>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                                          </svg>
+                                          <span>Gửi khách</span>
+                                        </>
+                                      )}
+                                    </button>
+                                  </div>
+                                </div>
+                              </td>
+
+                              {/* Cột 3: Giai Đoạn & Tiến Độ */}
+                              <td>
+                                <div className="admin-cell-stack">
+                                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.4rem' }}>
+                                    <span className={`admin-badge ${getStageBadgeClass(item.stage)}`}>
+                                      <span className="admin-badge-dot" />
+                                      {item.stage}
+                                    </span>
+                                    <span className="admin-milestone-chip">
+                                      ✓ {(item.milestones || []).filter((m) => m.status === 'completed').length}/{(item.milestones || []).length} mốc
+                                    </span>
+                                  </div>
+                                  <div className="admin-progress-meter-wrap" style={{ marginTop: '0.4rem' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', marginBottom: '0.2rem' }}>
+                                      <span style={{ color: '#94a3b8' }}>Tiến độ:</span>
+                                      <span style={{ color: '#00e5ff', fontWeight: 700 }}>{item.progress}%</span>
+                                    </div>
+                                    <div className="admin-progress-meter-track">
+                                      <div
+                                        className="admin-progress-meter-fill"
+                                        style={{ width: `${Math.min(100, Math.max(0, Number(item.progress) || 0))}%` }}
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              </td>
+
+                              {/* Cột 4: Tài Liệu & Ghi Chú */}
+                              <td>
+                                <div className="admin-cell-stack">
+                                  <div className="admin-links-cell">
+                                    {item.demoUrl ? (
+                                      <a
+                                        href={item.demoUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="admin-link-pill demo"
+                                        title={item.demoUrl}
+                                      >
+                                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                                          <polyline points="15 3 21 3 21 9" />
+                                          <line x1="10" y1="14" x2="21" y2="3" />
+                                        </svg>
+                                        <span>Demo</span>
+                                      </a>
+                                    ) : null}
+                                    {item.finalUrl ? (
+                                      <a
+                                        href={item.finalUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="admin-link-pill final"
+                                        title={item.finalUrl}
+                                      >
+                                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                          <polyline points="7 10 12 15 17 10" />
+                                          <line x1="12" y1="15" x2="12" y2="3" />
+                                        </svg>
+                                        <span>Final</span>
+                                      </a>
+                                    ) : null}
+                                    {!item.demoUrl && !item.finalUrl && (
+                                      <span className="admin-empty-link">Chưa cập nhật link</span>
+                                    )}
+                                  </div>
+
+                                  {item.notes ? (
+                                    <div className="admin-progress-notes" title={item.notes}>
+                                      "{item.notes}"
+                                    </div>
+                                  ) : null}
+
+                                  <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '0.2rem' }}>
+                                    {item.startDate || item.dueDate ? (
+                                      <span>{item.startDate || '—'} → {item.dueDate || '—'}</span>
+                                    ) : (
+                                      <span>Chưa đặt hạn</span>
+                                    )}
+                                  </div>
+                                </div>
+                              </td>
+
+                              {/* Cột 5: Thao Tác */}
+                              <td style={{ textAlign: 'right' }}>
+                                <div className="admin-cell-stack" style={{ alignItems: 'flex-end' }}>
+                                  <div className="admin-action-btns">
+                                    <button
+                                      type="button"
+                                      className="admin-icon-btn edit"
+                                      onClick={() => handleOpenEditProgressModal(item)}
+                                      title="Chỉnh sửa tiến độ"
+                                    >
+                                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                      </svg>
+                                    </button>
+
+                                    <button
+                                      type="button"
+                                      className="admin-icon-btn danger"
+                                      onClick={() => {
+                                        setProgressToDelete(item);
+                                        setDeleteProgressConfirmOpen(true);
+                                      }}
+                                      title="Xóa tiến độ"
+                                    >
+                                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <polyline points="3 6 5 6 21 6" />
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                      </svg>
+                                    </button>
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -1290,6 +1901,423 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
                 disabled={deleting}
               >
                 {deleting ? 'Đang xóa...' : 'Xác Nhận Xóa'}
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* MODAL: ADD / EDIT PROJECT PROGRESS */}
+      {progressModalOpen && (
+        <div className="admin-modal-backdrop" onClick={() => !progressSaving && setProgressModalOpen(false)}>
+          <motion.div
+            className="admin-modal-dialog"
+            onClick={(e) => e.stopPropagation()}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            style={{ maxWidth: '640px' }}
+          >
+            <div className="admin-modal-header">
+              <h3 className="admin-modal-title">
+                {progressModalMode === 'edit'
+                  ? `Chỉnh Sửa Tiến Độ Dự Án #${progressFormData.projectCode}`
+                  : 'Thêm Tiến Độ Dự Án Mới'}
+              </h3>
+              <button
+                type="button"
+                className="admin-modal-close"
+                onClick={() => setProgressModalOpen(false)}
+                disabled={progressSaving}
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveProgress} style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+              <div className="admin-modal-body">
+                {progressFormError && (
+                  <div className="admin-alert-error" style={{ marginBottom: 0 }}>
+                    {progressFormError}
+                  </div>
+                )}
+
+                {/* Quick Autofill from existing Projects */}
+                {progressModalMode === 'add' && projects.length > 0 && (
+                  <div style={{ background: 'rgba(0, 229, 255, 0.05)', border: '1px dashed rgba(0, 229, 255, 0.25)', borderRadius: '10px', padding: '0.75rem 1rem' }}>
+                    <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#00e5ff', display: 'block', marginBottom: '0.35rem' }}>
+                      ⚡ Chọn nhanh từ danh sách Dự án có sẵn:
+                    </label>
+                    <CustomSelect
+                      value=""
+                      onChange={(val) => handleQuickPickFromProjects(val)}
+                      options={projectQuickOptions}
+                      placeholder="-- Chọn dự án để tự động điền thông tin --"
+                    />
+                  </div>
+                )}
+
+                <div className="admin-modal-grid">
+                  <div className="admin-modal-field">
+                    <label>Mã Dự Án (Cấp cho khách) *</label>
+                    <input
+                      type="text"
+                      className="admin-modal-input"
+                      value={progressFormData.projectCode}
+                      onChange={(e) => setProgressFormData({ ...progressFormData, projectCode: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <div className="admin-modal-field">
+                    <label>Mã PIN Khách Hàng (6 số) *</label>
+                    <div style={{ display: 'flex', gap: '0.4rem' }}>
+                      <input
+                        type="text"
+                        className="admin-modal-input"
+                        value={progressFormData.pin}
+                        onChange={(e) => setProgressFormData({ ...progressFormData, pin: e.target.value })}
+                        required
+                        maxLength={10}
+                      />
+                      <button
+                        type="button"
+                        className="admin-pill-btn"
+                        onClick={() => {
+                          const randPin = String(Math.floor(100000 + Math.random() * 900000));
+                          setProgressFormData({ ...progressFormData, pin: randPin });
+                        }}
+                        style={{ whiteSpace: 'nowrap' }}
+                        title="Tạo mã PIN 6 số ngẫu nhiên"
+                      >
+                        PIN mới
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="admin-modal-field" style={{ gridColumn: '1 / -1' }}>
+                    <label>Tên Dự Án *</label>
+                    <input
+                      type="text"
+                      className="admin-modal-input"
+                      placeholder="VD: TVC ACTS Summer Collection..."
+                      value={progressFormData.projectName}
+                      onChange={(e) => setProgressFormData({ ...progressFormData, projectName: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <div className="admin-modal-field">
+                    <label>Khách Hàng / Thương Hiệu</label>
+                    <input
+                      type="text"
+                      className="admin-modal-input"
+                      placeholder="VD: Trân Trân / ACTS..."
+                      value={progressFormData.clientBrand}
+                      onChange={(e) => setProgressFormData({ ...progressFormData, clientBrand: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="admin-modal-field">
+                    <label>Dịch Vụ Sản Xuất</label>
+                    <CustomSelect
+                      direction="up"
+                      value={progressFormData.service}
+                      onChange={(val) => setProgressFormData({ ...progressFormData, service: val })}
+                      options={serviceOptions}
+                      allowCustom={true}
+                      placeholder="Chọn hoặc nhập dịch vụ..."
+                    />
+                  </div>
+
+                  <div className="admin-modal-field">
+                    <label>Người Phụ Trách</label>
+                    <input
+                      type="text"
+                      className="admin-modal-input"
+                      placeholder="VD: Vũ Thành..."
+                      value={progressFormData.assignee}
+                      onChange={(e) => setProgressFormData({ ...progressFormData, assignee: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="admin-modal-field">
+                    <label>Giai Đoạn Hiện Tại</label>
+                    <CustomSelect
+                      direction="up"
+                      value={progressFormData.stage}
+                      onChange={(val) => setProgressFormData({ ...progressFormData, stage: val })}
+                      options={PROGRESS_STAGES}
+                    />
+                  </div>
+
+                  {/* Progress Slider */}
+                  <div className="admin-modal-field" style={{ gridColumn: '1 / -1' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                      <label style={{ margin: 0 }}>
+                        Tiến Độ Thực Tế: <strong style={{ color: '#00e5ff' }}>{progressFormData.progress}%</strong>
+                      </label>
+                      <button
+                        type="button"
+                        className="admin-autocalc-btn"
+                        onClick={handleAutoCalcProgressFromMilestones}
+                        title="Tự động tính phần trăm dựa trên số mốc công việc đã hoàn thành"
+                      >
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                        </svg>
+                        <span>Tự tính theo mốc</span>
+                      </button>
+                    </div>
+                    <div className="admin-slider-group">
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        step="5"
+                        className="admin-slider-range"
+                        value={progressFormData.progress}
+                        onChange={(e) => setProgressFormData({ ...progressFormData, progress: Number(e.target.value) })}
+                      />
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        className="admin-modal-input admin-slider-input"
+                        value={progressFormData.progress}
+                        onChange={(e) => setProgressFormData({ ...progressFormData, progress: Math.min(100, Math.max(0, Number(e.target.value) || 0)) })}
+                      />
+                      <span style={{ color: '#94a3b8', fontSize: '0.85rem' }}>%</span>
+                    </div>
+                    <div className="admin-preset-pills-row">
+                      <span style={{ fontSize: '0.74rem', color: '#94a3b8', marginRight: '0.2rem' }}>Mức nhanh:</span>
+                      {[0, 25, 50, 75, 100].map((pct) => (
+                        <button
+                          key={pct}
+                          type="button"
+                          className={`admin-preset-pill ${Number(progressFormData.progress) === pct ? 'active' : ''}`}
+                          onClick={() => setProgressFormData({ ...progressFormData, progress: pct })}
+                        >
+                          {pct}%
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="admin-modal-field">
+                    <label>Ngày Bắt Đầu</label>
+                    <DatePicker
+                      value={progressFormData.startDate}
+                      onChange={(val) => setProgressFormData({ ...progressFormData, startDate: val })}
+                      placeholder="VD: 10/10/2026"
+                      direction="up"
+                    />
+                  </div>
+
+                  <div className="admin-modal-field">
+                    <label>Hạn Hoàn Thành</label>
+                    <DatePicker
+                      value={progressFormData.dueDate}
+                      onChange={(val) => setProgressFormData({ ...progressFormData, dueDate: val })}
+                      placeholder="VD: 25/10/2026"
+                      direction="up"
+                    />
+                  </div>
+
+                  {/* Milestones Builder */}
+                  <div className="admin-modal-field" style={{ gridColumn: '1 / -1' }}>
+                    <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span>Các Mốc Công Việc ({progressFormData.milestones?.length || 0})</span>
+                      <button
+                        type="button"
+                        className="admin-pill-btn"
+                        onClick={() => setProgressFormData({ ...progressFormData, milestones: [...DEFAULT_PROGRESS_MILESTONES] })}
+                        style={{ fontSize: '0.72rem', padding: '0.2rem 0.5rem' }}
+                      >
+                        Tạo 6 mốc chuẩn
+                      </button>
+                    </label>
+
+                    <div className="admin-milestone-editor">
+                      {(progressFormData.milestones || []).map((m, idx) => (
+                        <div key={m.id || idx} className="admin-milestone-row">
+                          <span style={{ fontSize: '0.75rem', color: '#94a3b8', width: '18px', textAlign: 'center', flexShrink: 0 }}>
+                            {idx + 1}.
+                          </span>
+                          <input
+                            type="text"
+                            className="admin-milestone-input"
+                            placeholder="Tên mốc công việc..."
+                            value={m.title}
+                            onChange={(e) => handleModalMilestoneChange(idx, 'title', e.target.value)}
+                          />
+                          <div className="admin-milestone-status-segmented">
+                            <button
+                              type="button"
+                              className={`admin-status-seg-btn pending ${m.status === 'pending' ? 'active' : ''}`}
+                              onClick={() => handleModalMilestoneChange(idx, 'status', 'pending')}
+                              title="Chờ xử lý"
+                            >
+                              <span className="seg-dot" />
+                              <span>Chờ</span>
+                            </button>
+                            <button
+                              type="button"
+                              className={`admin-status-seg-btn in_progress ${m.status === 'in_progress' ? 'active' : ''}`}
+                              onClick={() => handleModalMilestoneChange(idx, 'status', 'in_progress')}
+                              title="Đang làm"
+                            >
+                              <span className="seg-dot" />
+                              <span>Làm</span>
+                            </button>
+                            <button
+                              type="button"
+                              className={`admin-status-seg-btn completed ${m.status === 'completed' ? 'active' : ''}`}
+                              onClick={() => handleModalMilestoneChange(idx, 'status', 'completed')}
+                              title="Hoàn thành"
+                            >
+                              <span className="seg-dot" />
+                              <span>Xong</span>
+                            </button>
+                          </div>
+                          <button
+                            type="button"
+                            className="admin-milestone-del-btn"
+                            onClick={() => handleModalRemoveMilestone(idx)}
+                            title="Xóa mốc này"
+                          >
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <polyline points="3 6 5 6 21 6" />
+                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                            </svg>
+                          </button>
+                        </div>
+                      ))}
+                      <div className="admin-milestone-actions-row">
+                        <button
+                          type="button"
+                          className="admin-milestone-add-btn"
+                          onClick={handleModalAddMilestone}
+                        >
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                          </svg>
+                          <span>Thêm mốc công việc</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="admin-modal-field">
+                    <label>Link Demo / Bản Nháp</label>
+                    <input
+                      type="url"
+                      className="admin-modal-input"
+                      placeholder="https://..."
+                      value={progressFormData.demoUrl}
+                      onChange={(e) => setProgressFormData({ ...progressFormData, demoUrl: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="admin-modal-field">
+                    <label>Link Bàn Giao Final (File Master)</label>
+                    <input
+                      type="url"
+                      className="admin-modal-input"
+                      placeholder="https://drive.google.com/..."
+                      value={progressFormData.finalUrl}
+                      onChange={(e) => setProgressFormData({ ...progressFormData, finalUrl: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="admin-modal-field" style={{ gridColumn: '1 / -1' }}>
+                    <label>Ghi Chú Cập Nhật (Khách sẽ đọc được ghi chú này)</label>
+                    <textarea
+                      className="admin-modal-input"
+                      rows={2}
+                      placeholder="VD: Đã chốt concept, đang hoàn thiện storyboard và chuẩn bị casting..."
+                      value={progressFormData.notes}
+                      onChange={(e) => setProgressFormData({ ...progressFormData, notes: e.target.value })}
+                      style={{ resize: 'vertical' }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="admin-modal-footer">
+                <button
+                  type="button"
+                  className="admin-pill-btn"
+                  onClick={() => setProgressModalOpen(false)}
+                  disabled={progressSaving}
+                >
+                  Hủy Bỏ
+                </button>
+                <button
+                  type="submit"
+                  className="admin-btn-add"
+                  disabled={progressSaving}
+                >
+                  {progressSaving ? 'Đang lưu vào Sheet...' : (progressModalMode === 'edit' ? 'Lưu Thay Đổi' : 'Thêm Tiến Độ')}
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
+
+      {/* CONFIRM DELETE MODAL FOR PROGRESS */}
+      {deleteProgressConfirmOpen && progressToDelete && (
+        <div className="admin-modal-backdrop" onClick={() => !deletingProgress && setDeleteProgressConfirmOpen(false)}>
+          <motion.div
+            className="admin-modal-dialog"
+            onClick={(e) => e.stopPropagation()}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            style={{ maxWidth: '440px' }}
+          >
+            <div className="admin-modal-header">
+              <h3 className="admin-modal-title" style={{ color: '#f87171' }}>
+                Xác Nhận Xóa Tiến Độ
+              </h3>
+              <button
+                type="button"
+                className="admin-modal-close"
+                onClick={() => setDeleteProgressConfirmOpen(false)}
+                disabled={deletingProgress}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="admin-modal-body">
+              <p style={{ color: '#e2e8f0', lineHeight: 1.5 }}>
+                Bạn có chắc chắn muốn xóa tiến độ của dự án <strong>{progressToDelete.projectName}</strong> (Mã: <code>{progressToDelete.projectCode}</code>)?
+              </p>
+              <p style={{ color: '#fca5a5', fontSize: '0.85rem', marginTop: '0.5rem' }}>
+                Khách hàng sẽ không thể đăng nhập tra cứu tiến độ với mã này nữa.
+              </p>
+            </div>
+
+            <div className="admin-modal-footer">
+              <button
+                type="button"
+                className="admin-btn-secondary"
+                onClick={() => setDeleteProgressConfirmOpen(false)}
+                disabled={deletingProgress}
+              >
+                Hủy
+              </button>
+              <button
+                type="button"
+                className="admin-btn-primary"
+                onClick={handleDeleteProgressConfirm}
+                disabled={deletingProgress}
+                style={{ background: '#ef4444', borderColor: '#ef4444', color: '#ffffff' }}
+              >
+                {deletingProgress ? 'Đang xóa...' : 'Xác Nhận Xóa'}
               </button>
             </div>
           </motion.div>

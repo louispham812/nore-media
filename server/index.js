@@ -8,12 +8,20 @@ import { pathToFileURL } from 'node:url';
 import path from 'node:path';
 import {
   signAdminToken,
+  signClientToken,
   verifyAdminToken,
+  verifyClientToken,
+  matchesProjectCode,
+  verifyClientLogin,
   safeCompare,
   getSheetsAdminData,
   addProjectToSheet,
   updateProjectInSheet,
   deleteProjectFromSheet,
+  addProjectProgress,
+  updateProjectProgress,
+  deleteProjectProgress,
+  getClientProjectProgress,
 } from './adminService.js';
 
 const app = express();
@@ -380,6 +388,84 @@ function authAdmin(req, res, next) {
   next();
 }
 
+function authClient(req, res, next) {
+  const authHeader = req.get('Authorization') || '';
+  const match = authHeader.match(/^Bearer\s+(.+)$/i);
+  if (!match) {
+    return res.status(401).json({ error: 'Yêu cầu đăng nhập để xem tiến độ.' });
+  }
+  const token = match[1];
+  const secret = process.env.ADMIN_TOKEN_SECRET || 'nore-media-admin-default-secret';
+  const user = verifyClientToken(token, secret);
+  if (!user) {
+    return res.status(401).json({ error: 'Phiên đăng nhập đã hết hạn hoặc không hợp lệ. Vui lòng đăng nhập lại.' });
+  }
+  req.user = user;
+  next();
+}
+
+app.post('/api/auth/login', adminLoginRateLimit, async (req, res) => {
+  const { identifier, email, password } = req.body || {};
+  const providedId = (typeof identifier === 'string' ? identifier : (typeof email === 'string' ? email : '')).trim();
+  const providedPassword = typeof password === 'string' ? password : '';
+
+  if (!providedId || !providedPassword) {
+    return res.status(400).json({ error: 'Vui lòng nhập đầy đủ Mã Dự Án / Email và Mật khẩu / Mã PIN.' });
+  }
+
+  const expectedAdminEmail = (process.env.ADMIN_EMAIL || 'admin@noreagency.com').toLowerCase().trim();
+  const expectedAdminPassword = process.env.ADMIN_PASSWORD || 'NoreAdmin@2026!';
+  const secret = process.env.ADMIN_TOKEN_SECRET || 'nore-media-admin-default-secret';
+
+  // 1. Check if Admin credentials match
+  const isEmailMatch = providedId.toLowerCase() === expectedAdminEmail;
+  const isPassMatch = safeCompare(providedPassword, expectedAdminPassword);
+
+  if (isEmailMatch && isPassMatch) {
+    const token = signAdminToken({ email: expectedAdminEmail, role: 'admin' }, secret);
+    return res.status(200).json({
+      ok: true,
+      role: 'admin',
+      token,
+      expiresAt: Date.now() + 24 * 60 * 60 * 1000,
+      user: { email: expectedAdminEmail, role: 'admin' },
+      admin: { email: expectedAdminEmail },
+    });
+  }
+
+  // 2. Check if Client credentials match in 'Tiến Độ Dự Án'
+  try {
+    const config = getConfiguration();
+    const data = await getSheetsAdminData(config);
+    const matchedProject = verifyClientLogin(providedId, providedPassword, data.projectProgress || []);
+
+    if (matchedProject) {
+      const token = signClientToken({
+        projectCode: matchedProject.projectCode,
+        role: 'client',
+        clientBrand: matchedProject.clientBrand,
+        projectName: matchedProject.projectName,
+      }, secret);
+
+      const { pin, ...clientSafe } = matchedProject;
+      return res.status(200).json({
+        ok: true,
+        role: 'client',
+        token,
+        expiresAt: Date.now() + 24 * 60 * 60 * 1000,
+        projectCode: matchedProject.projectCode,
+        progress: clientSafe,
+      });
+    }
+  } catch (err) {
+    console.error('Error verifying client login:', err);
+  }
+
+  return res.status(401).json({
+    error: 'Thông tin đăng nhập không chính xác. Vui lòng kiểm tra lại Mã Dự Án / Email hoặc Mã PIN / Mật khẩu.',
+  });
+});
+
 app.post('/api/admin/login', adminLoginRateLimit, (req, res) => {
   const { email, password } = req.body || {};
   const expectedEmail = (process.env.ADMIN_EMAIL || 'admin@noreagency.com').toLowerCase().trim();
@@ -473,6 +559,86 @@ app.delete('/api/admin/projects/:id', authAdmin, async (req, res) => {
     console.error('Error deleting project from sheets:', error);
     res.status(500).json({
       error: error.message || 'Không thể xóa dự án.',
+    });
+  }
+});
+
+// Client progress API
+app.get('/api/client/progress', authClient, async (req, res) => {
+  try {
+    const config = getConfiguration();
+    const projectCode = req.query.code || req.user.projectCode;
+    if (!projectCode) {
+      return res.status(400).json({ error: 'Thiếu mã dự án cần tra cứu.' });
+    }
+
+    if (req.user.role === 'client' && !matchesProjectCode(projectCode, req.user.projectCode)) {
+      return res.status(403).json({ error: 'Bạn không có quyền truy cập dữ liệu dự án này.' });
+    }
+
+    const forceRefresh = req.query.refresh === 'true';
+    const progress = await getClientProjectProgress(config, projectCode, forceRefresh);
+    if (!progress) {
+      return res.status(404).json({ error: 'Không tìm thấy dữ liệu tiến độ cho dự án này.' });
+    }
+
+    res.status(200).json({ ok: true, progress });
+  } catch (error) {
+    console.error('Error fetching client progress:', error);
+    res.status(500).json({
+      error: error.message || 'Không thể đọc dữ liệu tiến độ dự án.',
+    });
+  }
+});
+
+// Admin progress CRUD APIs
+app.post('/api/admin/progress', authAdmin, async (req, res) => {
+  try {
+    const { projectName, name } = req.body || {};
+    if (!projectName && !name) {
+      return res.status(400).json({ error: 'Vui lòng nhập Tên dự án.' });
+    }
+    const config = getConfiguration();
+    const result = await addProjectProgress(config, req.body);
+    res.status(201).json(result);
+  } catch (error) {
+    console.error('Error adding project progress:', error);
+    res.status(500).json({
+      error: error.message || 'Không thể thêm tiến độ dự án.',
+    });
+  }
+});
+
+app.put('/api/admin/progress/:id', authAdmin, async (req, res) => {
+  try {
+    const projectCode = req.params.id;
+    if (!projectCode) {
+      return res.status(400).json({ error: 'Mã dự án không hợp lệ.' });
+    }
+    const config = getConfiguration();
+    const result = await updateProjectProgress(config, projectCode, req.body);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('Error updating project progress:', error);
+    res.status(500).json({
+      error: error.message || 'Không thể cập nhật tiến độ dự án.',
+    });
+  }
+});
+
+app.delete('/api/admin/progress/:id', authAdmin, async (req, res) => {
+  try {
+    const projectCode = req.params.id;
+    if (!projectCode) {
+      return res.status(400).json({ error: 'Mã dự án không hợp lệ.' });
+    }
+    const config = getConfiguration();
+    const result = await deleteProjectProgress(config, projectCode);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('Error deleting project progress:', error);
+    res.status(500).json({
+      error: error.message || 'Không thể xóa tiến độ dự án.',
     });
   }
 });
