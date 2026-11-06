@@ -207,11 +207,6 @@ export default function ClientProgressPage() {
 
   return (
     <div className="client-progress-root">
-      {/* Background Lighting */}
-      <div className="client-ambient-orb client-orb-1" aria-hidden="true" />
-      <div className="client-ambient-orb client-orb-2" aria-hidden="true" />
-      <div className="client-ambient-orb client-orb-3" aria-hidden="true" />
-
       <div className="client-progress-container">
         {/* Navigation Bar */}
         <header className="client-header">
@@ -221,7 +216,7 @@ export default function ClientProgressPage() {
               <span>NORE MEDIA</span>
               <span className="client-live-tag">
                 <span className="client-live-dot" />
-                LIVE TRACKING
+                CLIENT PORTAL
               </span>
             </div>
           </Link>
@@ -231,7 +226,6 @@ export default function ClientProgressPage() {
               <Link
                 to="/admin"
                 className="client-btn-action"
-                style={{ background: 'rgba(245, 158, 11, 0.1)', borderColor: 'rgba(245, 158, 11, 0.3)', color: '#fbbf24' }}
               >
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <rect x="3" y="3" width="7" height="7" rx="1.5" />
@@ -284,9 +278,9 @@ export default function ClientProgressPage() {
         {/* Project Hero Card */}
         <motion.div
           className="client-hero-card"
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35 }}
+          transition={{ duration: 0.25 }}
         >
           <div className="client-hero-top">
             <div className="client-hero-info">
@@ -296,12 +290,12 @@ export default function ClientProgressPage() {
                 onClick={handleCopyCode}
                 title="Bấm để sao chép mã dự án"
               >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                   <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
                   <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                 </svg>
                 <span>MÃ DỰ ÁN: {project.projectCode}</span>
-                {copied && <span style={{ color: '#10b981', marginLeft: '0.2rem' }}>✓ Đã chép</span>}
+                {copied && <span style={{ color: '#fafafa', marginLeft: '0.2rem' }}>✓ Đã chép</span>}
               </button>
 
               <h1 className="client-project-name">{project.projectName}</h1>
@@ -337,7 +331,7 @@ export default function ClientProgressPage() {
             <div className="client-hero-progress-side">
               <div className="client-progress-big-num">{progressPercent}%</div>
               <div className="client-stage-pill">
-                <span className="client-live-dot" style={{ background: '#c084fc', boxShadow: '0 0 8px #c084fc' }} />
+                <span className="client-live-dot" />
                 <span>{project.stage}</span>
               </div>
             </div>
@@ -352,8 +346,8 @@ export default function ClientProgressPage() {
               />
             </div>
             <div className="client-dates-row">
-              <span>Ngày bắt đầu: <strong style={{ color: '#f1f5f9' }}>{project.startDate || 'Đang cập nhật'}</strong></span>
-              <span>Dự kiến hoàn thành: <strong style={{ color: '#00e5ff' }}>{project.dueDate || 'Đang cập nhật'}</strong></span>
+              <span>Ngày bắt đầu: <strong style={{ color: '#fafafa' }}>{project.startDate || 'Đang cập nhật'}</strong></span>
+              <span>Dự kiến hoàn thành: <strong style={{ color: '#fafafa' }}>{project.dueDate || 'Đang cập nhật'}</strong></span>
             </div>
           </div>
         </motion.div>
@@ -440,7 +434,7 @@ export default function ClientProgressPage() {
                             <polyline points="20 6 9 17 4 12" />
                           </svg>
                         ) : isDoing ? (
-                          <span className="client-live-dot" style={{ width: 6, height: 6, background: '#fbbf24' }} />
+                          <span className="client-live-dot" style={{ width: 6, height: 6, background: '#fafafa' }} />
                         ) : (
                           <span style={{ fontSize: '0.65rem' }}>{mIdx + 1}</span>
                         )}

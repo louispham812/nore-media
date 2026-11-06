@@ -1497,8 +1497,8 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
                               <td>
                                 <div className="admin-cell-stack">
                                   <div className="admin-pin-chip">
-                                    <span style={{ color: '#94a3b8', fontSize: '0.74rem' }}>PIN:</span>
-                                    <span style={{ fontWeight: 700, letterSpacing: isPinShown ? '0.08em' : '0.15em', color: '#00e5ff' }}>
+                                    <span style={{ color: '#a1a1aa', fontSize: '0.74rem' }}>PIN:</span>
+                                    <span style={{ fontWeight: 700, letterSpacing: isPinShown ? '0.08em' : '0.15em', color: '#fafafa' }}>
                                       {isPinShown ? item.pin : '••••••'}
                                     </span>
                                     <button
@@ -1562,8 +1562,8 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
                                   </div>
                                   <div className="admin-progress-meter-wrap" style={{ marginTop: '0.4rem' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', marginBottom: '0.2rem' }}>
-                                      <span style={{ color: '#94a3b8' }}>Tiến độ:</span>
-                                      <span style={{ color: '#00e5ff', fontWeight: 700 }}>{item.progress}%</span>
+                                      <span style={{ color: '#a1a1aa' }}>Tiến độ:</span>
+                                      <span style={{ color: '#fafafa', fontWeight: 700 }}>{item.progress}%</span>
                                     </div>
                                     <div className="admin-progress-meter-track">
                                       <div
@@ -1944,9 +1944,9 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
 
                 {/* Quick Autofill from existing Projects */}
                 {progressModalMode === 'add' && projects.length > 0 && (
-                  <div style={{ background: 'rgba(0, 229, 255, 0.05)', border: '1px dashed rgba(0, 229, 255, 0.25)', borderRadius: '10px', padding: '0.75rem 1rem' }}>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#00e5ff', display: 'block', marginBottom: '0.35rem' }}>
-                      ⚡ Chọn nhanh từ danh sách Dự án có sẵn:
+                  <div style={{ background: '#18181b', border: '1px solid rgba(255, 255, 255, 0.12)', borderRadius: '10px', padding: '0.75rem 1rem' }}>
+                    <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#fafafa', display: 'block', marginBottom: '0.35rem' }}>
+                      Chọn nhanh từ danh sách Dự án có sẵn:
                     </label>
                     <CustomSelect
                       value=""
@@ -2055,7 +2055,7 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
                   <div className="admin-modal-field" style={{ gridColumn: '1 / -1' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
                       <label style={{ margin: 0 }}>
-                        Tiến Độ Thực Tế: <strong style={{ color: '#00e5ff' }}>{progressFormData.progress}%</strong>
+                        Tiến Độ Thực Tế: <strong style={{ color: '#fafafa' }}>{progressFormData.progress}%</strong>
                       </label>
                       <button
                         type="button"

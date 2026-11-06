@@ -7,4 +7,12 @@ dist/
 scratch_upload/
 temp_video_records/
 demo_snapshots/
+demo_snapshots_60s/
+demo-audio-60s.wav
 *.mp4
+*.wav
+scripts/demo-overlay.js
+scripts/finalize-mp4-and-snapshots.mjs
+scripts/generate-demo-audio.mjs
+scripts/record-demo*.mjs
+

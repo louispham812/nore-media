@@ -225,17 +225,15 @@ p {
   display: inline-flex !important;
   align-items: center;
   gap: 0.45rem;
-  padding: 0.42rem 0.85rem !important;
+  padding: 0.42rem 0.9rem !important;
   border-radius: 999px !important;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   color: #f8fafc !important;
   font-weight: 600;
-  font-size: 0.88rem !important;
+  font-size: 0.86rem !important;
   text-decoration: none;
-  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.18s ease;
   white-space: nowrap;
 }
 
@@ -244,11 +242,10 @@ p {
 }
 
 .nav-admin-link:hover {
-  background: rgba(255, 255, 255, 0.16) !important;
-  border-color: rgba(255, 255, 255, 0.45);
-  box-shadow: 0 0 16px rgba(255, 255, 255, 0.16);
+  background: #fafafa !important;
+  border-color: #fafafa !important;
+  color: #09090b !important;
   transform: translateY(-1px);
-  color: #ffffff !important;
 }
 
 .nav-admin-link:active {
@@ -256,57 +253,43 @@ p {
 }
 
 .nav-admin-icon {
-  width: 15px;
-  height: 15px;
-  stroke: #38bdf8;
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
   display: inline-block;
   flex-shrink: 0;
-  transition: transform 0.25s ease;
-}
-
-.nav-admin-link:hover .nav-admin-icon {
-  transform: rotate(90deg);
+  transition: transform 0.2s ease;
 }
 
 .nav-admin-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #22c55e;
-  box-shadow: 0 0 8px #22c55e;
+  background: #a1a1aa;
   display: inline-block;
   flex-shrink: 0;
-  animation: adminPulse 2s infinite ease-in-out;
 }
 
-@keyframes adminPulse {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.35;
-    transform: scale(0.8);
-  }
+.nav-admin-link:hover .nav-admin-dot {
+  background: #09090b !important;
 }
 
 /* Client Progress Navigation Link */
 .nav-client-link {
-  background: rgba(0, 229, 255, 0.08) !important;
-  border-color: rgba(0, 229, 255, 0.28) !important;
-  color: #e0f2fe !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  color: #f8fafc !important;
 }
 
 .nav-client-link:hover {
-  background: rgba(0, 229, 255, 0.16) !important;
-  border-color: #00e5ff !important;
-  box-shadow: 0 0 16px rgba(0, 229, 255, 0.25) !important;
-  color: #ffffff !important;
+  background: #fafafa !important;
+  border-color: #fafafa !important;
+  color: #09090b !important;
 }
 
 .nav-client-dot {
-  background: #00e5ff !important;
-  box-shadow: 0 0 8px #00e5ff !important;
+  background: #a1a1aa !important;
+  box-shadow: none !important;
 }
 
 /* Auth Login Header Button */
@@ -316,15 +299,13 @@ p {
   gap: 0.45rem;
   padding: 0.42rem 0.95rem !important;
   border-radius: 999px !important;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.05) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  color: #ffffff !important;
-  font-weight: 600;
-  font-size: 0.88rem !important;
+  background: #fafafa;
+  border: 1px solid #fafafa;
+  color: #09090b !important;
+  font-weight: 700;
+  font-size: 0.85rem !important;
   text-decoration: none;
-  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.18s ease;
   white-space: nowrap;
 }
 
@@ -333,11 +314,10 @@ p {
 }
 
 .nav-auth-login-btn:hover {
-  background: linear-gradient(135deg, rgba(0, 229, 255, 0.2) 0%, rgba(124, 58, 237, 0.2) 100%) !important;
-  border-color: rgba(0, 229, 255, 0.5);
-  box-shadow: 0 0 18px rgba(0, 229, 255, 0.25);
+  background: #e4e4e7 !important;
+  border-color: #e4e4e7 !important;
+  color: #09090b !important;
   transform: translateY(-1px);
-  color: #ffffff !important;
 }
 
 .nav-auth-login-btn:active {
@@ -345,12 +325,12 @@ p {
 }
 
 .nav-auth-icon {
-  width: 15px;
-  height: 15px;
-  stroke: #38bdf8;
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
   display: inline-block;
   flex-shrink: 0;
-  transition: transform 0.2s ease;
+  transition: transform 0.18s ease;
 }
 
 .nav-auth-login-btn:hover .nav-auth-icon {
