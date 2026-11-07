@@ -1,29 +1,48 @@
-import { useState, useEffect, useCallback } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   CLIENT_TOKEN_KEY,
   ADMIN_TOKEN_KEY,
   CLIENT_PROJECT_KEY,
+  dispatchAuthChanged,
   useAuth,
 } from '../hooks/useAdminAuth.js';
+import {
+  STAGES_SEQUENCE,
+  getStageIndex,
+  isProjectCompleted,
+  getStepStatus,
+  getNextMilestone,
+  isProjectOverdue,
+  extractProjectCodeFromQuery,
+} from '../utils/progressLogic.js';
 import '../styles/client-progress.css';
 
-const STAGES_SEQUENCE = [
-  { id: 'tien-ky', label: 'Tiền kỳ', icon: 'bulb', desc: 'Ý tưởng, kịch bản & chuẩn bị' },
-  { id: 'san-xuat', label: 'Đang sản xuất', icon: 'camera', desc: 'Quay chụp tại phim trường / On-set' },
-  { id: 'hau-ky', label: 'Hậu kỳ', icon: 'sliders', desc: 'Dựng phim, âm thanh & màu sắc' },
-  { id: 'feedback', label: 'Chỉnh sửa / Feedback', icon: 'message', desc: 'Khách xem bản nháp & phản hồi' },
-  { id: 'hoan-thanh', label: 'Hoàn thành', icon: 'award', desc: 'Nghiệm thu & Bàn giao file gốc' },
-];
+function formatTime(dateObj) {
+  if (!dateObj) return '';
+  try {
+    return dateObj.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+  } catch {
+    return '';
+  }
+}
 
-function getStageIndex(stageName = '') {
-  const clean = stageName.trim().toLowerCase();
-  if (clean.includes('hoàn thành')) return 4;
-  if (clean.includes('chỉnh sửa') || clean.includes('feedback')) return 3;
-  if (clean.includes('hậu kỳ')) return 2;
-  if (clean.includes('đang sản xuất') || clean.includes('sản xuất')) return 1;
-  return 0; // Default to 'Tiền kỳ'
+function formatDateTime(isoString) {
+  if (!isoString) return '';
+  try {
+    const d = new Date(isoString);
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleString('vi-VN', {
+      hour: '2-digit',
+      minute: '2-digit',
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+  } catch {
+    return '';
+  }
 }
 
 function StageIcon({ type }) {
@@ -83,26 +102,60 @@ export default function ClientProgressPage() {
   const navigate = useNavigate();
   const { logout, isAdmin } = useAuth();
 
+  const [authToken, setAuthToken] = useState(() => {
+    return localStorage.getItem(CLIENT_TOKEN_KEY) || localStorage.getItem(ADMIN_TOKEN_KEY) || '';
+  });
+  const [projectCodeInput, setProjectCodeInput] = useState(() => {
+    const fromQuery = extractProjectCodeFromQuery(window.location.search);
+    if (fromQuery) return fromQuery;
+    return localStorage.getItem(CLIENT_PROJECT_KEY) || '';
+  });
+  const [pinInput, setPinInput] = useState('');
+  const [authLoading, setAuthLoading] = useState(false);
+  const [authError, setAuthError] = useState('');
+  const pinInputRef = useRef(null);
+
   const [project, setProject] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
+  const [refreshError, setRefreshError] = useState('');
   const [copied, setCopied] = useState(false);
+  const [lastFetchedAt, setLastFetchedAt] = useState(null);
 
   useEffect(() => {
     document.title = 'Tiến Độ Dự Án | NORE MEDIA';
+    const queryCode = extractProjectCodeFromQuery(window.location.search);
+    if (queryCode) {
+      setProjectCodeInput(queryCode);
+      const currentToken = localStorage.getItem(CLIENT_TOKEN_KEY) || localStorage.getItem(ADMIN_TOKEN_KEY);
+      if (!currentToken) {
+        // Auto-focus on PIN input when project code is supplied via URL
+        const timer = setTimeout(() => {
+          pinInputRef.current?.focus();
+        }, 120);
+        return () => clearTimeout(timer);
+      } else {
+        localStorage.setItem(CLIENT_PROJECT_KEY, queryCode);
+      }
+    }
   }, []);
 
   const fetchProgress = useCallback(async (isRefresh = false) => {
     const token = localStorage.getItem(CLIENT_TOKEN_KEY) || localStorage.getItem(ADMIN_TOKEN_KEY);
     if (!token) {
-      navigate('/login?redirect=/tien-do', { replace: true });
+      setAuthToken('');
+      setLoading(false);
       return;
     }
 
-    if (isRefresh) setRefreshing(true);
-    else setLoading(true);
-    setError('');
+    if (isRefresh) {
+      setRefreshing(true);
+      setRefreshError('');
+    } else {
+      setLoading(true);
+      setError('');
+    }
 
     try {
       const code = localStorage.getItem(CLIENT_PROJECT_KEY) || '';
@@ -118,7 +171,8 @@ export default function ClientProgressPage() {
 
       if (res.status === 401 || res.status === 403) {
         logout();
-        navigate('/login?redirect=/tien-do', { replace: true });
+        setAuthToken('');
+        setProject(null);
         return;
       }
 
@@ -128,30 +182,190 @@ export default function ClientProgressPage() {
       }
 
       setProject(data.progress);
+      setLastFetchedAt(new Date());
+      setError('');
+      setRefreshError('');
     } catch (err) {
-      setError(err.message || 'Lỗi kết nối khi tải tiến độ.');
+      const msg = err.message || 'Lỗi kết nối khi tải tiến độ.';
+      if (isRefresh) {
+        setRefreshError(msg);
+      } else {
+        setError(msg);
+      }
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [navigate, logout]);
+  }, [logout]);
 
   useEffect(() => {
-    fetchProgress();
-  }, [fetchProgress]);
+    if (authToken) {
+      fetchProgress();
+    }
+  }, [authToken, fetchProgress]);
 
-  const handleCopyCode = () => {
-    if (project?.projectCode) {
-      navigator.clipboard.writeText(project.projectCode);
+  const handleClientLogin = async (e) => {
+    e.preventDefault();
+    const cleanCode = projectCodeInput.trim().toUpperCase();
+    const cleanPin = pinInput.trim();
+    if (!cleanCode || !cleanPin) {
+      setAuthError('Vui lòng nhập đầy đủ Mã Dự Án và Mã PIN.');
+      return;
+    }
+
+    setAuthLoading(true);
+    setAuthError('');
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier: cleanCode, password: cleanPin }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Mã PIN hoặc Mã Dự Án không chính xác.');
+      }
+      if (data.token) {
+        localStorage.setItem(CLIENT_TOKEN_KEY, data.token);
+        if (data.projectCode) {
+          localStorage.setItem(CLIENT_PROJECT_KEY, data.projectCode);
+        }
+        setAuthToken(data.token);
+        dispatchAuthChanged();
+      }
+    } catch (err) {
+      setAuthError(err.message || 'Lỗi khi xác thực mã PIN.');
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleCopyCode = async () => {
+    if (!project?.projectCode) return;
+    try {
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(project.projectCode);
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = project.projectCode;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.warn('Failed to copy project code:', err);
     }
   };
 
   const handleLogout = () => {
     logout();
-    navigate('/login', { replace: true });
+    setAuthToken('');
+    setProject(null);
   };
+
+  const progressPercent = useMemo(() => {
+    return Math.min(100, Math.max(0, Number(project?.progress) || 0));
+  }, [project?.progress]);
+
+  const currentStageIdx = useMemo(() => {
+    return getStageIndex(project?.stage);
+  }, [project?.stage]);
+
+  const isCompleted = useMemo(() => {
+    return isProjectCompleted(project?.stage, progressPercent, project?.milestones);
+  }, [project?.stage, progressPercent, project?.milestones]);
+
+  const isOverdue = useMemo(() => {
+    return isProjectOverdue(project?.dueDate, project?.stage, progressPercent, new Date(), project?.milestones);
+  }, [project?.dueDate, project?.stage, progressPercent, project?.milestones]);
+
+  const nextMilestone = useMemo(() => {
+    return getNextMilestone(project?.milestones);
+  }, [project?.milestones]);
+
+  const studioUpdatedTimeFormatted = useMemo(() => {
+    if (project?.updatedAt) {
+      return formatDateTime(project.updatedAt);
+    }
+    return '';
+  }, [project?.updatedAt]);
+
+  if (!authToken) {
+    return (
+      <div className="client-progress-root">
+        <div className="client-login-gateway-container">
+          <div className="client-login-gateway-card">
+            <div className="client-login-gateway-header">
+              <Link to="/" className="client-logo-link" style={{ textDecoration: 'none' }}>
+                <span className="client-logo-text">NORE MEDIA</span>
+                <span className="client-logo-badge">CLIENT PORTAL</span>
+              </Link>
+              <h1 className="client-login-gateway-title">Tra Cứu Tiến Độ Dự Án</h1>
+              <p className="client-login-gateway-desc">
+                Nhập mã PIN bảo mật do studio cung cấp để truy cập tiến độ sản xuất, duyệt demo và tải sản phẩm hoàn thiện.
+              </p>
+            </div>
+
+            {authError && (
+              <div className="client-login-gateway-error">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+                <span>{authError}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleClientLogin} className="client-login-gateway-form">
+              <div className="client-gateway-field">
+                <label htmlFor="client-gateway-code">Mã Dự Án</label>
+                <input
+                  id="client-gateway-code"
+                  type="text"
+                  placeholder="VD: NR-001"
+                  value={projectCodeInput}
+                  onChange={(e) => setProjectCodeInput(e.target.value.toUpperCase())}
+                  required
+                />
+              </div>
+
+              <div className="client-gateway-field">
+                <label htmlFor="client-gateway-pin">Mã PIN Bảo Mật (6 số)</label>
+                <input
+                  ref={pinInputRef}
+                  id="client-gateway-pin"
+                  type="password"
+                  placeholder="••••••"
+                  maxLength={12}
+                  value={pinInput}
+                  onChange={(e) => setPinInput(e.target.value)}
+                  autoComplete="current-password"
+                  required
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="client-gateway-submit-btn"
+                disabled={authLoading}
+              >
+                {authLoading ? 'Đang xác thực...' : 'Truy cập tiến độ dự án →'}
+              </button>
+            </form>
+
+            <div className="client-gateway-footer">
+              <span>Cần hỗ trợ quản trị? </span>
+              <Link to="/login" style={{ marginLeft: '0.25rem' }}>Đăng nhập quản trị viên</Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -166,7 +380,8 @@ export default function ClientProgressPage() {
     );
   }
 
-  if (error || !project) {
+  // Only show full error state if initial load failed and we have no project
+  if (error && !project) {
     return (
       <div className="client-progress-root">
         <div className="client-progress-container">
@@ -180,11 +395,11 @@ export default function ClientProgressPage() {
             <p style={{ color: '#94a3b8', maxWidth: '420px', marginBottom: '1.5rem' }}>
               {error || 'Chưa tìm thấy dự án được liên kết với tài khoản này.'}
             </p>
-            <div style={{ display: 'flex', gap: '0.75rem' }}>
+            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'center' }}>
               <button
                 type="button"
                 className="client-btn-action"
-                onClick={() => fetchProgress(true)}
+                onClick={() => fetchProgress(false)}
               >
                 Thử lại
               </button>
@@ -202,8 +417,7 @@ export default function ClientProgressPage() {
     );
   }
 
-  const currentStageIdx = getStageIndex(project.stage);
-  const progressPercent = Math.min(100, Math.max(0, Number(project.progress) || 0));
+  if (!project) return null;
 
   return (
     <div className="client-progress-root">
@@ -222,6 +436,12 @@ export default function ClientProgressPage() {
           </Link>
 
           <div className="client-header-actions">
+            {lastFetchedAt && (
+              <span className="client-sync-time" title="Thời điểm trình duyệt đồng bộ dữ liệu gần nhất">
+                Đồng bộ: {formatTime(lastFetchedAt)}
+              </span>
+            )}
+
             {isAdmin && (
               <Link
                 to="/admin"
@@ -242,7 +462,7 @@ export default function ClientProgressPage() {
               className="client-btn-action"
               onClick={() => fetchProgress(true)}
               disabled={refreshing}
-              title="Làm mới dữ liệu mới nhất"
+              title="Làm mới dữ liệu mới nhất từ Studio"
             >
               <svg
                 width="15"
@@ -275,6 +495,48 @@ export default function ClientProgressPage() {
           </div>
         </header>
 
+        {/* Refresh Error Notification Banner (Preserving existing data) */}
+        <AnimatePresence>
+          {refreshError && (
+            <motion.div
+              className="client-refresh-error-banner"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+            >
+              <div className="client-refresh-error-text">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f87171" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+                <span>Không thể làm mới dữ liệu mới nhất ({refreshError}). Đang hiển thị bản dữ liệu lưu trước đó.</span>
+              </div>
+              <button
+                type="button"
+                className="client-refresh-retry-btn"
+                onClick={() => fetchProgress(true)}
+              >
+                Thử lại
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Overdue Warning Alert */}
+        {isOverdue && (
+          <div className="client-overdue-alert">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+              <line x1="12" y1="9" x2="12" y2="13" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+            <div>
+              <strong>Thông báo tiến độ:</strong> Dự án đã quá hạn dự kiến bàn giao ({project.dueDate}). Đội ngũ Studio đang tập trung cao độ để hoàn thiện các khâu nghiệm thu trong thời gian sớm nhất.
+            </div>
+          </div>
+        )}
+
         {/* Project Hero Card */}
         <motion.div
           className="client-hero-card"
@@ -284,19 +546,32 @@ export default function ClientProgressPage() {
         >
           <div className="client-hero-top">
             <div className="client-hero-info">
-              <button
-                type="button"
-                className="client-project-code-badge"
-                onClick={handleCopyCode}
-                title="Bấm để sao chép mã dự án"
-              >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                </svg>
-                <span>MÃ DỰ ÁN: {project.projectCode}</span>
-                {copied && <span style={{ color: '#fafafa', marginLeft: '0.2rem' }}>✓ Đã chép</span>}
-              </button>
+              <div className="client-hero-badges-row">
+                <button
+                  type="button"
+                  className="client-project-code-badge"
+                  onClick={handleCopyCode}
+                  title="Bấm để sao chép mã dự án"
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                  </svg>
+                  <span>MÃ DỰ ÁN: {project.projectCode}</span>
+                  {copied && <span className="client-copied-hint">✓ Đã chép</span>}
+                </button>
+
+                {isCompleted && (
+                  <span className="client-status-badge is-completed">
+                    ✓ ĐÃ HOÀN TẤT 100%
+                  </span>
+                )}
+                {isOverdue && !isCompleted && (
+                  <span className="client-status-badge is-overdue">
+                    ⚠️ QUÁ HẠN BÀN GIAO
+                  </span>
+                )}
+              </div>
 
               <h1 className="client-project-name">{project.projectName}</h1>
 
@@ -306,7 +581,7 @@ export default function ClientProgressPage() {
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                     <circle cx="12" cy="7" r="4" />
                   </svg>
-                  <span>Khách hàng: <strong>{project.clientBrand}</strong></span>
+                  <span>Khách hàng: <strong>{project.clientBrand && project.clientBrand !== '—' ? project.clientBrand : 'Khách cá nhân'}</strong></span>
                 </div>
 
                 <div className="client-meta-item">
@@ -314,7 +589,7 @@ export default function ClientProgressPage() {
                     <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
                     <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
                   </svg>
-                  <span>Dịch vụ: <strong>{project.service}</strong></span>
+                  <span>Dịch vụ: <strong>{project.service || 'Sản xuất hình ảnh/video'}</strong></span>
                 </div>
 
                 <div className="client-meta-item">
@@ -323,7 +598,7 @@ export default function ClientProgressPage() {
                     <line x1="12" y1="8" x2="12" y2="12" />
                     <line x1="12" y1="16" x2="12.01" y2="16" />
                   </svg>
-                  <span>Phụ trách: <strong>{project.assignee}</strong></span>
+                  <span>Phụ trách: <strong>{project.assignee || 'NORE Studio Team'}</strong></span>
                 </div>
               </div>
             </div>
@@ -332,12 +607,12 @@ export default function ClientProgressPage() {
               <div className="client-progress-big-num">{progressPercent}%</div>
               <div className="client-stage-pill">
                 <span className="client-live-dot" />
-                <span>{project.stage}</span>
+                <span>{project.stage || (isCompleted ? 'Hoàn thành' : 'Đang cập nhật')}</span>
               </div>
             </div>
           </div>
 
-          {/* Progress Bar */}
+          {/* Master Progress Bar */}
           <div className="client-progressbar-wrapper">
             <div className="client-progressbar-track">
               <div
@@ -346,8 +621,51 @@ export default function ClientProgressPage() {
               />
             </div>
             <div className="client-dates-row">
-              <span>Ngày bắt đầu: <strong style={{ color: '#fafafa' }}>{project.startDate || 'Đang cập nhật'}</strong></span>
-              <span>Dự kiến hoàn thành: <strong style={{ color: '#fafafa' }}>{project.dueDate || 'Đang cập nhật'}</strong></span>
+              <span>Ngày bắt đầu: <strong>{project.startDate || 'Đang cập nhật'}</strong></span>
+              <span>
+                Hạn bàn giao:{' '}
+                <strong style={{ color: isOverdue ? '#fca5a5' : '#fafafa' }}>
+                  {project.dueDate || 'Đang cập nhật'}
+                  {isOverdue && ' (Quá hạn)'}
+                </strong>
+              </span>
+              <span className="client-studio-timestamp">
+                {studioUpdatedTimeFormatted
+                  ? `Studio cập nhật: ${studioUpdatedTimeFormatted}`
+                  : 'Nội dung: Cập nhật từ Studio'}
+              </span>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Next Milestone Feature Banner */}
+        <motion.div
+          className="client-next-milestone-banner"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.05 }}
+        >
+          <div className="client-next-milestone-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+          </div>
+          <div className="client-next-milestone-content">
+            <span className="client-next-milestone-label">MỐC TIẾP THEO THEO DÕI</span>
+            <div className="client-next-milestone-title">
+              {isCompleted ? (
+                <span style={{ color: '#34d399' }}>✓ Dự án đã hoàn tất toàn bộ các mốc công việc sản xuất và bàn giao.</span>
+              ) : nextMilestone ? (
+                <>
+                  <span>{nextMilestone.title}</span>
+                  <span className={`client-milestone-status-chip ${nextMilestone.status}`}>
+                    {nextMilestone.status === 'in_progress' ? 'Đang thực hiện' : 'Chờ xử lý'}
+                  </span>
+                </>
+              ) : (
+                <span style={{ color: '#a1a1aa' }}>Chưa có mốc công việc tiếp theo trong kế hoạch.</span>
+              )}
             </div>
           </div>
         </motion.div>
@@ -368,24 +686,16 @@ export default function ClientProgressPage() {
 
           <div className="client-stepper-list">
             {STAGES_SEQUENCE.map((stageItem, idx) => {
-              const isCompleted = idx < currentStageIdx;
-              const isActive = idx === currentStageIdx;
-              const isPending = idx > currentStageIdx;
-
-              let statusClass = 'is-pending';
-              let statusText = 'Chưa bắt đầu';
-              if (isCompleted) {
-                statusClass = 'is-completed';
-                statusText = 'Đã hoàn thành';
-              } else if (isActive) {
-                statusClass = 'is-active';
-                statusText = 'Đang thực hiện';
-              }
+              const { statusClass, statusText, isCompleted: stepDone } = getStepStatus(
+                idx,
+                currentStageIdx,
+                isCompleted
+              );
 
               return (
                 <div key={stageItem.id} className={`client-step-item ${statusClass}`}>
                   <div className="client-step-icon-wrap">
-                    {isCompleted ? (
+                    {stepDone ? (
                       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                         <polyline points="20 6 9 17 4 12" />
                       </svg>
@@ -410,44 +720,57 @@ export default function ClientProgressPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, delay: 0.15 }}
           >
-            <h2 className="client-section-title">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                <path d="M9 11l3 3L22 4" />
-                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-              </svg>
-              <span>Các Mốc Công Việc (Milestones)</span>
-            </h2>
+            <div className="client-card-header-row">
+              <h2 className="client-section-title" style={{ margin: 0 }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                  <path d="M9 11l3 3L22 4" />
+                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+                </svg>
+                <span>Các Mốc Công Việc (Milestones)</span>
+              </h2>
+              {Array.isArray(project.milestones) && project.milestones.length > 0 && (
+                <span className="client-milestone-count-tag">
+                  {project.milestones.filter((m) => m.status === 'completed').length} / {project.milestones.length} hoàn thành
+                </span>
+              )}
+            </div>
 
             <div className="client-milestones-list">
-              {(project.milestones || []).map((m, mIdx) => {
-                const isDone = m.status === 'completed';
-                const isDoing = m.status === 'in_progress';
-                const bulletClass = isDone ? 'completed' : (isDoing ? 'in_progress' : 'pending');
-                const badgeText = isDone ? 'Hoàn thành' : (isDoing ? 'Đang thực hiện' : 'Chờ xử lý');
+              {!Array.isArray(project.milestones) || project.milestones.length === 0 ? (
+                <div className="client-empty-inline-state">
+                  Chưa có danh sách mốc công việc cụ thể cho dự án này.
+                </div>
+              ) : (
+                project.milestones.map((m, mIdx) => {
+                  const isDone = m.status === 'completed';
+                  const isDoing = m.status === 'in_progress';
+                  const bulletClass = isDone ? 'completed' : isDoing ? 'in_progress' : 'pending';
+                  const badgeText = isDone ? 'Đã hoàn thành' : isDoing ? 'Đang thực hiện' : 'Chờ xử lý';
 
-                return (
-                  <div key={m.id || mIdx} className="client-milestone-item">
-                    <div className="client-milestone-left">
-                      <div className={`client-milestone-bullet ${bulletClass}`}>
-                        {isDone ? (
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                        ) : isDoing ? (
-                          <span className="client-live-dot" style={{ width: 6, height: 6, background: '#fafafa' }} />
-                        ) : (
-                          <span style={{ fontSize: '0.65rem' }}>{mIdx + 1}</span>
-                        )}
+                  return (
+                    <div key={m.id || mIdx} className={`client-milestone-item ${bulletClass}`}>
+                      <div className="client-milestone-left">
+                        <div className={`client-milestone-bullet ${bulletClass}`}>
+                          {isDone ? (
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          ) : isDoing ? (
+                            <span className="client-live-dot" style={{ width: 6, height: 6, background: '#fafafa' }} />
+                          ) : (
+                            <span style={{ fontSize: '0.65rem' }}>{mIdx + 1}</span>
+                          )}
+                        </div>
+                        <span className="client-milestone-title">{m.title || 'Mốc chưa đặt tên'}</span>
                       </div>
-                      <span className="client-milestone-title">{m.title}</span>
-                    </div>
 
-                    <span className={`client-milestone-badge ${bulletClass}`}>
-                      {badgeText}
-                    </span>
-                  </div>
-                );
-              })}
+                      <span className={`client-milestone-badge ${bulletClass}`}>
+                        {badgeText}
+                      </span>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </motion.section>
 
@@ -580,7 +903,7 @@ export default function ClientProgressPage() {
                 {project.notes ? (
                   `"${project.notes}"`
                 ) : (
-                  '"Dự án đang được thực hiện theo đúng tiến độ kế hoạch. Mọi cập nhật mới sẽ được thông báo ngay tại đây."'
+                  'Hiện chưa có ghi chú mới từ Studio. Thông tin cập nhật sẽ được hiển thị tại đây khi có thay đổi.'
                 )}
               </div>
 

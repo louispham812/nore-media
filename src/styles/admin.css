@@ -1988,6 +1988,9 @@
 }
 
 .admin-modal-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -1997,23 +2000,180 @@
   background: #0d0d10;
 }
 
+/* Grouped Sections in Progress Modal */
+.admin-form-group-section {
+  background: #101014;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 12px;
+  padding: 1.15rem 1.25rem;
+  margin-bottom: 1.15rem;
+}
+
+.admin-form-group-header {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #fafafa;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 1rem;
+}
+
+.admin-form-group-header svg {
+  color: #a1a1aa;
+}
+
+.admin-quick-autofill-box {
+  background: #18181b;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 0.85rem 1.1rem;
+  margin-bottom: 1.15rem;
+}
+
+.admin-group-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #fafafa;
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+.admin-alert-warning {
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.32);
+  color: #fde68a;
+  border-radius: 10px;
+  padding: 0.85rem 1.1rem;
+}
+
+/* Desktop vs Mobile Table/Card Views */
+.admin-desktop-table-view {
+  display: block;
+}
+
+.admin-mobile-cards-view {
+  display: none;
+}
+
+/* Mobile Card Component */
+.admin-mobile-card {
+  background: #121215;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  transition: border-color 0.18s ease;
+}
+
+.admin-mobile-card:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.admin-mobile-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.admin-mobile-badges {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.admin-mobile-card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fafafa;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.admin-mobile-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  font-size: 0.82rem;
+}
+
+.admin-mobile-card-progress {
+  background: #09090b;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 0.65rem 0.85rem;
+}
+
+.admin-mobile-card-dates {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  color: #a1a1aa;
+  flex-wrap: wrap;
+}
+
+.admin-card-overdue-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+}
+
+.admin-mobile-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  flex-wrap: wrap;
+}
+
 /* ==========================================================================
-   8. RESPONSIVE BREAKPOINTS
+   8. RESPONSIVE BREAKPOINTS (DESKTOP 1280px & MOBILE 360-768px OPTIMIZED)
    ========================================================================== */
+
+/* Header layout at ~1280px: Ensure User Group is never cut off */
+@media (max-width: 1340px) {
+  .admin-site-header .container.admin-nav-wrap,
+  .admin-nav-wrap {
+    flex-wrap: wrap;
+    justify-content: space-between;
+    row-gap: 0.65rem;
+    padding: 0.65rem 0;
+  }
+  .admin-tab-group {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+  }
+  .admin-header-actions {
+    order: 2;
+  }
+  .admin-brand-group {
+    order: 1;
+  }
+}
 
 @media (max-width: 1250px) {
   .admin-quick-stats-ribbon {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 1024px) {
-  .admin-site-header .container.admin-nav-wrap,
-  .admin-nav-wrap {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.75rem;
-    padding: 0.65rem 0;
   }
 }
 
@@ -2023,50 +2183,121 @@
   }
 }
 
-@media (max-width: 860px) {
+/* Tablet & Mobile Breakpoint (<= 768px): Cards replace compact table */
+@media (max-width: 768px) {
+  .admin-desktop-table-view {
+    display: none !important;
+  }
+
+  .admin-mobile-cards-view {
+    display: flex !important;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  /* Compact quick stats on operational tabs to bring cards up early */
+  .admin-quick-stats-ribbon.operational-tab {
+    display: none !important;
+  }
+
   .admin-site-header .container.admin-nav-wrap,
   .admin-nav-wrap {
     flex-direction: column;
-    align-items: center;
-    gap: 0.75rem;
+    align-items: stretch;
+    gap: 0.65rem;
     padding: 0.65rem 0;
   }
+
   .admin-brand-group {
     justify-content: center;
   }
+
+  /* Fully accessible mobile tab navigation: 2x2 grid, zero scroll, 100% visible */
   .admin-tab-group {
-    justify-content: flex-start;
-    max-width: 100%;
-    overflow-x: auto;
-    padding: 0.25rem;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    width: 100% !important;
+    gap: 0.35rem !important;
+    padding: 0.35rem !important;
+    overflow-x: visible !important;
   }
-  .admin-tab-group::-webkit-scrollbar {
-    display: none;
+
+  .admin-tab-btn {
+    justify-content: center !important;
+    padding: 0.55rem 0.45rem !important;
+    font-size: 0.78rem !important;
+    width: 100% !important;
+    text-align: center !important;
   }
+
+  .admin-tab-btn svg {
+    width: 13px;
+    height: 13px;
+  }
+
   .admin-header-actions {
     justify-content: center;
     flex-wrap: wrap;
     gap: 0.45rem;
+    width: 100%;
   }
+
+  .admin-user-group {
+    margin-left: 0;
+  }
+
   .admin-user-name {
-    max-width: 90px;
+    max-width: 110px;
   }
+
   .admin-quick-stats-ribbon {
     grid-template-columns: 1fr;
   }
+
   .admin-kpi-grid {
     grid-template-columns: 1fr;
   }
+
   .admin-breakdowns-grid {
     grid-template-columns: 1fr;
   }
+
   .admin-submissions-grid {
     grid-template-columns: 1fr;
   }
+
   .admin-modal-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-toolbar-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-filter-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-filter-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-modal-dialog {
+    margin: 0.5rem;
+    max-height: 94vh;
+  }
+
+  .admin-modal-body {
+    padding: 1rem 0.85rem;
+  }
+
+  .admin-modal-footer {
+    padding: 0.85rem 1rem;
   }
 }
 
@@ -2985,3 +3216,26 @@ select option,
 }
 
 
+
+
+/* Milestone Sync Button */
+.admin-sync-milestone-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 6px;
+  color: #fafafa;
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 0.3rem 0.65rem;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.admin-sync-milestone-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+}

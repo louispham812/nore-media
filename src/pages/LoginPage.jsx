@@ -26,6 +26,18 @@ export default function LoginPage() {
     document.title = 'Đăng Nhập | NORE MEDIA';
   }, []);
 
+  // Pre-fill identifier and focus PIN if deep-link has ?code=
+  useEffect(() => {
+    const codeParam = searchParams.get('code') || searchParams.get('projectCode') || searchParams.get('project_code');
+    if (codeParam) {
+      setIdentifier(codeParam.trim().toUpperCase());
+      const timer = setTimeout(() => {
+        document.getElementById('login-password')?.focus();
+      }, 120);
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams]);
+
   // Redirect if already logged in
   useEffect(() => {
     if (isAuthenticated) {

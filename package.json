@@ -8,7 +8,7 @@
     "server:dev": "node --watch server/index.js",
     "build": "vite build",
     "start": "node server/index.js",
-    "test": "node --test test/contact.test.js test/admin.test.js",
+    "test": "node --test test/contact.test.js test/admin.test.js test/progress.test.js",
     "test:sheets": "node scripts/test-sheets.js",
     "record:demo": "node scripts/record-demo.mjs"
   },

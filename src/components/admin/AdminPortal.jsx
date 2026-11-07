@@ -1,8 +1,14 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import CustomSelect from './CustomSelect.jsx';
 import DatePicker from './DatePicker.jsx';
+import {
+  checkProgressConsistency,
+  hasFormUnsavedChanges,
+  isProjectOverdue,
+  computeMilestoneSync,
+} from '../../utils/progressLogic.js';
 
 function formatTime(isoString) {
   if (!isoString) return '';
@@ -92,6 +98,11 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
   const [visiblePins, setVisiblePins] = useState(new Set());
   const [copiedPinCode, setCopiedPinCode] = useState(null);
 
+  // Focus restore & modal dialog refs
+  const lastTriggerElementRef = useRef(null);
+  const projectModalRef = useRef(null);
+  const progressModalRef = useRef(null);
+
   // Modal State (Add / Edit Project Progress)
   const [progressModalOpen, setProgressModalOpen] = useState(false);
   const [progressModalMode, setProgressModalMode] = useState('add'); // 'add' | 'edit'
@@ -112,6 +123,7 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
     finalUrl: '',
     notes: '',
   });
+  const [initialProgressFormData, setInitialProgressFormData] = useState(null);
   const [progressSaving, setProgressSaving] = useState(false);
   const [progressFormError, setProgressFormError] = useState('');
 
@@ -135,6 +147,7 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
     startDate: '',
     dueDate: '',
   });
+  const [initialFormData, setInitialFormData] = useState(null);
   const [formSaving, setFormSaving] = useState(false);
   const [formError, setFormError] = useState('');
 
@@ -146,12 +159,12 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
   // Toast Notification State
   const [toast, setToast] = useState(null);
 
-  const showToast = (message, type = 'success') => {
+  const showToast = useCallback((message, type = 'success') => {
     setToast({ message, type });
     setTimeout(() => {
       setToast(null);
     }, 3500);
-  };
+  }, []);
 
   const dashboard = data?.dashboard || { kpis: [], revenueByGenre: [], stageDistribution: [] };
   const projects = data?.projects || [];
@@ -167,21 +180,37 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
     });
   };
 
-  const handleCopyClientCredentials = (item) => {
+  const handleCopyClientCredentials = async (item) => {
     const origin = window.location.origin;
+    const trackingUrl = `${origin}/tien-do?code=${encodeURIComponent(item.projectCode)}`;
     const text = `NORE MEDIA — THÔNG TIN THEO DÕI TIẾN ĐỘ DỰ ÁN\n` +
       `• Dự án: ${item.projectName}\n` +
-      `• Khách hàng / Brand: ${item.clientBrand}\n` +
-      `• Đường dẫn đăng nhập: ${origin}/login\n` +
+      `• Khách hàng / Brand: ${item.clientBrand || 'Quý khách'}\n` +
+      `• Đường dẫn tra cứu: ${trackingUrl}\n` +
       `• Mã Dự Án: ${item.projectCode}\n` +
       `• Mã PIN: ${item.pin}\n\n` +
-      `Quý khách truy cập liên kết trên và nhập Mã Dự Án cùng Mã PIN để xem tiến độ cập nhật mới nhất từ studio.`;
-    navigator.clipboard.writeText(text);
-    setCopiedPinCode(item.projectCode);
-    setTimeout(() => {
-      setCopiedPinCode((prev) => (prev === item.projectCode ? null : prev));
-    }, 2500);
-    showToast(`Đã sao chép thông tin gửi khách (${item.projectCode})!`);
+      `Quý khách truy cập liên kết trên (đã tự động điền Mã Dự Án), chỉ cần nhập Mã PIN để xem tiến độ cập nhật mới nhất từ studio.`;
+
+    try {
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
+      setCopiedPinCode(item.projectCode);
+      setTimeout(() => {
+        setCopiedPinCode((prev) => (prev === item.projectCode ? null : prev));
+      }, 2500);
+      showToast(`Đã sao chép thông tin đăng nhập (${item.projectCode})!`, 'success');
+    } catch (err) {
+      console.warn('Clipboard copy error:', err);
+      showToast('Không thể sao chép vào bộ nhớ tạm. Vui lòng cấp quyền thao tác.', 'error');
+    }
   };
 
   const getStageBadgeClass = (stage) => {
@@ -336,14 +365,180 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
     };
   }, [projects, formSubmissions]);
 
+  // Consistency warnings for Progress Modal
+  const progressConsistencyWarnings = useMemo(() => {
+    if (!progressModalOpen) return [];
+    return checkProgressConsistency(
+      progressFormData.stage,
+      progressFormData.progress,
+      progressFormData.milestones
+    );
+  }, [progressModalOpen, progressFormData.stage, progressFormData.progress, progressFormData.milestones]);
+
+  const isProjectDirty = useMemo(() => {
+    if (!modalOpen || !initialFormData) return false;
+    return hasFormUnsavedChanges(formData, initialFormData);
+  }, [modalOpen, formData, initialFormData]);
+
+  const isProgressDirty = useMemo(() => {
+    if (!progressModalOpen || !initialProgressFormData) return false;
+    return hasFormUnsavedChanges(progressFormData, initialProgressFormData);
+  }, [progressModalOpen, progressFormData, initialProgressFormData]);
+
+  // Protect against accidental refresh / tab close when form has unsaved changes or is saving
+  useEffect(() => {
+    const hasUnsaved = (modalOpen && isProjectDirty) || (progressModalOpen && isProgressDirty) || formSaving || progressSaving;
+    if (!hasUnsaved) return;
+
+    const onBeforeUnload = (e) => {
+      e.preventDefault();
+      e.returnValue = '';
+      return '';
+    };
+
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, [modalOpen, isProjectDirty, progressModalOpen, isProgressDirty, formSaving, progressSaving]);
+
+  // Form close with unsaved changes verification
+  const handleRequestCloseProjectModal = useCallback(() => {
+    if (formSaving) return;
+    if (isProjectDirty) {
+      const confirmed = window.confirm('Bạn có thay đổi chưa lưu trong dự án. Bạn có chắc chắn muốn đóng mà không lưu không?');
+      if (!confirmed) return;
+    }
+    setModalOpen(false);
+    if (lastTriggerElementRef.current?.focus) {
+      lastTriggerElementRef.current.focus();
+    }
+  }, [formSaving, isProjectDirty]);
+
+  const handleRequestCloseProgressModal = useCallback(() => {
+    if (progressSaving) return;
+    if (isProgressDirty) {
+      const confirmed = window.confirm('Bạn có thay đổi chưa lưu trong tiến độ dự án. Bạn có chắc chắn muốn đóng mà không lưu không?');
+      if (!confirmed) return;
+    }
+    setProgressModalOpen(false);
+    if (lastTriggerElementRef.current?.focus) {
+      lastTriggerElementRef.current.focus();
+    }
+  }, [progressSaving, isProgressDirty]);
+
+  // Refs for modal close callbacks to isolate effects from form state changes
+  const handleCloseProjectModalRef = useRef(handleRequestCloseProjectModal);
+  handleCloseProjectModalRef.current = handleRequestCloseProjectModal;
+
+  const handleCloseProgressModalRef = useRef(handleRequestCloseProgressModal);
+  handleCloseProgressModalRef.current = handleRequestCloseProgressModal;
+
+  // Auto-focus only ONCE when Project Modal opens
+  useEffect(() => {
+    if (!modalOpen || !projectModalRef.current) return;
+    const dialog = projectModalRef.current;
+    const timer = setTimeout(() => {
+      const firstEditable = dialog.querySelector(
+        'input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled])'
+      );
+      firstEditable?.focus();
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [modalOpen]);
+
+  // Focus trap & Escape listener for Project Modal
+  useEffect(() => {
+    if (!modalOpen || !projectModalRef.current) return;
+    const dialog = projectModalRef.current;
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        handleCloseProjectModalRef.current?.();
+        return;
+      }
+      if (e.key === 'Tab') {
+        const focusable = Array.from(dialog.querySelectorAll(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        ));
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === first || !dialog.contains(document.activeElement)) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last || !dialog.contains(document.activeElement)) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [modalOpen]);
+
+  // Auto-focus only ONCE when Progress Modal opens
+  useEffect(() => {
+    if (!progressModalOpen || !progressModalRef.current) return;
+    const dialog = progressModalRef.current;
+    const timer = setTimeout(() => {
+      const firstEditable = dialog.querySelector(
+        'input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled])'
+      );
+      firstEditable?.focus();
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [progressModalOpen]);
+
+  // Focus trap & Escape listener for Progress Modal
+  useEffect(() => {
+    if (!progressModalOpen || !progressModalRef.current) return;
+    const dialog = progressModalRef.current;
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        handleCloseProgressModalRef.current?.();
+        return;
+      }
+      if (e.key === 'Tab') {
+        const focusable = Array.from(dialog.querySelectorAll(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        ));
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === first || !dialog.contains(document.activeElement)) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last || !dialog.contains(document.activeElement)) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [progressModalOpen]);
+
   // Handle Open Add Modal
-  const handleOpenAddModal = () => {
+  const handleOpenAddModal = (e) => {
+    lastTriggerElementRef.current = e?.currentTarget || document.activeElement;
     const existingIds = projects
       .map((p) => parseInt(String(p.id).trim(), 10))
       .filter((n) => !isNaN(n) && n > 0);
     const nextId = existingIds.length > 0 ? Math.max(...existingIds) + 1 : 1;
 
-    setFormData({
+    const initial = {
       id: String(nextId),
       name: '',
       brand: '',
@@ -354,15 +549,18 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
       paymentStatus: allPaymentOptions[0] || 'Chưa thanh toán',
       startDate: new Date().toLocaleDateString('vi-VN'),
       dueDate: '',
-    });
+    };
+    setFormData(initial);
+    setInitialFormData(initial);
     setFormError('');
     setModalMode('add');
     setModalOpen(true);
   };
 
   // Handle Open Edit Modal
-  const handleOpenEditModal = (project) => {
-    setFormData({
+  const handleOpenEditModal = (project, e) => {
+    lastTriggerElementRef.current = e?.currentTarget || document.activeElement;
+    const initial = {
       id: project.id,
       name: project.name,
       brand: project.brand === '—' ? '' : project.brand,
@@ -373,7 +571,9 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
       paymentStatus: project.paymentStatus || 'Chưa thanh toán',
       startDate: project.startDate === '—' ? '' : project.startDate,
       dueDate: project.dueDate === '—' ? '' : project.dueDate,
-    });
+    };
+    setFormData(initial);
+    setInitialFormData(initial);
     setFormError('');
     setModalMode('edit');
     setModalOpen(true);
@@ -382,6 +582,7 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
   // Save Project (Add / Edit)
   const handleSaveProject = async (e) => {
     e.preventDefault();
+    if (formSaving) return;
     if (!formData.name.trim()) {
       setFormError('Vui lòng nhập Tên khách hàng / Dự án.');
       return;
@@ -421,7 +622,7 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
 
   // Delete Project
   const handleDeleteConfirm = async () => {
-    if (!projectToDelete) return;
+    if (!projectToDelete || deleting) return;
     setDeleting(true);
 
     try {
@@ -449,7 +650,8 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
   };
 
   // Progress Handlers
-  const handleOpenAddProgressModal = () => {
+  const handleOpenAddProgressModal = (e) => {
+    lastTriggerElementRef.current = e?.currentTarget || document.activeElement;
     const existingCodes = projectProgress.map((p) => p.projectCode);
     let maxNum = 0;
     for (const code of existingCodes) {
@@ -461,7 +663,7 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
     }
     const nextCode = `NR-${String(maxNum + 1).padStart(3, '0')}`;
 
-    setProgressFormData({
+    const initial = {
       id: nextCode,
       projectCode: nextCode,
       pin: '123456',
@@ -477,14 +679,18 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
       demoUrl: '',
       finalUrl: '',
       notes: '',
-    });
+    };
+
+    setProgressFormData(initial);
+    setInitialProgressFormData(initial);
     setProgressFormError('');
     setProgressModalMode('add');
     setProgressModalOpen(true);
   };
 
-  const handleOpenEditProgressModal = (item) => {
-    setProgressFormData({
+  const handleOpenEditProgressModal = (item, e) => {
+    lastTriggerElementRef.current = e?.currentTarget || document.activeElement;
+    const initial = {
       id: item.projectCode,
       projectCode: item.projectCode,
       pin: item.pin || '123456',
@@ -500,7 +706,10 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
       demoUrl: item.demoUrl || '',
       finalUrl: item.finalUrl || '',
       notes: item.notes || '',
-    });
+    };
+
+    setProgressFormData(initial);
+    setInitialProgressFormData(initial);
     setProgressFormError('');
     setProgressModalMode('edit');
     setProgressModalOpen(true);
@@ -522,13 +731,18 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
     }
   };
 
-  const handleAutoCalcProgressFromMilestones = () => {
+  const handleSyncMilestones = () => {
     const ms = progressFormData.milestones || [];
     if (ms.length === 0) return;
-    const completed = ms.filter((m) => m.status === 'completed').length;
-    const calculated = Math.round((completed / ms.length) * 100);
-    setProgressFormData((prev) => ({ ...prev, progress: calculated }));
+    const { progress: syncedProgress, stage: syncedStage } = computeMilestoneSync(ms, progressFormData.stage);
+    setProgressFormData((prev) => ({
+      ...prev,
+      progress: syncedProgress,
+      stage: syncedStage,
+    }));
+    showToast(`Đã đồng bộ: ${syncedProgress}% • Giai đoạn: ${syncedStage}`);
   };
+  const handleAutoCalcProgressFromMilestones = handleSyncMilestones;
 
   const handleModalAddMilestone = () => {
     setProgressFormData((prev) => ({
@@ -557,6 +771,7 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
 
   const handleSaveProgress = async (e) => {
     e.preventDefault();
+    if (progressSaving) return;
     if (!progressFormData.projectName.trim()) {
       setProgressFormError('Vui lòng nhập Tên dự án.');
       return;
@@ -597,7 +812,7 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
   };
 
   const handleDeleteProgressConfirm = async () => {
-    if (!progressToDelete) return;
+    if (!progressToDelete || deletingProgress) return;
     setDeletingProgress(true);
 
     try {
@@ -639,7 +854,7 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
         </motion.div>
       )}
 
-      {/* Sticky Site Header matching Homepage */}
+      {/* Sticky Site Header */}
       <header className="admin-site-header">
         <div className="container admin-nav-wrap">
           <div className="admin-brand-group">
@@ -779,8 +994,8 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
 
       {/* Main Container */}
       <main className="admin-main-container">
-        {/* Modern Executive Stat Cards Ribbon */}
-        <div className="admin-quick-stats-ribbon">
+        {/* Quick Stats Ribbon: Compact/Limited on mobile in operational tabs */}
+        <div className={`admin-quick-stats-ribbon ${activeTab !== 'dashboard' ? 'operational-tab' : ''}`}>
           <div className="admin-quick-stat-card">
             <div className="admin-quick-stat-icon-wrap icon-projects">
               <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
@@ -844,6 +1059,7 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
             </div>
           </div>
         </div>
+
         {loading ? (
           <div className="admin-loader-center">
             <div className="admin-spinner-circle" />
@@ -1013,7 +1229,7 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
               </motion.div>
             )}
 
-            {/* TAB 2: PROJECTS (SMART COMPACT TABLE - NO HORIZONTAL SCROLL) */}
+            {/* TAB 2: PROJECTS */}
             {activeTab === 'projects' && (
               <motion.div
                 key="tab-projects"
@@ -1099,8 +1315,8 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
                   </div>
                 </div>
 
-                {/* SMART COMPACT TABLE: 5 Columns, No Horizontal Scroll */}
-                <div className="admin-table-panel">
+                {/* DESKTOP TABLE VIEW */}
+                <div className="admin-desktop-table-view admin-table-panel">
                   <table className="admin-compact-table">
                     <thead>
                       <tr>
@@ -1197,7 +1413,7 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
                                     <button
                                       type="button"
                                       className="admin-icon-btn edit"
-                                      onClick={() => handleOpenEditModal(p)}
+                                      onClick={(e) => handleOpenEditModal(p, e)}
                                       title="Chỉnh sửa dự án này"
                                     >
                                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
@@ -1230,10 +1446,98 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
                     </tbody>
                   </table>
                 </div>
+
+                {/* MOBILE CARDS VIEW */}
+                <div className="admin-mobile-cards-view">
+                  {filteredProjects.length === 0 ? (
+                    <div className="admin-empty-box">
+                      {projects.length === 0
+                        ? 'Chưa có dữ liệu dự án nào trong hệ thống.'
+                        : 'Không tìm thấy kết quả phù hợp với điều kiện tìm kiếm.'}
+                    </div>
+                  ) : (
+                    filteredProjects.map((p) => {
+                      const isPaid = p.paymentStatus?.toLowerCase().includes('đã thanh toán');
+                      const stageLower = (p.stage || '').toLowerCase();
+                      let stageClass = 'badge-negotiating';
+                      if (stageLower.includes('sản xuất') || stageLower.includes('tiền kỳ') || stageLower.includes('hậu kỳ')) {
+                        stageClass = 'badge-production';
+                      }
+
+                      return (
+                        <div key={p.id} className="admin-mobile-card">
+                          <div className="admin-mobile-card-header">
+                            <span className="admin-code-pill">#{p.id}</span>
+                            <div className="admin-mobile-badges">
+                              <span className={`admin-badge ${stageClass}`}>
+                                <span className="admin-badge-dot" />
+                                {p.stage}
+                              </span>
+                              <span className={`admin-badge ${isPaid ? 'badge-paid' : 'badge-unpaid'}`}>
+                                <span className="admin-badge-dot" />
+                                {p.paymentStatus}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="admin-mobile-card-title">{p.name}</div>
+
+                          <div className="admin-mobile-card-meta">
+                            <span className="admin-brand-tag">🏷️ {p.brand || 'Khách cá nhân'}</span>
+                            {p.service && <span className="admin-assignee-chip">{p.service}</span>}
+                            {p.assignee && (
+                              <span className="admin-assignee-chip">
+                                <span className="admin-assignee-avatar">{(p.assignee || '—')[0].toUpperCase()}</span>
+                                <span>{p.assignee}</span>
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="admin-mobile-card-dates">
+                            <span className="admin-date-label">Tiến độ thời gian:</span>
+                            <span>{p.startDate || '—'} → {p.dueDate || '—'}</span>
+                          </div>
+
+                          <div className="admin-mobile-card-footer">
+                            <span className="admin-amount-highlight">{p.value}</span>
+                            <div className="admin-action-btns">
+                              <button
+                                type="button"
+                                className="admin-icon-btn edit"
+                                onClick={(e) => handleOpenEditModal(p, e)}
+                                title="Chỉnh sửa dự án này"
+                              >
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                </svg>
+                              </button>
+
+                              <button
+                                type="button"
+                                className="admin-icon-btn danger"
+                                onClick={() => {
+                                  setProjectToDelete(p);
+                                  setDeleteConfirmOpen(true);
+                                }}
+                                title="Xóa dự án"
+                              >
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <polyline points="3 6 5 6 21 6" />
+                                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
               </motion.div>
             )}
 
-            {/* TAB 3: FORM SUBMISSIONS FROM WEBSITE */}
+            {/* TAB 3: FORM SUBMISSIONS */}
             {activeTab === 'form_submissions' && (
               <motion.div
                 key="tab-form-submissions"
@@ -1439,8 +1743,8 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
                   </div>
                 </div>
 
-                {/* Progress Table: 5-Column Compact Smart Table */}
-                <div className="admin-table-panel">
+                {/* DESKTOP TABLE VIEW */}
+                <div className="admin-desktop-table-view admin-table-panel">
                   <table className="admin-compact-table">
                     <thead>
                       <tr>
@@ -1465,6 +1769,7 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
                       ) : (
                         filteredProgress.map((item) => {
                           const isPinShown = visiblePins.has(item.projectCode);
+                          const isItemOverdue = isProjectOverdue(item.dueDate, item.stage, item.progress, item.milestones);
                           return (
                             <tr key={item.projectCode}>
                               {/* Cột 1: Mã dự án + Tên + Khách/Brand + Dịch vụ */}
@@ -1540,7 +1845,7 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
                                             <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
                                             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                                           </svg>
-                                          <span>Gửi khách</span>
+                                          <span>Sao chép thông tin</span>
                                         </>
                                       )}
                                     </button>
@@ -1622,12 +1927,13 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
                                     </div>
                                   ) : null}
 
-                                  <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '0.2rem' }}>
+                                  <div style={{ fontSize: '0.72rem', color: isItemOverdue ? '#f87171' : '#64748b', marginTop: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                                     {item.startDate || item.dueDate ? (
                                       <span>{item.startDate || '—'} → {item.dueDate || '—'}</span>
                                     ) : (
                                       <span>Chưa đặt hạn</span>
                                     )}
+                                    {isItemOverdue && <span className="admin-card-overdue-tag">⚠️ Quá hạn</span>}
                                   </div>
                                 </div>
                               </td>
@@ -1639,7 +1945,7 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
                                     <button
                                       type="button"
                                       className="admin-icon-btn edit"
-                                      onClick={() => handleOpenEditProgressModal(item)}
+                                      onClick={(e) => handleOpenEditProgressModal(item, e)}
                                       title="Chỉnh sửa tiến độ"
                                     >
                                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
@@ -1672,6 +1978,174 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
                     </tbody>
                   </table>
                 </div>
+
+                {/* MOBILE CARDS VIEW */}
+                <div className="admin-mobile-cards-view">
+                  {filteredProgress.length === 0 ? (
+                    <div className="admin-empty-box">
+                      {projectProgress.length === 0
+                        ? 'Chưa có dự án nào trong bảng Tiến Độ.'
+                        : 'Không tìm thấy kết quả phù hợp với điều kiện tìm kiếm.'}
+                    </div>
+                  ) : (
+                    filteredProgress.map((item) => {
+                      const isPinShown = visiblePins.has(item.projectCode);
+                      const isItemOverdue = isProjectOverdue(item.dueDate, item.stage, item.progress, item.milestones);
+
+                      return (
+                        <div key={item.projectCode} className="admin-mobile-card">
+                          <div className="admin-mobile-card-header">
+                            <span className="admin-code-pill">{item.projectCode}</span>
+                            <div className="admin-pin-chip">
+                              <span style={{ color: '#a1a1aa', fontSize: '0.74rem' }}>PIN:</span>
+                              <span style={{ fontWeight: 700, letterSpacing: isPinShown ? '0.08em' : '0.15em', color: '#fafafa' }}>
+                                {isPinShown ? item.pin : '••••••'}
+                              </span>
+                              <button
+                                type="button"
+                                className="admin-pin-toggle-btn"
+                                onClick={() => togglePinVisibility(item.projectCode)}
+                                title={isPinShown ? 'Ẩn mã PIN' : 'Hiện mã PIN'}
+                              >
+                                {isPinShown ? (
+                                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                                    <line x1="1" y1="1" x2="23" y2="23" />
+                                  </svg>
+                                ) : (
+                                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                    <circle cx="12" cy="12" r="3" />
+                                  </svg>
+                                )}
+                              </button>
+                            </div>
+                            <span className={`admin-badge ${getStageBadgeClass(item.stage)}`}>
+                              <span className="admin-badge-dot" />
+                              {item.stage}
+                            </span>
+                          </div>
+
+                          <div className="admin-mobile-card-title">{item.projectName}</div>
+
+                          <div className="admin-mobile-card-meta">
+                            <span className="admin-brand-tag">🏷️ {item.clientBrand || 'Khách cá nhân'}</span>
+                            {item.service && <span className="admin-assignee-chip">{item.service}</span>}
+                            {item.assignee && (
+                              <span className="admin-assignee-chip">
+                                <span className="admin-assignee-avatar">{(item.assignee || '—')[0].toUpperCase()}</span>
+                                <span>{item.assignee}</span>
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Progress bar */}
+                          <div className="admin-mobile-card-progress">
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.76rem', marginBottom: '0.3rem' }}>
+                              <span style={{ color: '#a1a1aa' }}>
+                                Tiến độ: <strong style={{ color: '#fafafa' }}>{item.progress}%</strong>
+                              </span>
+                              <span className="admin-milestone-chip">
+                                ✓ {(item.milestones || []).filter((m) => m.status === 'completed').length}/{(item.milestones || []).length} mốc
+                              </span>
+                            </div>
+                            <div className="admin-progress-meter-track">
+                              <div
+                                className="admin-progress-meter-fill"
+                                style={{ width: `${Math.min(100, Math.max(0, Number(item.progress) || 0))}%` }}
+                              />
+                            </div>
+                          </div>
+
+                          {/* Dates row */}
+                          <div className="admin-mobile-card-dates">
+                            <span>Kế hoạch: {item.startDate || '—'} → {item.dueDate || 'Chưa đặt hạn'}</span>
+                            {isItemOverdue && <span className="admin-card-overdue-tag">⚠️ Quá hạn</span>}
+                          </div>
+
+                          {/* Deliverable links */}
+                          {(item.demoUrl || item.finalUrl) && (
+                            <div className="admin-links-cell" style={{ marginTop: '0.5rem' }}>
+                              {item.demoUrl && (
+                                <a href={item.demoUrl} target="_blank" rel="noopener noreferrer" className="admin-link-pill demo">
+                                  Demo
+                                </a>
+                              )}
+                              {item.finalUrl && (
+                                <a href={item.finalUrl} target="_blank" rel="noopener noreferrer" className="admin-link-pill final">
+                                  Final Master
+                                </a>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Studio notes if any */}
+                          {item.notes && (
+                            <div className="admin-progress-notes" style={{ marginTop: '0.45rem' }}>
+                              "{item.notes}"
+                            </div>
+                          )}
+
+                          {/* Action group */}
+                          <div className="admin-mobile-card-footer" style={{ marginTop: '0.85rem' }}>
+                            <button
+                              type="button"
+                              className={`admin-copy-creds-btn ${copiedPinCode === item.projectCode ? 'is-copied' : ''}`}
+                              onClick={() => handleCopyClientCredentials(item)}
+                              title="Sao chép toàn bộ thông tin đăng nhập gửi cho khách"
+                            >
+                              {copiedPinCode === item.projectCode ? (
+                                <>
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                    <polyline points="20 6 9 17 4 12" />
+                                  </svg>
+                                  <span>Đã chép!</span>
+                                </>
+                              ) : (
+                                <>
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                                  </svg>
+                                  <span>Sao chép thông tin</span>
+                                </>
+                              )}
+                            </button>
+
+                            <div className="admin-action-btns">
+                              <button
+                                type="button"
+                                className="admin-icon-btn edit"
+                                onClick={(e) => handleOpenEditProgressModal(item, e)}
+                                title="Chỉnh sửa tiến độ"
+                              >
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                </svg>
+                              </button>
+
+                              <button
+                                type="button"
+                                className="admin-icon-btn danger"
+                                onClick={() => {
+                                  setProgressToDelete(item);
+                                  setDeleteProgressConfirmOpen(true);
+                                }}
+                                title="Xóa tiến độ"
+                              >
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <polyline points="3 6 5 6 21 6" />
+                                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -1680,8 +2154,15 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
 
       {/* MODAL: ADD / EDIT PROJECT */}
       {modalOpen && (
-        <div className="admin-modal-backdrop" onClick={() => !formSaving && setModalOpen(false)}>
+        <div
+          className="admin-modal-backdrop"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="project-modal-title"
+          onClick={handleRequestCloseProjectModal}
+        >
           <motion.div
+            ref={projectModalRef}
             className="admin-modal-dialog"
             onClick={(e) => e.stopPropagation()}
             initial={{ opacity: 0, scale: 0.95 }}
@@ -1689,14 +2170,15 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
             exit={{ opacity: 0, scale: 0.95 }}
           >
             <div className="admin-modal-header">
-              <h3 className="admin-modal-title">
+              <h3 id="project-modal-title" className="admin-modal-title">
                 {modalMode === 'edit' ? `Chỉnh Sửa Dự Án #${formData.id}` : 'Thêm Dự Án Mới'}
               </h3>
               <button
                 type="button"
                 className="admin-modal-close"
-                onClick={() => setModalOpen(false)}
+                onClick={handleRequestCloseProjectModal}
                 disabled={formSaving}
+                title="Đóng cửa sổ"
               >
                 ✕
               </button>
@@ -1705,7 +2187,7 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
             <form onSubmit={handleSaveProject} style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
               <div className="admin-modal-body">
                 {formError && (
-                  <div className="admin-alert-error" style={{ marginBottom: 0 }}>
+                  <div className="admin-alert-error" style={{ marginBottom: '1rem' }}>
                     {formError}
                   </div>
                 )}
@@ -1833,7 +2315,7 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
                 <button
                   type="button"
                   className="admin-pill-btn"
-                  onClick={() => setModalOpen(false)}
+                  onClick={handleRequestCloseProjectModal}
                   disabled={formSaving}
                 >
                   Hủy Bỏ
@@ -1854,7 +2336,12 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
 
       {/* CONFIRM DELETE DIALOG */}
       {deleteConfirmOpen && projectToDelete && (
-        <div className="admin-modal-backdrop" onClick={() => !deleting && setDeleteConfirmOpen(false)}>
+        <div
+          className="admin-modal-backdrop"
+          role="dialog"
+          aria-modal="true"
+          onClick={() => !deleting && setDeleteConfirmOpen(false)}
+        >
           <motion.div
             className="admin-modal-dialog"
             style={{ maxWidth: '440px' }}
@@ -1907,19 +2394,26 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
         </div>
       )}
 
-      {/* MODAL: ADD / EDIT PROJECT PROGRESS */}
+      {/* MODAL: ADD / EDIT PROJECT PROGRESS (GROUPED SECTIONS + CONSISTENCY CHECKS) */}
       {progressModalOpen && (
-        <div className="admin-modal-backdrop" onClick={() => !progressSaving && setProgressModalOpen(false)}>
+        <div
+          className="admin-modal-backdrop"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="progress-modal-title"
+          onClick={handleRequestCloseProgressModal}
+        >
           <motion.div
+            ref={progressModalRef}
             className="admin-modal-dialog"
             onClick={(e) => e.stopPropagation()}
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            style={{ maxWidth: '640px' }}
+            style={{ maxWidth: '680px' }}
           >
             <div className="admin-modal-header">
-              <h3 className="admin-modal-title">
+              <h3 id="progress-modal-title" className="admin-modal-title">
                 {progressModalMode === 'edit'
                   ? `Chỉnh Sửa Tiến Độ Dự Án #${progressFormData.projectCode}`
                   : 'Thêm Tiến Độ Dự Án Mới'}
@@ -1927,8 +2421,9 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
               <button
                 type="button"
                 className="admin-modal-close"
-                onClick={() => setProgressModalOpen(false)}
+                onClick={handleRequestCloseProgressModal}
                 disabled={progressSaving}
+                title="Đóng cửa sổ"
               >
                 ✕
               </button>
@@ -1937,16 +2432,52 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
             <form onSubmit={handleSaveProgress} style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
               <div className="admin-modal-body">
                 {progressFormError && (
-                  <div className="admin-alert-error" style={{ marginBottom: 0 }}>
+                  <div className="admin-alert-error" style={{ marginBottom: '1rem' }}>
                     {progressFormError}
+                  </div>
+                )}
+
+                {/* Consistency Warning Banner */}
+                {progressConsistencyWarnings.length > 0 && (
+                  <div className="admin-alert-warning" style={{ marginBottom: '1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.35rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontWeight: 700 }}>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                          <line x1="12" y1="9" x2="12" y2="13" />
+                          <line x1="12" y1="17" x2="12.01" y2="17" />
+                        </svg>
+                        <span>Cảnh báo tính nhất quán dữ liệu:</span>
+                      </div>
+                      {(progressFormData.milestones || []).length > 0 && (
+                        <button
+                          type="button"
+                          className="admin-sync-milestone-btn"
+                          onClick={handleSyncMilestones}
+                          title="Tự động tính phần trăm và cập nhật giai đoạn theo số mốc đã hoàn thành"
+                        >
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                            <polyline points="23 4 23 10 17 10" />
+                            <polyline points="1 20 1 14 7 14" />
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                          </svg>
+                          <span>Đồng bộ theo Milestones</span>
+                        </button>
+                      )}
+                    </div>
+                    <ul style={{ margin: 0, paddingLeft: '1.25rem', fontSize: '0.8rem', lineHeight: 1.45 }}>
+                      {progressConsistencyWarnings.map((warn, wIdx) => (
+                        <li key={wIdx}>{warn}</li>
+                      ))}
+                    </ul>
                   </div>
                 )}
 
                 {/* Quick Autofill from existing Projects */}
                 {progressModalMode === 'add' && projects.length > 0 && (
-                  <div style={{ background: '#18181b', border: '1px solid rgba(255, 255, 255, 0.12)', borderRadius: '10px', padding: '0.75rem 1rem' }}>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#fafafa', display: 'block', marginBottom: '0.35rem' }}>
-                      Chọn nhanh từ danh sách Dự án có sẵn:
+                  <div className="admin-quick-autofill-box">
+                    <label className="admin-group-label">
+                      Chọn nhanh từ danh sách Dự án có sẵn để tự động điền:
                     </label>
                     <CustomSelect
                       value=""
@@ -1957,299 +2488,353 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
                   </div>
                 )}
 
-                <div className="admin-modal-grid">
-                  <div className="admin-modal-field">
-                    <label>Mã Dự Án (Cấp cho khách) *</label>
-                    <input
-                      type="text"
-                      className="admin-modal-input"
-                      value={progressFormData.projectCode}
-                      onChange={(e) => setProgressFormData({ ...progressFormData, projectCode: e.target.value })}
-                      required
-                    />
+                {/* NHÓM 1: THÔNG TIN DỰ ÁN */}
+                <div className="admin-form-group-section">
+                  <div className="admin-form-group-header">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                      <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                    </svg>
+                    <span>1. Thông Tin Dự Án & Kế Hoạch</span>
                   </div>
 
-                  <div className="admin-modal-field">
-                    <label>Mã PIN Khách Hàng (6 số) *</label>
-                    <div style={{ display: 'flex', gap: '0.4rem' }}>
+                  <div className="admin-modal-grid">
+                    <div className="admin-modal-field" style={{ gridColumn: '1 / -1' }}>
+                      <label>Tên Dự Án *</label>
                       <input
                         type="text"
                         className="admin-modal-input"
-                        value={progressFormData.pin}
-                        onChange={(e) => setProgressFormData({ ...progressFormData, pin: e.target.value })}
+                        placeholder="VD: TVC ACTS Summer Collection..."
+                        value={progressFormData.projectName}
+                        onChange={(e) => setProgressFormData({ ...progressFormData, projectName: e.target.value })}
                         required
-                        maxLength={10}
                       />
-                      <button
-                        type="button"
-                        className="admin-pill-btn"
-                        onClick={() => {
-                          const randPin = String(Math.floor(100000 + Math.random() * 900000));
-                          setProgressFormData({ ...progressFormData, pin: randPin });
-                        }}
-                        style={{ whiteSpace: 'nowrap' }}
-                        title="Tạo mã PIN 6 số ngẫu nhiên"
-                      >
-                        PIN mới
-                      </button>
                     </div>
-                  </div>
 
-                  <div className="admin-modal-field" style={{ gridColumn: '1 / -1' }}>
-                    <label>Tên Dự Án *</label>
-                    <input
-                      type="text"
-                      className="admin-modal-input"
-                      placeholder="VD: TVC ACTS Summer Collection..."
-                      value={progressFormData.projectName}
-                      onChange={(e) => setProgressFormData({ ...progressFormData, projectName: e.target.value })}
-                      required
-                    />
-                  </div>
-
-                  <div className="admin-modal-field">
-                    <label>Khách Hàng / Thương Hiệu</label>
-                    <input
-                      type="text"
-                      className="admin-modal-input"
-                      placeholder="VD: Trân Trân / ACTS..."
-                      value={progressFormData.clientBrand}
-                      onChange={(e) => setProgressFormData({ ...progressFormData, clientBrand: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="admin-modal-field">
-                    <label>Dịch Vụ Sản Xuất</label>
-                    <CustomSelect
-                      direction="up"
-                      value={progressFormData.service}
-                      onChange={(val) => setProgressFormData({ ...progressFormData, service: val })}
-                      options={serviceOptions}
-                      allowCustom={true}
-                      placeholder="Chọn hoặc nhập dịch vụ..."
-                    />
-                  </div>
-
-                  <div className="admin-modal-field">
-                    <label>Người Phụ Trách</label>
-                    <input
-                      type="text"
-                      className="admin-modal-input"
-                      placeholder="VD: Vũ Thành..."
-                      value={progressFormData.assignee}
-                      onChange={(e) => setProgressFormData({ ...progressFormData, assignee: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="admin-modal-field">
-                    <label>Giai Đoạn Hiện Tại</label>
-                    <CustomSelect
-                      direction="up"
-                      value={progressFormData.stage}
-                      onChange={(val) => setProgressFormData({ ...progressFormData, stage: val })}
-                      options={PROGRESS_STAGES}
-                    />
-                  </div>
-
-                  {/* Progress Slider */}
-                  <div className="admin-modal-field" style={{ gridColumn: '1 / -1' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-                      <label style={{ margin: 0 }}>
-                        Tiến Độ Thực Tế: <strong style={{ color: '#fafafa' }}>{progressFormData.progress}%</strong>
-                      </label>
-                      <button
-                        type="button"
-                        className="admin-autocalc-btn"
-                        onClick={handleAutoCalcProgressFromMilestones}
-                        title="Tự động tính phần trăm dựa trên số mốc công việc đã hoàn thành"
-                      >
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-                        </svg>
-                        <span>Tự tính theo mốc</span>
-                      </button>
-                    </div>
-                    <div className="admin-slider-group">
+                    <div className="admin-modal-field">
+                      <label>Khách Hàng / Thương Hiệu</label>
                       <input
-                        type="range"
-                        min="0"
-                        max="100"
-                        step="5"
-                        className="admin-slider-range"
-                        value={progressFormData.progress}
-                        onChange={(e) => setProgressFormData({ ...progressFormData, progress: Number(e.target.value) })}
+                        type="text"
+                        className="admin-modal-input"
+                        placeholder="VD: Trân Trân / ACTS..."
+                        value={progressFormData.clientBrand}
+                        onChange={(e) => setProgressFormData({ ...progressFormData, clientBrand: e.target.value })}
                       />
+                    </div>
+
+                    <div className="admin-modal-field">
+                      <label>Dịch Vụ Sản Xuất</label>
+                      <CustomSelect
+                        direction="up"
+                        value={progressFormData.service}
+                        onChange={(val) => setProgressFormData({ ...progressFormData, service: val })}
+                        options={serviceOptions}
+                        allowCustom={true}
+                        placeholder="Chọn hoặc nhập dịch vụ..."
+                      />
+                    </div>
+
+                    <div className="admin-modal-field">
+                      <label>Người Phụ Trách</label>
                       <input
-                        type="number"
-                        min="0"
-                        max="100"
-                        className="admin-modal-input admin-slider-input"
-                        value={progressFormData.progress}
-                        onChange={(e) => setProgressFormData({ ...progressFormData, progress: Math.min(100, Math.max(0, Number(e.target.value) || 0)) })}
+                        type="text"
+                        className="admin-modal-input"
+                        placeholder="VD: Vũ Thành..."
+                        value={progressFormData.assignee}
+                        onChange={(e) => setProgressFormData({ ...progressFormData, assignee: e.target.value })}
                       />
-                      <span style={{ color: '#94a3b8', fontSize: '0.85rem' }}>%</span>
                     </div>
-                    <div className="admin-preset-pills-row">
-                      <span style={{ fontSize: '0.74rem', color: '#94a3b8', marginRight: '0.2rem' }}>Mức nhanh:</span>
-                      {[0, 25, 50, 75, 100].map((pct) => (
-                        <button
-                          key={pct}
-                          type="button"
-                          className={`admin-preset-pill ${Number(progressFormData.progress) === pct ? 'active' : ''}`}
-                          onClick={() => setProgressFormData({ ...progressFormData, progress: pct })}
-                        >
-                          {pct}%
-                        </button>
-                      ))}
+
+                    <div className="admin-modal-field">
+                      <label>Ngày Bắt Đầu</label>
+                      <DatePicker
+                        value={progressFormData.startDate}
+                        onChange={(val) => setProgressFormData({ ...progressFormData, startDate: val })}
+                        placeholder="VD: 10/10/2026"
+                        direction="up"
+                      />
+                    </div>
+
+                    <div className="admin-modal-field">
+                      <label>Hạn Hoàn Thành</label>
+                      <DatePicker
+                        value={progressFormData.dueDate}
+                        onChange={(val) => setProgressFormData({ ...progressFormData, dueDate: val })}
+                        placeholder="VD: 25/10/2026"
+                        direction="up"
+                      />
                     </div>
                   </div>
+                </div>
 
-                  <div className="admin-modal-field">
-                    <label>Ngày Bắt Đầu</label>
-                    <DatePicker
-                      value={progressFormData.startDate}
-                      onChange={(val) => setProgressFormData({ ...progressFormData, startDate: val })}
-                      placeholder="VD: 10/10/2026"
-                      direction="up"
-                    />
+                {/* NHÓM 2: TRUY CẬP KHÁCH HÀNG */}
+                <div className="admin-form-group-section">
+                  <div className="admin-form-group-header">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                    <span>2. Tài Khoản & Truy Cập Cổng Khách Hàng</span>
                   </div>
 
-                  <div className="admin-modal-field">
-                    <label>Hạn Hoàn Thành</label>
-                    <DatePicker
-                      value={progressFormData.dueDate}
-                      onChange={(val) => setProgressFormData({ ...progressFormData, dueDate: val })}
-                      placeholder="VD: 25/10/2026"
-                      direction="up"
-                    />
-                  </div>
+                  <div className="admin-modal-grid">
+                    <div className="admin-modal-field">
+                      <label>Mã Dự Án (Cấp cho khách đăng nhập) *</label>
+                      <input
+                        type="text"
+                        className="admin-modal-input"
+                        value={progressFormData.projectCode}
+                        onChange={(e) => setProgressFormData({ ...progressFormData, projectCode: e.target.value })}
+                        required
+                      />
+                    </div>
 
-                  {/* Milestones Builder */}
-                  <div className="admin-modal-field" style={{ gridColumn: '1 / -1' }}>
-                    <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span>Các Mốc Công Việc ({progressFormData.milestones?.length || 0})</span>
-                      <button
-                        type="button"
-                        className="admin-pill-btn"
-                        onClick={() => setProgressFormData({ ...progressFormData, milestones: [...DEFAULT_PROGRESS_MILESTONES] })}
-                        style={{ fontSize: '0.72rem', padding: '0.2rem 0.5rem' }}
-                      >
-                        Tạo 6 mốc chuẩn
-                      </button>
-                    </label>
-
-                    <div className="admin-milestone-editor">
-                      {(progressFormData.milestones || []).map((m, idx) => (
-                        <div key={m.id || idx} className="admin-milestone-row">
-                          <span style={{ fontSize: '0.75rem', color: '#94a3b8', width: '18px', textAlign: 'center', flexShrink: 0 }}>
-                            {idx + 1}.
-                          </span>
-                          <input
-                            type="text"
-                            className="admin-milestone-input"
-                            placeholder="Tên mốc công việc..."
-                            value={m.title}
-                            onChange={(e) => handleModalMilestoneChange(idx, 'title', e.target.value)}
-                          />
-                          <div className="admin-milestone-status-segmented">
-                            <button
-                              type="button"
-                              className={`admin-status-seg-btn pending ${m.status === 'pending' ? 'active' : ''}`}
-                              onClick={() => handleModalMilestoneChange(idx, 'status', 'pending')}
-                              title="Chờ xử lý"
-                            >
-                              <span className="seg-dot" />
-                              <span>Chờ</span>
-                            </button>
-                            <button
-                              type="button"
-                              className={`admin-status-seg-btn in_progress ${m.status === 'in_progress' ? 'active' : ''}`}
-                              onClick={() => handleModalMilestoneChange(idx, 'status', 'in_progress')}
-                              title="Đang làm"
-                            >
-                              <span className="seg-dot" />
-                              <span>Làm</span>
-                            </button>
-                            <button
-                              type="button"
-                              className={`admin-status-seg-btn completed ${m.status === 'completed' ? 'active' : ''}`}
-                              onClick={() => handleModalMilestoneChange(idx, 'status', 'completed')}
-                              title="Hoàn thành"
-                            >
-                              <span className="seg-dot" />
-                              <span>Xong</span>
-                            </button>
-                          </div>
-                          <button
-                            type="button"
-                            className="admin-milestone-del-btn"
-                            onClick={() => handleModalRemoveMilestone(idx)}
-                            title="Xóa mốc này"
-                          >
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <polyline points="3 6 5 6 21 6" />
-                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                            </svg>
-                          </button>
-                        </div>
-                      ))}
-                      <div className="admin-milestone-actions-row">
+                    <div className="admin-modal-field">
+                      <label>Mã PIN Khách Hàng (6 số) *</label>
+                      <div style={{ display: 'flex', gap: '0.4rem' }}>
+                        <input
+                          type="text"
+                          className="admin-modal-input"
+                          value={progressFormData.pin}
+                          onChange={(e) => setProgressFormData({ ...progressFormData, pin: e.target.value })}
+                          required
+                          maxLength={10}
+                        />
                         <button
                           type="button"
-                          className="admin-milestone-add-btn"
-                          onClick={handleModalAddMilestone}
+                          className="admin-pill-btn"
+                          onClick={() => {
+                            const randPin = String(Math.floor(100000 + Math.random() * 900000));
+                            setProgressFormData({ ...progressFormData, pin: randPin });
+                          }}
+                          style={{ whiteSpace: 'nowrap' }}
+                          title="Tạo mã PIN 6 số ngẫu nhiên"
                         >
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                            <line x1="12" y1="5" x2="12" y2="19" />
-                            <line x1="5" y1="12" x2="19" y2="12" />
-                          </svg>
-                          <span>Thêm mốc công việc</span>
+                          PIN mới
                         </button>
                       </div>
                     </div>
                   </div>
+                </div>
 
-                  <div className="admin-modal-field">
-                    <label>Link Demo / Bản Nháp</label>
-                    <input
-                      type="url"
-                      className="admin-modal-input"
-                      placeholder="https://..."
-                      value={progressFormData.demoUrl}
-                      onChange={(e) => setProgressFormData({ ...progressFormData, demoUrl: e.target.value })}
-                    />
+                {/* NHÓM 3: TIẾN ĐỘ & MỐC CÔNG VIỆC */}
+                <div className="admin-form-group-section">
+                  <div className="admin-form-group-header">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                    </svg>
+                    <span>3. Giai Đoạn, Tiến Độ & Mốc Công Việc (Milestones)</span>
                   </div>
 
-                  <div className="admin-modal-field">
-                    <label>Link Bàn Giao Final (File Master)</label>
-                    <input
-                      type="url"
-                      className="admin-modal-input"
-                      placeholder="https://drive.google.com/..."
-                      value={progressFormData.finalUrl}
-                      onChange={(e) => setProgressFormData({ ...progressFormData, finalUrl: e.target.value })}
-                    />
+                  <div className="admin-modal-grid">
+                    <div className="admin-modal-field" style={{ gridColumn: '1 / -1' }}>
+                      <label>Giai Đoạn Sản Xuất Hiện Tại</label>
+                      <CustomSelect
+                        direction="up"
+                        value={progressFormData.stage}
+                        onChange={(val) => setProgressFormData({ ...progressFormData, stage: val })}
+                        options={PROGRESS_STAGES}
+                      />
+                    </div>
+
+                    {/* Progress Slider */}
+                    <div className="admin-modal-field" style={{ gridColumn: '1 / -1' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                        <label style={{ margin: 0 }}>
+                          Tiến Độ Thực Tế: <strong style={{ color: '#fafafa' }}>{progressFormData.progress}%</strong>
+                        </label>
+                        <button
+                          type="button"
+                          className="admin-autocalc-btn"
+                          onClick={handleSyncMilestones}
+                          title="Tự động tính phần trăm và cập nhật giai đoạn theo số mốc đã hoàn thành"
+                        >
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                            <polyline points="23 4 23 10 17 10" />
+                            <polyline points="1 20 1 14 7 14" />
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                          </svg>
+                          <span>Đồng bộ theo Milestones</span>
+                        </button>
+                      </div>
+                      <div className="admin-slider-group">
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          step="5"
+                          className="admin-slider-range"
+                          value={progressFormData.progress}
+                          onChange={(e) => setProgressFormData({ ...progressFormData, progress: Number(e.target.value) })}
+                        />
+                        <input
+                          type="number"
+                          min="0"
+                          max="100"
+                          className="admin-modal-input admin-slider-input"
+                          value={progressFormData.progress}
+                          onChange={(e) => setProgressFormData({ ...progressFormData, progress: Math.min(100, Math.max(0, Number(e.target.value) || 0)) })}
+                        />
+                        <span style={{ color: '#94a3b8', fontSize: '0.85rem' }}>%</span>
+                      </div>
+                      <div className="admin-preset-pills-row">
+                        <span style={{ fontSize: '0.74rem', color: '#94a3b8', marginRight: '0.2rem' }}>Mức nhanh:</span>
+                        {[0, 25, 50, 75, 100].map((pct) => (
+                          <button
+                            key={pct}
+                            type="button"
+                            className={`admin-preset-pill ${Number(progressFormData.progress) === pct ? 'active' : ''}`}
+                            onClick={() => setProgressFormData({ ...progressFormData, progress: pct })}
+                          >
+                            {pct}%
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Milestones Builder */}
+                    <div className="admin-modal-field" style={{ gridColumn: '1 / -1' }}>
+                      <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span>Các Mốc Công Việc ({progressFormData.milestones?.length || 0})</span>
+                        <button
+                          type="button"
+                          className="admin-pill-btn"
+                          onClick={() => setProgressFormData({ ...progressFormData, milestones: [...DEFAULT_PROGRESS_MILESTONES] })}
+                          style={{ fontSize: '0.72rem', padding: '0.2rem 0.5rem' }}
+                        >
+                          Tạo 6 mốc chuẩn
+                        </button>
+                      </label>
+
+                      <div className="admin-milestone-editor">
+                        {(progressFormData.milestones || []).map((m, idx) => (
+                          <div key={m.id || idx} className="admin-milestone-row">
+                            <span style={{ fontSize: '0.75rem', color: '#94a3b8', width: '18px', textAlign: 'center', flexShrink: 0 }}>
+                              {idx + 1}.
+                            </span>
+                            <input
+                              type="text"
+                              className="admin-milestone-input"
+                              placeholder="Tên mốc công việc..."
+                              value={m.title}
+                              onChange={(e) => handleModalMilestoneChange(idx, 'title', e.target.value)}
+                            />
+                            <div className="admin-milestone-status-segmented">
+                              <button
+                                type="button"
+                                className={`admin-status-seg-btn pending ${m.status === 'pending' ? 'active' : ''}`}
+                                onClick={() => handleModalMilestoneChange(idx, 'status', 'pending')}
+                                title="Chờ xử lý"
+                              >
+                                <span className="seg-dot" />
+                                <span>Chờ</span>
+                              </button>
+                              <button
+                                type="button"
+                                className={`admin-status-seg-btn in_progress ${m.status === 'in_progress' ? 'active' : ''}`}
+                                onClick={() => handleModalMilestoneChange(idx, 'status', 'in_progress')}
+                                title="Đang làm"
+                              >
+                                <span className="seg-dot" />
+                                <span>Làm</span>
+                              </button>
+                              <button
+                                type="button"
+                                className={`admin-status-seg-btn completed ${m.status === 'completed' ? 'active' : ''}`}
+                                onClick={() => handleModalMilestoneChange(idx, 'status', 'completed')}
+                                title="Hoàn thành"
+                              >
+                                <span className="seg-dot" />
+                                <span>Xong</span>
+                              </button>
+                            </div>
+                            <button
+                              type="button"
+                              className="admin-milestone-del-btn"
+                              onClick={() => handleModalRemoveMilestone(idx)}
+                              title="Xóa mốc này"
+                            >
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <polyline points="3 6 5 6 21 6" />
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                              </svg>
+                            </button>
+                          </div>
+                        ))}
+                        <div className="admin-milestone-actions-row">
+                          <button
+                            type="button"
+                            className="admin-milestone-add-btn"
+                            onClick={handleModalAddMilestone}
+                          >
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                              <line x1="12" y1="5" x2="12" y2="19" />
+                              <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                            <span>Thêm mốc công việc</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* NHÓM 4: TÀI LIỆU & GHI CHÚ */}
+                <div className="admin-form-group-section">
+                  <div className="admin-form-group-header">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                      <polyline points="14 2 14 8 20 8" />
+                      <line x1="16" y1="13" x2="8" y2="13" />
+                      <line x1="16" y1="17" x2="8" y2="17" />
+                    </svg>
+                    <span>4. Tài Liệu Sản Phẩm & Ghi Chú Cập Nhật</span>
                   </div>
 
-                  <div className="admin-modal-field" style={{ gridColumn: '1 / -1' }}>
-                    <label>Ghi Chú Cập Nhật (Khách sẽ đọc được ghi chú này)</label>
-                    <textarea
-                      className="admin-modal-input"
-                      rows={2}
-                      placeholder="VD: Đã chốt concept, đang hoàn thiện storyboard và chuẩn bị casting..."
-                      value={progressFormData.notes}
-                      onChange={(e) => setProgressFormData({ ...progressFormData, notes: e.target.value })}
-                      style={{ resize: 'vertical' }}
-                    />
+                  <div className="admin-modal-grid">
+                    <div className="admin-modal-field">
+                      <label>Link Demo / Bản Nháp</label>
+                      <input
+                        type="url"
+                        className="admin-modal-input"
+                        placeholder="https://..."
+                        value={progressFormData.demoUrl}
+                        onChange={(e) => setProgressFormData({ ...progressFormData, demoUrl: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="admin-modal-field">
+                      <label>Link Bàn Giao Final (File Master)</label>
+                      <input
+                        type="url"
+                        className="admin-modal-input"
+                        placeholder="https://drive.google.com/..."
+                        value={progressFormData.finalUrl}
+                        onChange={(e) => setProgressFormData({ ...progressFormData, finalUrl: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="admin-modal-field" style={{ gridColumn: '1 / -1' }}>
+                      <label>Ghi Chú Cập Nhật (Khách sẽ đọc được ghi chú này)</label>
+                      <textarea
+                        className="admin-modal-input"
+                        rows={2}
+                        placeholder="VD: Đã chốt concept, đang hoàn thiện storyboard và chuẩn bị casting..."
+                        value={progressFormData.notes}
+                        onChange={(e) => setProgressFormData({ ...progressFormData, notes: e.target.value })}
+                        style={{ resize: 'vertical' }}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
 
+              {/* STICKY ACCESSIBLE FOOTER */}
               <div className="admin-modal-footer">
                 <button
                   type="button"
                   className="admin-pill-btn"
-                  onClick={() => setProgressModalOpen(false)}
+                  onClick={handleRequestCloseProgressModal}
                   disabled={progressSaving}
                 >
                   Hủy Bỏ
@@ -2269,7 +2854,12 @@ export default function AdminPortal({ admin, data, loading, refreshing, onRefres
 
       {/* CONFIRM DELETE MODAL FOR PROGRESS */}
       {deleteProgressConfirmOpen && progressToDelete && (
-        <div className="admin-modal-backdrop" onClick={() => !deletingProgress && setDeleteProgressConfirmOpen(false)}>
+        <div
+          className="admin-modal-backdrop"
+          role="dialog"
+          aria-modal="true"
+          onClick={() => !deletingProgress && setDeleteProgressConfirmOpen(false)}
+        >
           <motion.div
             className="admin-modal-dialog"
             onClick={(e) => e.stopPropagation()}
